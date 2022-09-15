@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://bbbanenejgwwt"]
+[gd_scene load_steps=3 format=3 uid="uid://e0cm3qyt5noc"]
 
 [ext_resource type="Script" path="res://testing/test.gd" id="1_t34bj"]
 
@@ -26,4 +26,5 @@ script = ExtResource("1_t34bj")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
+zoom = Vector2(2, 2)
 script = SubResource("GDScript_k6a31")

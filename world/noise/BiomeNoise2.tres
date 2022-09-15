@@ -2,12 +2,15 @@
 
 [resource]
 noise_type = 2
-fractal_type = 3
+seed = 230
+frequency = 0.002
+fractal_type = 0
 fractal_octaves = 1
-fractal_lacunarity = 1.0
+fractal_lacunarity = 0.1
+fractal_gain = -0.379
 fractal_weighted_strength = 1.0
-fractal_ping_pong_strength = 7.046
-cellular_jitter = 0.25
+fractal_ping_pong_strength = 7.009
+cellular_jitter = 0.503
 cellular_return_type = 0
 domain_warp_type = 1
 domain_warp_amplitude = 27.093

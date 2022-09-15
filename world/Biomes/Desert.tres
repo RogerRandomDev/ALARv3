@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_ydo0y")
 biomeName = "Desert"
-baseTiles = PackedInt32Array(3, 3, 3)
+baseTiles = PackedInt32Array(3, 3, 4)
 Temperature = 0.8
 Humidity = 0.1
-Depth = 0.5
+Depth = 0.8
 groundOffset = 0
 groundVariance = 0.25

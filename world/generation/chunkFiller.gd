@@ -4,7 +4,7 @@ const terrainNoise0=preload("res://world/noise/terrainNoise0.tres")
 const underTerrainNoise0=preload("res://world/noise/terrainNoise1.tres")
 const tempNoise=preload("res://world/noise/BiomeNoise0.tres")
 const humidNoise=preload("res://world/noise/BiomeNoise2.tres")
-const smoothNoise=preload("res://world/noise/BiomeNoise1.tres")
+const heightNoise=preload("res://world/noise/BiomeNoise1.tres")
 const caveNoise0=preload("res://world/noise/caveNoise0.tres")
 const caveNoise1=preload("res://world/noise/caveNoise1.tres")
 func caveNoise2D(x,y):
@@ -20,24 +20,35 @@ func caveNoise2D(x,y):
 
 #gets the biome for a given tile
 func getBiome(tilePos):
-	var curBiome=[null,0]
-	var nextBest=[null,0]
 	
-	var temp=tempNoise.get_noise_1d(tilePos.x)
-	var humid=humidNoise.get_noise_1d(tilePos.x)
-	var smoothBy=smoothNoise.get_noise_1d(tilePos.x)**2
 	
-	for biome in world.biomeList:
-		#average % off from the desired value for the given biome
-		var aveOff=(abs((biome.Temperature-temp)/biome.Temperature)+
-		abs((biome.Humidity-humid)/biome.Humidity)
-		)/2
-		if(curBiome[0]==null||curBiome[1]>aveOff):
-			nextBest=[curBiome[0],curBiome[1]]
-			curBiome=[biome,aveOff]
-	if nextBest[0]==null:nextBest=curBiome
-	if(abs(nextBest[1]-curBiome[1])>curBiome[1]):smoothBy=min(smoothBy*1.25,1)
-	return [curBiome[0],nextBest[0],abs(smoothBy)]
+	
+	var nearBiomes=[]
+	for x in range(-6,6,2):
+		var curBiome=[null,0]
+		var nextBest=[null,0]
+		var temp=tempNoise.get_noise_1d(tilePos.x+x)
+		var humid=humidNoise.get_noise_1d(tilePos.x+x)
+		var height=1-heightNoise.get_noise_1d(tilePos.x+x)
+		for biome in world.biomeList:
+			#average % off from the desired value for the given biome
+			var aveOff=(abs((biome.Temperature-temp)/biome.Temperature)+
+			abs((biome.Humidity-humid)/biome.Humidity)+
+			abs((biome.Depth-height)/biome.Depth)
+			)/3
+			if(curBiome[0]==null||curBiome[1]>aveOff):
+				nextBest=[curBiome[0],curBiome[1]]
+				
+				curBiome=[biome,aveOff]
+		if nextBest[0]==null:nextBest=curBiome
+		nearBiomes.push_back(curBiome[0])
+	var modifiers=[0,0]
+	for biome in nearBiomes:
+		modifiers[0]+=biome.groundVariance
+		modifiers[1]+=biome.groundOffset
+	modifiers[0]/=6
+	modifiers[1]/=6
+	return [nearBiomes[2],modifiers]
 
 #builds the chunk
 func buildChunkData(chunkPos):
@@ -48,9 +59,8 @@ func buildChunkData(chunkPos):
 		var biomes=getBiome(TLcorner+Vector2i(x,y))
 		var biome=biomes[0]
 		var cellID=[-1,-1]
-		
-		var groundVariance=lerp(biomes[1].groundVariance,biomes[0].groundVariance,biomes[2])
-		var groundOffset=lerp(biomes[1].groundOffset,biomes[0].groundOffset,biomes[2])
+		var groundVariance=biomes[1][0]
+		var groundOffset=biomes[1][1]
 		var caveNoise=caveNoise2D(TLcorner.x+x,TLcorner.y+y)
 		
 		

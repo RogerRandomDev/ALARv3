@@ -9,7 +9,7 @@ var chunkHolder=null
 var biomeList=[]
 
 
-var renderDistance=2
+var renderDistance=3
 var chunkSize=16
 var tileSize=8
 var groundLevel=32

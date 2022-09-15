@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://dp6il3pesp8gg"]
+
+[ext_resource type="Script" path="res://world/resources/biomeResource.gd" id="1_ep4kv"]
+
+[resource]
+script = ExtResource("1_ep4kv")
+biomeName = "Default"
+baseTiles = PackedInt32Array(3, 3, 4)
+Temperature = 0.8
+Humidity = 0.1
+Depth = 0.3
+groundOffset = 0
+groundVariance = 5.0

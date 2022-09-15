@@ -1,11 +1,20 @@
-[gd_resource type="FastNoiseLite" format=3 uid="uid://bx5ef40v33r4b"]
+[gd_resource type="FastNoiseLite" format=3 uid="uid://bxou86bw6yxpj"]
 
 [resource]
-noise_type = 2
+noise_type = 5
+seed = 226
+frequency = 0.011
 fractal_type = 0
-fractal_octaves = 2
-fractal_lacunarity = 2.475
-fractal_gain = 0.291
-cellular_distance_function = 1
-cellular_jitter = 0.25
-cellular_return_type = 4
+fractal_octaves = 1
+fractal_lacunarity = 4.367
+fractal_gain = -0.275
+fractal_weighted_strength = 1.0
+fractal_ping_pong_strength = 14.001
+cellular_jitter = 0.15
+cellular_return_type = 0
+domain_warp_amplitude = 27.093
+domain_warp_frequency = 0.019
+domain_warp_fractal_type = 0
+domain_warp_fractal_octaves = 3
+domain_warp_fractal_lacunarity = 5.426
+domain_warp_fractal_gain = 0.444
