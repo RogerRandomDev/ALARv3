@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bvfin4sldwt0m"]
+
+[ext_resource type="Script" path="res://world/resources/biomeResource.gd" id="1_u1qcx"]
+
+[resource]
+script = ExtResource("1_u1qcx")
+biomeName = "Plains"
+baseTiles = PackedInt32Array(0, 1, 2)
+Temperature = 0.5
+Humidity = 0.5
+Depth = 0.0
+groundOffset = null
+groundVariance = 0.5
+caveWidth = 1.2

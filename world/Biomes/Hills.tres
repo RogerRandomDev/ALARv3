@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://b2nc3404ckhtk"]
+
+[ext_resource type="Script" path="res://world/resources/biomeResource.gd" id="1_bjblw"]
+
+[resource]
+script = ExtResource("1_bjblw")
+biomeName = "Hills"
+baseTiles = PackedInt32Array(0, 1, 2)
+Temperature = 0.375
+Humidity = 0.125
+Depth = 0.0
+groundOffset = 0
+groundVariance = 3.0

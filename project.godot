@@ -9,12 +9,18 @@
 config_version=5
 
 _global_script_classes=[{
+"base": "Resource",
+"class": &"biomeResource",
+"language": &"GDScript",
+"path": "res://world/resources/biomeResource.gd"
+}, {
 "base": "TileMap",
 "class": &"chunk2D",
 "language": &"GDScript",
 "path": "res://world/generation/chunk.gd"
 }]
 _global_script_class_icons={
+"biomeResource": "",
 "chunk2D": ""
 }
 
