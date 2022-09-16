@@ -51,7 +51,7 @@ func getBiome(tilePos):
 	modifiers[0]=(nearBiomes[0].groundVariance+nearBiomes[1].groundVariance+nearBiomes[2].groundVariance)/3
 	modifiers[1]=(nearBiomes[0].groundOffset+nearBiomes[1].groundOffset+nearBiomes[2].groundOffset)/3
 	
-	return [nearBiomes[1],modifiers]
+	return [nearBiomes,modifiers]
 
 
 #builds the chunk
@@ -61,35 +61,40 @@ func buildChunkData(chunkPos):
 	var TLcorner=chunkPos*world.chunkSize
 	var atlasPos=Vector2i(0,0)
 	
-	for x in world.chunkSize:for y in world.chunkSize:
-		var biomes=getBiome(TLcorner+Vector2i(x,y))
-		var biomeCells=biomes[0].baseTiles
-		var cellID=[-1,-1]
+	
+	for x in world.chunkSize:
+		#only horizontal based checks
+		var biomes=getBiome(TLcorner+Vector2i(x,0))
+		var biomeCells=biomes[0][1].baseTiles
 		var groundVariance=biomes[1][0]
 		var groundOffset=biomes[1][1]
-		
-		
-		#gets the terrainheight base value from terrainNoise0
-		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
-		#basic grass,dirt.stone
-		
-		
-		
-		
-		#grass
-		cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
-		#dirt
-		cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-1)*(biomeCells[1]-cellID[0])+cellID[0])
-		#stone
-		cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
-		
+		#per cell in here
+		for y in world.chunkSize:
+			var cellID=[-1,-1]
+			
+			
+			
+			#gets the terrainheight base value from terrainNoise0
+			var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
+			#basic grass,dirt.stone
+			
+			
+			
+			
+			#grass
+			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
+			#dirt
+			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-1)*(biomeCells[1]-cellID[0])+cellID[0])
+			#stone
+			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
+			
 
-		
-		#handles caves
-		if caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0:cellID[0]=-1
-		
-		
-		if cellID[0]> -1:out[0].append([Vector2i(x,y),cellID[0]])
-#		if cellID[1]> -1:out[0].append([Vector2i(x,y),atlasPos,cellID[0]])
-		
+			
+			#handles caves
+			if caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0:cellID[0]=-1
+			
+			
+			if cellID[0]> -1:out[0].append([Vector2i(x,y),cellID[0]])
+	#		if cellID[1]> -1:out[0].append([Vector2i(x,y),atlasPos,cellID[0]])
+			
 	return out

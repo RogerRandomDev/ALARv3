@@ -27,7 +27,7 @@ func generateChunk(chunkPos,removedChunks=[]):
 	#calls if you need to build a new chunk
 	if removedChunks.size()==0:
 		chunk=chunk2D.new()
-		chunk.tile_set=world.mapTiles
+		chunk.set_deferred('tile_set',world.mapTiles)
 		world.chunkHolder.call_deferred('add_child',chunk)
 		
 	#otherwise just uses an already made chunk and sets new data in it
@@ -37,7 +37,7 @@ func generateChunk(chunkPos,removedChunks=[]):
 	loadedChunks[chunkPos]=chunk
 	chunk._pos=chunkPos
 	
-	chunk.position=chunkPos*world.tileSize*world.chunkSize
+	chunk.set_deferred('position',chunkPos*world.tileSize*world.chunkSize)
 	
 	
 	var chunkData=world.chunkFiller.buildChunkData(chunkPos)
@@ -66,7 +66,7 @@ func buildChunks():
 	
 		#loads the shadows
 		
-		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
+		world.worldShadows.loadShadows(loadedChunks.duplicate(),centerChunk)
 		
 
 

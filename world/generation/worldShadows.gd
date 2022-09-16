@@ -3,6 +3,9 @@ extends Node
 var tex=ImageTexture.new()
 var img=Image.new()
 var sprite=Sprite2D.new()
+
+
+
 func _ready():
 	img.create((world.renderDistance*2+1)*16,(world.renderDistance*2+1)*16,false,Image.FORMAT_RGBA8)
 	tex.create_from_image(img)
@@ -16,8 +19,7 @@ func _ready():
 
 func loadShadows(data,tlcorner):
 	var offsetDraw= Vector2i(world.renderDistance,world.renderDistance)-tlcorner
-	sprite.global_position=(tlcorner-Vector2i(world.renderDistance,world.renderDistance))*8*16
-	img.fill(Color(0,0,0,1))
+	img.call_deferred('fill',Color(0,0,0,1))
 	for chunk in data.keys():
 		var pos=chunk+offsetDraw
 		
@@ -25,8 +27,11 @@ func loadShadows(data,tlcorner):
 		
 		for cell in fill:
 			if(cell.x+pos.x*16<0||cell.x+pos.x*16>=(world.renderDistance*2+1)*16||cell.y+pos.y*16<0||cell.y+pos.y*16>=(world.renderDistance*2+1)*16):continue
-			img.set_pixelv(cell+(pos*16),Color8(0,0,0,0))
-	fillImage()
+			img.call_deferred('set_pixelv',(cell+(pos*16)),Color8(0,0,0,0))
+	call_deferred('fillImage')
+	sprite.set_deferred('position',(tlcorner-Vector2i(world.renderDistance,world.renderDistance))*8*16)
+
 func fillImage():
+	
 	tex.set_image(img)
 	sprite.texture=tex;
