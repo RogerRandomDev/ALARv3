@@ -66,7 +66,7 @@ func buildChunks():
 	
 		#loads the shadows
 		
-		world.worldShadows.loadShadows(loadedChunks.duplicate(),centerChunk)
+		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
 		
 
 

@@ -6,7 +6,5 @@ res://world/noise/BiomeNoise1.tres
 res://world/noise/caveNoise0.tres
 res://world/noise/caveNoise1.tres
 res://world/resources/shadowMat.tres
-res://world/generation/chunkFiller.gd
-res://world/generation/router.gd
+res://world/resources/biomeResource.gd
 res://world/generation/mapGeneration.gd
-res://world/generation/worldShadows.gd
