@@ -13,9 +13,12 @@ var centerChunk=Vector2i(100000,1000000)
 #builds current chunks to read
 func getChunksToRead():
 	var validSpots=[]
+	var i=0;
+	validSpots.resize((world.renderDistance*2+1)*(world.renderDistance*2+1))
 	for x in range(centerChunk.x-world.renderDistance,centerChunk.x+world.renderDistance+1):
 		for y in range(centerChunk.y-world.renderDistance,centerChunk.y+world.renderDistance+1):
-			validSpots.append(Vector2i(x,y))
+			validSpots[i]=Vector2i(x,y)
+			i+=1
 	return validSpots
 
 #builds single chunk
@@ -40,7 +43,7 @@ func generateChunk(chunkPos,removedChunks=[]):
 	var chunkData=world.chunkFiller.buildChunkData(chunkPos)
 	chunk.fill(chunkData)
 	removedChunks.pop_back()
-	return removedChunks
+	return [removedChunks,0]
 	
 #builds the chunks for the map
 func buildChunks():
@@ -48,14 +51,23 @@ func buildChunks():
 		
 		genSema.wait()
 		var validSpots=getChunksToRead()
-		var needChunks=validSpots.filter(func(cPos):return !loadedChunks.keys().has(cPos))
+		var lKeys=loadedChunks.keys()
+		var needChunks=validSpots.filter(func(cPos):return !lKeys.has(cPos))
 		var removeChunks=loadedChunks.keys().filter(func(cPos):return !validSpots.has(cPos))
+		var chunkData=[]
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
 		#builds new needed chunks
-		for chunk in needChunks:removeChunks=generateChunk(chunk,removeChunks)
-
+		for chunk in needChunks:
+			var dat=generateChunk(chunk,removeChunks)
+			removeChunks=dat[0]
+			chunkData.push_back(dat[1])
+	
+		#loads the shadows
+		
+		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
+		
 
 
 #does basic thread prep for use

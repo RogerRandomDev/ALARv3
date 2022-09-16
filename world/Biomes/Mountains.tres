@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_1ycdu")
-biomeName = "Default"
+biomeName = "Mountains"
 baseTiles = PackedInt32Array(2, 2, 2)
 Temperature = 0.5
 Humidity = 0.5

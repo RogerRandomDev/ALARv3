@@ -17,65 +17,76 @@ func caveNoise2D(x,y):
 		b >= (1.5 - border)      and
 		b <= (-2.0 * border / (-2))
 	))
-
+#get biomeCell 
+#put the noise straight into the average calculation
+#it saves some ram from a variable this way
+func getBiomeCell(x):
+	var curBiome=[null,10000000000000]
+	var height=heightNoise.get_noise_1d(x)
+	var humid=humidNoise.get_noise_1d(x)
+	var temp=tempNoise.get_noise_1d(x)
+	for biome in world.biomeList:
+		#average % off from the desired value for the given biome
+		var aveOff=(abs((biome.Temperature-temp)/biome.Temperature)+
+		abs((biome.Humidity-humid)/biome.Humidity)+
+		abs((biome.Depth+height)/biome.Depth)
+		)/3
+		if(curBiome[1]>aveOff):curBiome=[biome,aveOff]
+	return curBiome[0]
 #gets the biome for a given tile
+#efficiency of this bit has been greatly improved
+#if you face any problems with it being slow, check the above part
 func getBiome(tilePos):
 	
 	
+	#i dont bother looping, since it is a bit more taxing
+	#so i just used a new function up top for this
+	var nearBiomes=[
+	getBiomeCell(-3+tilePos.x),
+	getBiomeCell(tilePos.x),
+	getBiomeCell(3+tilePos.x)]
+	#slowly, this becomes more and more efficient
+	var modifiers=[0,0];
+	#removed loop since i only need to grab a small number of values
+	modifiers[0]=(nearBiomes[0].groundVariance+nearBiomes[1].groundVariance+nearBiomes[2].groundVariance)/3
+	modifiers[1]=(nearBiomes[0].groundOffset+nearBiomes[1].groundOffset+nearBiomes[2].groundOffset)/3
 	
-	var nearBiomes=[]
-	for x in range(-6,6,2):
-		var curBiome=[null,0]
-		var nextBest=[null,0]
-		var temp=tempNoise.get_noise_1d(tilePos.x+x)
-		var humid=humidNoise.get_noise_1d(tilePos.x+x)
-		var height=1-heightNoise.get_noise_1d(tilePos.x+x)
-		for biome in world.biomeList:
-			#average % off from the desired value for the given biome
-			var aveOff=(abs((biome.Temperature-temp)/biome.Temperature)+
-			abs((biome.Humidity-humid)/biome.Humidity)+
-			abs((biome.Depth-height)/biome.Depth)
-			)/3
-			if(curBiome[0]==null||curBiome[1]>aveOff):
-				nextBest=[curBiome[0],curBiome[1]]
-				
-				curBiome=[biome,aveOff]
-		if nextBest[0]==null:nextBest=curBiome
-		nearBiomes.push_back(curBiome[0])
-	var modifiers=[0,0]
-	for biome in nearBiomes:
-		modifiers[0]+=biome.groundVariance
-		modifiers[1]+=biome.groundOffset
-	modifiers[0]/=6
-	modifiers[1]/=6
-	return [nearBiomes[2],modifiers]
+	return [nearBiomes[1],modifiers]
+
 
 #builds the chunk
+
 func buildChunkData(chunkPos):
 	var out =[[],[]]
 	var TLcorner=chunkPos*world.chunkSize
 	var atlasPos=Vector2i(0,0)
+	
 	for x in world.chunkSize:for y in world.chunkSize:
 		var biomes=getBiome(TLcorner+Vector2i(x,y))
-		var biome=biomes[0]
+		var biomeCells=biomes[0].baseTiles
 		var cellID=[-1,-1]
 		var groundVariance=biomes[1][0]
 		var groundOffset=biomes[1][1]
-		var caveNoise=caveNoise2D(TLcorner.x+x,TLcorner.y+y)
 		
 		
 		#gets the terrainheight base value from terrainNoise0
 		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
 		#basic grass,dirt.stone
-		if(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y):
-			cellID[0]=biome.baseTiles[0];
-			if(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-1):
-				cellID[0]=biome.baseTiles[1];
-				if(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-3):cellID[0]=biome.baseTiles[2]
+		
+		
+		
+		
+		#grass
+		cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
+		#dirt
+		cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-1)*(biomeCells[1]-cellID[0])+cellID[0])
+		#stone
+		cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
+		
+
 		
 		#handles caves
-		if caveNoise>0:
-			cellID[0]=-1
+		if caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0:cellID[0]=-1
 		
 		
 		if cellID[0]> -1:out[0].append([Vector2i(x,y),cellID[0]])

@@ -22,9 +22,10 @@ func _process(delta):
 "
 
 [node name="Node2D" type="Node2D"]
+texture_filter = 1
 script = ExtResource("1_t34bj")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
-zoom = Vector2(2, 2)
+zoom = Vector2(2.25, 2.25)
 script = SubResource("GDScript_k6a31")

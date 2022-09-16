@@ -4,6 +4,7 @@ const mapTiles=preload("res://world/resources/mapTiles.tres")
 
 var mapGen=load("res://world/generation/mapGeneration.gd").new()
 var chunkFiller=load("res://world/generation/chunkFiller.gd").new()
+var worldShadows=load("res://world/generation/worldShadows.gd").new()
 var root=null
 var chunkHolder=null
 var biomeList=[]
@@ -18,7 +19,9 @@ var height = 1024
 func _ready():
 	fillBiomeList()
 	mapGen._ready()
+	worldShadows.call_deferred('_ready')
 	mapGen.moveCurrentChunk(Vector2i(0,0))
+	
 
 
 #loads all the biomes into an array
