@@ -6,17 +6,19 @@ var genSema=Semaphore.new()
 var loadedChunks={}
 
 var centerChunk=Vector2i(100000,1000000)
+var threadedCenter=Vector2i.ZERO
 
+var globalChunkData={}
 
-
+var plantGen=load("res://world/generation/PlantGeneration.gd").new()
 
 #builds current chunks to read
 func getChunksToRead():
 	var validSpots=[]
 	var i=0;
 	validSpots.resize((world.renderDistance*2+1)*(world.renderDistance*2+1))
-	for x in range(centerChunk.x-world.renderDistance,centerChunk.x+world.renderDistance+1):
-		for y in range(centerChunk.y-world.renderDistance,centerChunk.y+world.renderDistance+1):
+	for x in range(threadedCenter.x-world.renderDistance,threadedCenter.x+world.renderDistance+1):
+		for y in range(threadedCenter.y-world.renderDistance,threadedCenter.y+world.renderDistance+1):
 			validSpots[i]=Vector2i(x,y)
 			i+=1
 	return validSpots
@@ -36,37 +38,38 @@ func generateChunk(chunkPos,removedChunks=[]):
 		loadedChunks.erase(chunk._pos)
 	loadedChunks[chunkPos]=chunk
 	chunk._pos=chunkPos
-	
-	chunk.set_deferred('position',chunkPos*world.tileSize*world.chunkSize)
+	chunk.position=chunkPos*world.tileSize*world.chunkSize
 	
 	
 	var chunkData=world.chunkFiller.buildChunkData(chunkPos)
 	chunk.fill(chunkData)
 	removedChunks.pop_back()
-	return [removedChunks,0]
-	
+	return [removedChunks,chunkData]
+
+
 #builds the chunks for the map
 func buildChunks():
 	while true:
 		
 		genSema.wait()
+		threadedCenter=centerChunk
 		var validSpots=getChunksToRead()
 		var lKeys=loadedChunks.keys()
 		var needChunks=validSpots.filter(func(cPos):return !lKeys.has(cPos))
 		var removeChunks=loadedChunks.keys().filter(func(cPos):return !validSpots.has(cPos))
-		var chunkData=[]
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
+			removeChunkData(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
 			var dat=generateChunk(chunk,removeChunks)
 			removeChunks=dat[0]
-			chunkData.push_back(dat[1])
-	
+			globalChunkData[chunk]=dat[1]
+		#plant generation
+		plantGen.call_deferred('genPlants',loadedChunks)
 		#loads the shadows
-		
-		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
+#		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
 		
 
 
@@ -96,6 +99,9 @@ func globalToChunk(globalPos):
 	return globalPos/world.chunkSize
 
 
+#handles removal of chunk data to a file
+func removeChunkData(chunkPos):
+	globalChunkData.erase(chunkPos)
 
 
 

@@ -94,7 +94,7 @@ func buildChunkData(chunkPos):
 			if caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0:cellID[0]=-1
 			
 			
-			if cellID[0]> -1:out[0].append([Vector2i(x,y),cellID[0]])
+			if cellID[0]> -1:out[0].append(Vector3i(x,y,cellID[0]))
 	#		if cellID[1]> -1:out[0].append([Vector2i(x,y),atlasPos,cellID[0]])
 			
 	return out

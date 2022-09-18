@@ -29,3 +29,8 @@ func fillBiomeList():
 	var dir=Directory.new()
 	dir.open("res://world/Biomes")
 	for biome in dir.get_files():biomeList.append(load("res://world/Biomes/%s"%biome))
+
+
+#converts cell position to the chunk position
+func cellToChunk(cellPos):
+	return Vector2i(cellPos.x/16,cellPos.y/16)

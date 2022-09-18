@@ -1,10 +1,12 @@
 res://testing/test.tscn
 res://world/resources/mapTiles.tres
+res://world/generation/chunk.gd
 res://world/noise/BiomeNoise0.tres
 res://world/noise/BiomeNoise2.tres
 res://world/noise/BiomeNoise1.tres
 res://world/noise/caveNoise0.tres
 res://world/noise/caveNoise1.tres
+res://world/noise/plantNoise0.tres
 res://world/resources/shadowMat.tres
-res://world/resources/biomeResource.gd
 res://world/generation/mapGeneration.gd
+res://world/generation/PlantGeneration.gd

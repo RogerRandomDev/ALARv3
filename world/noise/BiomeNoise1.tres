@@ -1,16 +1,14 @@
 [gd_resource type="FastNoiseLite" format=3 uid="uid://bxou86bw6yxpj"]
 
 [resource]
-noise_type = 5
+noise_type = 2
 seed = 226
 frequency = 0.001
-fractal_type = 0
-fractal_octaves = 1
+fractal_octaves = 3
 fractal_lacunarity = 4.367
-fractal_gain = -0.275
-fractal_weighted_strength = 1.0
+fractal_gain = 1.0
 fractal_ping_pong_strength = 14.001
-cellular_jitter = 0.15
+cellular_jitter = 1.0
 cellular_return_type = 0
 domain_warp_amplitude = 27.093
 domain_warp_frequency = 0.019
