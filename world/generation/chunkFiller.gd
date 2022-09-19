@@ -8,7 +8,7 @@ const heightNoise=preload("res://world/noise/BiomeNoise1.tres")
 const caveNoise0=preload("res://world/noise/caveNoise0.tres")
 const caveNoise1=preload("res://world/noise/caveNoise1.tres")
 const plantNoise0=preload("res://world/noise/plantNoise0.tres")
-
+const plantNoise1=preload("res://world/noise/plantNoise1.tres")
 
 
 
@@ -75,7 +75,10 @@ func buildChunkData(chunkPos):
 		var biomeCells=biomes[0][1].baseTiles
 		var groundVariance=biomes[1][0]
 		var groundOffset=biomes[1][1]
-		var canGrowPlant=biomes[0][1].growPlants&&plantNoise0.get_noise_1d(x+TLcorner.x)>0.75
+		var canGrowPlant=biomes[0][1].growPlants&&plantNoise0.get_noise_1d(x+TLcorner.x)>biomes[0][1].plantCull
+		var plantSize=int(
+			abs(plantNoise1.get_noise_1d(x+TLcorner.x)*(biomes[0][1].plantSizeMax-biomes[0][1].plantSizeMin))+
+			biomes[0][1].plantSizeMin)
 		#per cell in here
 		for y in range(world.chunkSize,0,-1):
 			var cellID=[-1,-1]
@@ -86,19 +89,33 @@ func buildChunkData(chunkPos):
 			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
 			#dirt
 			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-1)*(biomeCells[1]-cellID[0])+cellID[0])
-			#stone
+			#middle layer
 			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
+			#stone
+			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-12)*(biomeCells[3]-cellID[0])+cellID[0])
 			var beforeCaves=cellID[0]
+			#deals with water
+			if(
+				TLcorner.y+y>0&&
+				tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y&&
+				cellID[0]==-1):
+				cellID[0]=7
 			#handles caves
-			if caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&!(cellID[0]==biomeCells[0]&&canGrowPlant):cellID[0]=-1
+			#cave wont remove the cell if there is a tree
+			#and it wont remove if it will be under water
+			if (caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&
+			!((cellID[0]==biomeCells[0]&&(canGrowPlant||biomes[0][1].groundOffset>3))||
+			cellID[0]==7)
+			):cellID[0]=-1
+			
 			
 			#handles plant generation
-			if(canGrowPlant&&
-			(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y+6))&&
+			if(canGrowPlant&&cellID[0]==-1&&
+			(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y+plantSize))&&
 			(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y))
 			):
 				#regular handler for plants
-				cellID[0]=world.plantsByFloor[biomeCells[0]][(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y+4))]
+				cellID[0]=biomes[0][1].plantTiles[(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y+int(plantSize*0.75)))]
 			if(int(tH*(world.groundLevel*groundVariance)+groundOffset)==TLcorner.y+y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
 			out[0].append(cellID[0])
 

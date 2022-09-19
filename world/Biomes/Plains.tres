@@ -5,9 +5,14 @@
 [resource]
 script = ExtResource("1_u1qcx")
 biomeName = "Plains"
-baseTiles = PackedInt32Array(0, 1, 2)
+baseTiles = PackedInt32Array(0, 1, 2, 2)
 Temperature = 0.5
 Humidity = 0.5
-Depth = 0.75
+Depth = 0.5
 groundOffset = 0
 groundVariance = 0.5
+growPlants = true
+plantCull = 0.95
+plantSizeMin = 4
+plantSizeMax = 8
+plantTiles = PackedInt32Array(5, 6)

@@ -14,3 +14,7 @@ class_name biomeResource
 @export var groundVariance:float=0.
 
 @export var growPlants:bool=true
+@export var plantCull:float=0.75
+@export var plantSizeMin:int=4
+@export var plantSizeMax:int=8
+@export var plantTiles:PackedInt32Array=PackedInt32Array([0,0])

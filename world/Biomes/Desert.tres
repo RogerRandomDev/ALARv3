@@ -5,10 +5,14 @@
 [resource]
 script = ExtResource("1_ydo0y")
 biomeName = "Desert"
-baseTiles = PackedInt32Array(3, 3, 4)
-Temperature = 0.7
-Humidity = 0.5
-Depth = 0.5
+baseTiles = PackedInt32Array(3, 3, 4, 2)
+Temperature = 0.8
+Humidity = 0.25
+Depth = 0.25
 groundOffset = 0
 groundVariance = 0.25
 growPlants = true
+plantCull = 0.95
+plantSizeMin = 4
+plantSizeMax = 8
+plantTiles = PackedInt32Array(5, 5)

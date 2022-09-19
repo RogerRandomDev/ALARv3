@@ -34,7 +34,9 @@ config/icon="res://icon.png"
 [autoload]
 
 world="*res://world/generation/router.gd"
+DebugMenu="*res://Debug/DebugMenu.tscn"
 
 [display]
 
+window/vsync/vsync_mode=0
 window/stretch/mode="canvas_items"

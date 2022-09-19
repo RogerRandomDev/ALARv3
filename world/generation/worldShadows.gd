@@ -16,7 +16,8 @@ func _ready():
 	world.chunkHolder.add_child(sprite)
 	
 
-
+#when converting to compute shader,
+#make sure to use the dataStore.chunkData
 func loadShadows(data,tlcorner):
 	var offsetDraw= Vector2i(world.renderDistance,world.renderDistance)-tlcorner
 	img.call_deferred('fill',Color(0,0,0,1))
@@ -24,9 +25,10 @@ func loadShadows(data,tlcorner):
 		var pos=chunk+offsetDraw
 		
 		var fill=data[chunk].get_used_cells(0)
-		
 		for cell in fill:
-			if(cell.x+pos.x*16<0||cell.x+pos.x*16>=(world.renderDistance*2+1)*16||cell.y+pos.y*16<0||cell.y+pos.y*16>=(world.renderDistance*2+1)*16):continue
+			if((cell.x+pos.x*16<0||cell.x+pos.x*16>=(world.renderDistance*2+1)*16||cell.y+pos.y*16<0||cell.y+pos.y*16>=(world.renderDistance*2+1)*16)||
+			data[chunk].get_cell_source_id(0,cell,false)==7):continue
+			
 			img.call_deferred('set_pixelv',(cell+(pos*16)),Color8(0,0,0,0))
 	call_deferred('fillImage')
 	sprite.set_deferred('position',(tlcorner-Vector2i(world.renderDistance,world.renderDistance))*8*16)

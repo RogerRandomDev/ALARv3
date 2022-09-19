@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bciukl0xte4ru"]
+
+[ext_resource type="Script" path="res://world/resources/biomeResource.gd" id="1_2fmcl"]
+
+[resource]
+script = ExtResource("1_2fmcl")
+biomeName = "Desert Lake"
+baseTiles = PackedInt32Array(3, 3, 4, 2)
+Temperature = 0.8
+Humidity = 0.25
+Depth = 0.375
+groundOffset = 10
+groundVariance = 0.25
+growPlants = false
+plantCull = 0.75
+plantSizeMin = 4
+plantSizeMax = 8
+plantTiles = PackedInt32Array(5, 5)

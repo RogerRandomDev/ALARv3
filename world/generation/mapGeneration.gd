@@ -71,7 +71,7 @@ func buildChunks():
 			removeChunks=dat[0]
 			world.dataStore.addChunk(chunk)
 		#loads the shadows
-		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
+#		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
 		
 
 

@@ -6,6 +6,8 @@ var mapGen=load("res://world/generation/mapGeneration.gd").new()
 var chunkFiller=load("res://world/generation/chunkFiller.gd").new()
 var worldShadows=load("res://world/generation/worldShadows.gd").new()
 var dataStore=load("res://world/generation/rawChunkData.gd").new()
+var shaderComp=load("res://world/generation/runShader.gd").new()
+
 var root=null
 var chunkHolder=null
 var biomeList=[]
@@ -29,7 +31,7 @@ func _ready():
 	mapGen._ready()
 	worldShadows.call_deferred('_ready')
 	mapGen.moveCurrentChunk(Vector2i(0,0))
-	
+#	shaderComp.runCompute("updateWater")
 
 
 #loads all the biomes into an array

@@ -1,3 +1,3 @@
+biomeResource (biomeResource.gd)
 FastNoiseLite
 ShaderMaterial
-biomeResource (biomeResource.gd)

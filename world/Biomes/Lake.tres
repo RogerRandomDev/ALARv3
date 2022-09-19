@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://c4tgmc0ukomxu"]
+
+[ext_resource type="Script" path="res://world/resources/biomeResource.gd" id="1_hec2q"]
+
+[resource]
+script = ExtResource("1_hec2q")
+biomeName = "Lake"
+baseTiles = PackedInt32Array(1, 1, 2, 2)
+Temperature = 0.625
+Humidity = 0.5
+Depth = 0.375
+groundOffset = 10
+groundVariance = 0.25
+growPlants = false
+plantCull = 0.75
+plantSizeMin = 4
+plantSizeMax = 8
+plantTiles = PackedInt32Array(5, 6)

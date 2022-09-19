@@ -1,2 +1,5 @@
+VBoxContainer
+Label
+CanvasLayer
 TileMap
 Sprite2D

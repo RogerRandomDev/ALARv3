@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://dv7f65eg6ybjw"]
+
+[ext_resource type="Script" path="res://world/resources/biomeResource.gd" id="1_kopht"]
+
+[resource]
+script = ExtResource("1_kopht")
+biomeName = "Default"
+baseTiles = PackedInt32Array(0, 1, 2, 2)
+Temperature = 0.5
+Humidity = 0.25
+Depth = 0.5
+groundOffset = 0
+groundVariance = 0.25
+growPlants = true
+plantCull = 0.5
+plantSizeMin = 12
+plantSizeMax = 20
+plantTiles = PackedInt32Array(5, 6)
