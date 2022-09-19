@@ -11,3 +11,4 @@ Humidity = 0.5
 Depth = 0.5
 groundOffset = 0
 groundVariance = 0.25
+growPlants = true

@@ -13,3 +13,4 @@ class_name biomeResource
 @export var groundOffset:int=0
 @export var groundVariance:float=0.
 
+@export var growPlants:bool=true

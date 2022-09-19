@@ -10,9 +10,10 @@ func _ready():
 	
 	
 func fill(contents):
-	for tileID in contents[0]:
-		call_deferred('set_cell',0,Vector2i(tileID.x,tileID.y),tileID.z,atlas,0)
-		
+	for tileID in contents[0].size():
+		if(contents[0][tileID]==-1):continue
+		call_deferred('set_cell',0,Vector2i(tileID/16,16-tileID%16),contents[0][tileID],atlas,0)
+	world.dataStore.chunkData[_pos]=contents
 #handles the freeing of the chunk
 func prepForRemoval():
 	clear_layer(0)
@@ -23,4 +24,5 @@ func prepForRemoval():
 func attemptFillCell(cell):
 	if get_cell_source_id(0,Vector2i(cell.x,cell.y),false)!=-1:return false
 	call_deferred('set_cell',0,Vector2i(cell.x,cell.y),cell.z,atlas,0)
+	
 	return true

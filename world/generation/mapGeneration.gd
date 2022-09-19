@@ -12,6 +12,8 @@ var globalChunkData={}
 
 var plantGen=load("res://world/generation/PlantGeneration.gd").new()
 
+
+
 #builds current chunks to read
 func getChunksToRead():
 	var validSpots=[]
@@ -40,8 +42,10 @@ func generateChunk(chunkPos,removedChunks=[]):
 	chunk._pos=chunkPos
 	chunk.position=chunkPos*world.tileSize*world.chunkSize
 	
-	
-	var chunkData=world.chunkFiller.buildChunkData(chunkPos)
+	#uses already made data if it is there
+	#otherwise it creates the new chunk
+	var chunkData=world.dataStore.getChunk(chunkPos)
+	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos)
 	chunk.fill(chunkData)
 	removedChunks.pop_back()
 	return [removedChunks,chunkData]
@@ -60,16 +64,14 @@ func buildChunks():
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
-			removeChunkData(chunk)
+			world.dataStore.removeChunk(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
 			var dat=generateChunk(chunk,removeChunks)
 			removeChunks=dat[0]
-			globalChunkData[chunk]=dat[1]
-		#plant generation
-		plantGen.call_deferred('genPlants',loadedChunks)
+			world.dataStore.addChunk(chunk)
 		#loads the shadows
-#		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
+		world.worldShadows.call_deferred('loadShadows',loadedChunks.duplicate(),centerChunk)
 		
 
 
@@ -99,9 +101,7 @@ func globalToChunk(globalPos):
 	return globalPos/world.chunkSize
 
 
-#handles removal of chunk data to a file
-func removeChunkData(chunkPos):
-	globalChunkData.erase(chunkPos)
+
 
 
 

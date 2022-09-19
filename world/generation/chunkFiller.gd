@@ -7,6 +7,13 @@ const humidNoise=preload("res://world/noise/BiomeNoise2.tres")
 const heightNoise=preload("res://world/noise/BiomeNoise1.tres")
 const caveNoise0=preload("res://world/noise/caveNoise0.tres")
 const caveNoise1=preload("res://world/noise/caveNoise1.tres")
+const plantNoise0=preload("res://world/noise/plantNoise0.tres")
+
+
+
+
+
+
 func caveNoise2D(x,y):
 	var a      : float = (caveNoise0.get_noise_2d(x, y) + 1.0) / 2.0
 	var b      : float = (caveNoise1.get_noise_2d(x, y) + 1.0) / 2.0
@@ -68,33 +75,33 @@ func buildChunkData(chunkPos):
 		var biomeCells=biomes[0][1].baseTiles
 		var groundVariance=biomes[1][0]
 		var groundOffset=biomes[1][1]
+		var canGrowPlant=biomes[0][1].growPlants&&plantNoise0.get_noise_1d(x+TLcorner.x)>0.75
 		#per cell in here
-		for y in world.chunkSize:
+		for y in range(world.chunkSize,0,-1):
 			var cellID=[-1,-1]
-			
-			
-			
 			#gets the terrainheight base value from terrainNoise0
 			var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
 			#basic grass,dirt.stone
-			
-			
-			
-			
 			#grass
 			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
 			#dirt
 			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-1)*(biomeCells[1]-cellID[0])+cellID[0])
 			#stone
 			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
-			
-
-			
+			var beforeCaves=cellID[0]
 			#handles caves
-			if caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0:cellID[0]=-1
+			if caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&!(cellID[0]==biomeCells[0]&&canGrowPlant):cellID[0]=-1
 			
-			
-			if cellID[0]> -1:out[0].append(Vector3i(x,y,cellID[0]))
+			#handles plant generation
+			if(canGrowPlant&&
+			(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y+6))&&
+			(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y))
+			):
+				#regular handler for plants
+				cellID[0]=world.plantsByFloor[biomeCells[0]][(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y+4))]
+			if(int(tH*(world.groundLevel*groundVariance)+groundOffset)==TLcorner.y+y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
+			out[0].append(cellID[0])
+
 	#		if cellID[1]> -1:out[0].append([Vector2i(x,y),atlasPos,cellID[0]])
 			
 	return out
