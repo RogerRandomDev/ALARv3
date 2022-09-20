@@ -8,14 +8,5 @@ res://world/noise/caveNoise1.tres
 res://world/noise/plantNoise0.tres
 res://world/resources/shadowMat.tres
 res://Debug/DebugMenu.tscn
-res://Debug/DebugMenu.gd
-res://world/generation/router.gd
 res://world/generation/mapGeneration.gd
-res://world/Biomes/Forest.tres
 res://world/generation/runShader.gd
-res://world/generation/rawChunkData.gd
-res://world/Biomes/Lake.tres
-res://world/Biomes/Beach.tres
-res://world/Biomes/Plains.tres
-res://world/Biomes/DesertLake.tres
-res://world/Biomes/Desert.tres

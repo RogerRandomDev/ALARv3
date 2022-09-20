@@ -72,8 +72,8 @@ func buildChunks():
 			world.dataStore.addChunk(chunk)
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
-#		world.shaderComp.input_data=world.dataStore.compileChunks()
-#		world.shaderComp.call_deferred('runCompute',"updateWater")
+		world.shaderComp.input_data=world.dataStore.compileChunks()
+		world.shaderComp.runCompute("updateWater")
 
 
 #does basic thread prep for use

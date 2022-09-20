@@ -47,11 +47,10 @@ func compileChunks():
 	var sorted=chunkData.keys()
 	#sorts into top-left to bottom-right order
 	sorted.sort_custom(func(a,b):return a.x<b.x||a.y<b.y)
-	var i=0
-	for chunk in sorted:
-		i+=1
-		data.append_array(chunkData[chunk][0])
-		if i>0:break
+	
+	for y in 16:
+		for chunk in sorted:
+			data.append_array(chunkData[chunk][0].slice(y*16,y*16+16))
 	return data
 
 
