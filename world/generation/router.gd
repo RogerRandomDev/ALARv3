@@ -31,7 +31,6 @@ func _ready():
 	fillBiomeList()
 	mapGen._ready()
 	worldShadows.call_deferred('_ready')
-	mapGen.moveCurrentChunk(Vector2i(0,0))
 	
 
 

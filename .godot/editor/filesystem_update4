@@ -7,6 +7,7 @@ res://world/noise/caveNoise0.tres
 res://world/noise/caveNoise1.tres
 res://world/noise/plantNoise0.tres
 res://world/resources/shadowMat.tres
-res://Debug/DebugMenu.tscn
 res://world/generation/mapGeneration.gd
+res://Debug/DebugMenu.tscn
 res://world/generation/runShader.gd
+res://world/generation/rawChunkData.gd

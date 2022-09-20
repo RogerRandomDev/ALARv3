@@ -9,22 +9,30 @@ layout(set = 0, binding = 0, std430) restrict buffer MyBuffer {
   int data[];
 }
 my_buffer;
-uint renderDistance=784;
+uint renderDistance=112;
+
+int getCell(int x, int y, uint index){
+  if(
+    index%112 + x < 0||
+    index%112 + x>112||
+    index+y* 112 < 0 ||
+    index+y*112>12544){return -2;}
+  return my_buffer.data[index+x+y*112];
+}
+
 void main() {
     uint index=gl_GlobalInvocationID.x;
     int cellID=my_buffer.data[index];
-    for(int x=-1;x<2;x+=1){
-      for(int y=-1;y<2;y+=1){
-        if(((x==0&&y==0)||index%renderDistance + x <0 ||index%renderDistance + x >renderDistance||
-        index%renderDistance + y*renderDistance <0 ||index%renderDistance + y*renderDistance >12544)){continue;}
-        /*
-        I need different handlers for each type of update,
-        but for now i'll just do the water in here
-        */
-        if(cellID==-1&&my_buffer.data[index+x+y*renderDistance]==7){cellID=7;}
-        
-    }
-    }
+    
+    /*
+    I need different handlers for each type of update,
+    but for now i'll just do the water in here
+    */
+    if(cellID==-1&&(
+    getCell(-1,0,index)==7||
+    getCell(1,0,index)==7
+    )){cellID=7;}
+
     my_buffer.data[index] = cellID;
 }
 

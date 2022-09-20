@@ -46,7 +46,7 @@ func generateChunk(chunkPos,removedChunks=[]):
 	#otherwise it creates the new chunk
 	var chunkData=world.dataStore.getChunk(chunkPos)
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos)
-	chunk.fill(chunkData)
+#	chunk.fill(chunkData)
 	removedChunks.pop_back()
 	return [removedChunks,chunkData]
 
@@ -69,11 +69,23 @@ func buildChunks():
 		for chunk in needChunks:
 			var dat=generateChunk(chunk,removeChunks)
 			removeChunks=dat[0]
-			world.dataStore.addChunk(chunk)
+			world.dataStore.addChunk(chunk,dat[1])
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
 		world.shaderComp.input_data=world.dataStore.compileChunks()
-		world.shaderComp.runCompute("updateWater")
+		compute()
+func compute():
+		
+		
+		var output=world.shaderComp.runCompute("updateWater")
+		var sorted=loadedChunks.keys()
+		sorted.sort_custom(func(a,b):return a.x<b.x||a.y<b.y)
+		for chunk in len(sorted):
+			var modifiedChunkData=[]
+			
+			for y in 16:
+				modifiedChunkData.append_array(output.slice(chunk*16,chunk*16 + 16))
+			loadedChunks[sorted[chunk]].fill([modifiedChunkData,[]])
 
 
 #does basic thread prep for use

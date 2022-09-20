@@ -27,16 +27,16 @@ func _ready():
 ##
 #CHUNK DATA
 ##
-func addChunk(chunk):
+func addChunk(chunk,chunkDataIn=[]):
 	if chunkData.has(chunk):return
-	chunkData[chunk]=[emptyChunk.duplicate(true),emptyChunk.duplicate(true)]
+	if chunkDataIn==[]:chunkDataIn=[emptyChunk.duplicate(true),emptyChunk.duplicate(true)]
+	chunkData[chunk]=chunkDataIn
 
 #this prevents storing in the ram itself
 #if you want to load chunks after this, you need to store
 #as a file and then get this fill from getChunk
 func removeChunk(chunk):
 	chunkData.erase(chunk)
-	pass
 func getChunk(chunk):
 	return chunkData[chunk]
 #compiles chunk data into one giant array
@@ -47,10 +47,8 @@ func compileChunks():
 	var sorted=chunkData.keys()
 	#sorts into top-left to bottom-right order
 	sorted.sort_custom(func(a,b):return a.x<b.x||a.y<b.y)
-	
-	for y in 16:
-		for chunk in sorted:
-			data.append_array(chunkData[chunk][0].slice(y*16,y*16+16))
+	for y in 16:for chunk in sorted:
+		data.append_array(chunkData[chunk][0].slice(y*16,y*16+16))
 	return data
 
 
