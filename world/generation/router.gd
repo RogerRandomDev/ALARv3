@@ -10,6 +10,7 @@ var shaderComp=load("res://world/generation/runShader.gd").new()
 
 var root=null
 var chunkHolder=null
+var player=null
 var biomeList=[]
 var renderDistance=3
 var chunkSize=16
@@ -31,7 +32,7 @@ func _ready():
 	mapGen._ready()
 	worldShadows.call_deferred('_ready')
 	mapGen.moveCurrentChunk(Vector2i(0,0))
-#	shaderComp.runCompute("updateWater")
+	
 
 
 #loads all the biomes into an array

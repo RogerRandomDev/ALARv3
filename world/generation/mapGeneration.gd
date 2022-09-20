@@ -10,7 +10,7 @@ var threadedCenter=Vector2i.ZERO
 
 var globalChunkData={}
 
-var plantGen=load("res://world/generation/PlantGeneration.gd").new()
+
 
 
 
@@ -72,7 +72,8 @@ func buildChunks():
 			world.dataStore.addChunk(chunk)
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
-		
+#		world.shaderComp.input_data=world.dataStore.compileChunks()
+#		world.shaderComp.call_deferred('runCompute',"updateWater")
 
 
 #does basic thread prep for use

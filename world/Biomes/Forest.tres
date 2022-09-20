@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_kopht")
-biomeName = "Default"
+biomeName = "Forest"
 baseTiles = PackedInt32Array(0, 1, 2, 2)
 Temperature = 0.5
 Humidity = 0.25

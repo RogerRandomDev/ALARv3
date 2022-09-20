@@ -1,6 +1,6 @@
 extends Node
 
-
+var input_data=[0]
 
 func runCompute(computeName):
 	# Create a local rendering device.
@@ -12,7 +12,7 @@ func runCompute(computeName):
 	var shader := rd.shader_create_from_spirv(shader_spirv)
 	
 	# Prepare our data. We use doubles in the shader, so we need 64 bit.
-	var input := PackedInt64Array([1,2,3,4,5,6,7,8,9,0])
+	var input := PackedFloat64Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 	var input_bytes := input.to_byte_array()
 	
 	# Create a storage buffer that can hold 10 double values. Each
