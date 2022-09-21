@@ -12,7 +12,7 @@ func _ready():
 func fill(contents):
 	for tileID in contents[0].size():
 		if(contents[0][tileID]==-1):continue
-		call_deferred('set_cell',0,Vector2i(tileID/16,16-tileID%16),contents[0][tileID],atlas,0)
+		call_deferred('set_cell',0,Vector2i(tileID%16,tileID/16),contents[0][tileID],atlas,0)
 	world.dataStore.chunkData[_pos]=contents
 #handles the freeing of the chunk
 func prepForRemoval():

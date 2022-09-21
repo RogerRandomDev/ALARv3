@@ -12,12 +12,8 @@ my_buffer;
 uint renderDistance=112;
 
 int getCell(int x, int y, uint index){
-  if(
-    index%112 + x < 0||
-    index%112 + x>112||
-    index+y* 112 < 0 ||
-    index+y*112>12544){return -2;}
-  return my_buffer.data[index+x+y*112];
+  if(index%112+x != (index+x)%112){return -2;}
+  return my_buffer.data[index+x-(y*112)];
 }
 
 void main() {
@@ -30,10 +26,12 @@ void main() {
     */
     if(cellID==-1&&(
     getCell(-1,0,index)==7||
-    getCell(1,0,index)==7
+    getCell(1,0,index)==7||
+    getCell(0,1,index)==7
     )){cellID=7;}
-
-    my_buffer.data[index] = cellID;
+    if(my_buffer.data[index]!=cellID){
+      my_buffer.data[index] = cellID;
+      }
 }
 
 \

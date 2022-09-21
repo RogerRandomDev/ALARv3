@@ -65,10 +65,9 @@ func getBiome(tilePos):
 
 func buildChunkData(chunkPos):
 	var out =[[],[]]
+	out[0]=world.dataStore.emptyChunk
 	var TLcorner=chunkPos*world.chunkSize
 	var atlasPos=Vector2i(0,0)
-	
-	
 	for x in world.chunkSize:
 		#only horizontal based checks
 		var biomes=getBiome(TLcorner+Vector2i(x,0))
@@ -80,7 +79,7 @@ func buildChunkData(chunkPos):
 			abs(plantNoise1.get_noise_1d(x+TLcorner.x)*(biomes[0][1].plantSizeMax-biomes[0][1].plantSizeMin))+
 			biomes[0][1].plantSizeMin)
 		#per cell in here
-		for y in range(world.chunkSize,0,-1):
+		for y in world.chunkSize:
 			var cellID=[-1,-1]
 			#gets the terrainheight base value from terrainNoise0
 			var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
@@ -104,7 +103,7 @@ func buildChunkData(chunkPos):
 			#cave wont remove the cell if there is a tree
 			#and it wont remove if it will be under water
 			if (caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&
-			!((cellID[0]==biomeCells[0]&&(canGrowPlant||biomes[0][1].groundOffset>3))||
+			!(
 			cellID[0]==7)
 			):cellID[0]=-1
 			
@@ -117,8 +116,8 @@ func buildChunkData(chunkPos):
 				#regular handler for plants
 				cellID[0]=biomes[0][1].plantTiles[(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y+int(plantSize*0.75)))]
 			if(int(tH*(world.groundLevel*groundVariance)+groundOffset)==TLcorner.y+y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
-			out[0].append(cellID[0])
+			out[0][x+y*16]=cellID[0]
+			
 
 	#		if cellID[1]> -1:out[0].append([Vector2i(x,y),atlasPos,cellID[0]])
-			
 	return out

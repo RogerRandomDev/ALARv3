@@ -1,11 +1,13 @@
 extends Node
 
 var input_data=[0]
+var myCenterChunk=Vector2i.ZERO
+var myChunks={}
 var rd := RenderingServer.create_local_rendering_device()
 func runCompute(computeName):
 	# Create a local rendering device.
-	
-	
+	myCenterChunk=world.mapGen.centerChunk
+	myChunks=world.mapGen.loadedChunks.keys()
 	# Load GLSL shader
 	var shader_file := load("res://computeShaders/%s.glsl"%computeName)
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
@@ -39,4 +41,5 @@ func runCompute(computeName):
 	# Read back the data from the buffers
 	var output_bytes := rd.buffer_get_data(buffer)
 	var output := output_bytes.to_int32_array()
+	
 	return output
