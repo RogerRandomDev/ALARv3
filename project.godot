@@ -35,6 +35,7 @@ config/icon="res://icon.png"
 
 world="*res://world/generation/router.gd"
 DebugMenu="*res://Debug/DebugMenu.tscn"
+GameTick="*res://world/resources/GameTick.tscn"
 
 [display]
 

@@ -19,19 +19,23 @@ int getCell(int x, int y, uint index){
 void main() {
     uint index=gl_GlobalInvocationID.x;
     int cellID=my_buffer.data[index];
-    
+    int neighborCells[4]={
+      getCell(-1,0,index),
+      getCell(1,0,index),
+      getCell(0,-1,index),
+      getCell(0,1,index)
+};
     /*
     I need different handlers for each type of update,
     but for now i'll just do the water in here
     */
     if(cellID==-1&&(
-    getCell(-1,0,index)==7||
-    getCell(1,0,index)==7||
-    getCell(0,1,index)==7
-    )){cellID=7;}
-    if(my_buffer.data[index]!=cellID){
-      my_buffer.data[index] = cellID;
-      }
+    neighborCells[0]==8||
+    neighborCells[1]==8||
+    neighborCells[2]==8||
+    neighborCells[3]==8
+    )){cellID=8;}
+    my_buffer.data[index] = cellID;
 }
 
 \

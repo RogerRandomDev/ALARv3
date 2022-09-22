@@ -98,13 +98,13 @@ func buildChunkData(chunkPos):
 				TLcorner.y+y>0&&
 				tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y&&
 				cellID[0]==-1):
-				cellID[0]=7
+				cellID[0]=8
 			#handles caves
 			#cave wont remove the cell if there is a tree
 			#and it wont remove if it will be under water
 			if (caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&
 			!(
-			cellID[0]==7)
+			cellID[0]==8)
 			):cellID[0]=-1
 			
 			

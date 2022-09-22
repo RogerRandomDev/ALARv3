@@ -28,5 +28,5 @@ script = ExtResource("1_t34bj")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(17408, 0)
 current = true
-zoom = Vector2(1.75, 1.75)
+zoom = Vector2(2, 2)
 script = SubResource("GDScript_k6a31")

@@ -31,6 +31,7 @@ func _ready():
 	fillBiomeList()
 	mapGen._ready()
 	worldShadows.call_deferred('_ready')
+	shaderComp._ready()
 	
 
 

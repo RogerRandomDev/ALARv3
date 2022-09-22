@@ -4,7 +4,14 @@ var input_data=[0]
 var myCenterChunk=Vector2i.ZERO
 var myChunks={}
 var rd := RenderingServer.create_local_rendering_device()
+var uniform := RDUniform.new()
+func _ready():
+	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	uniform.binding = 0
+
 func runCompute(computeName):
+	uniform.clear_ids()
+	
 	# Create a local rendering device.
 	myCenterChunk=world.mapGen.centerChunk
 	myChunks=world.mapGen.loadedChunks.keys()
@@ -20,12 +27,10 @@ func runCompute(computeName):
 	# Create a storage buffer that can hold 10 double values. Each
 	# double has 8 byte (64 bit) so 10 x 8 = 80 bytes
 	var buffer := rd.storage_buffer_create(len(input_bytes), input_bytes)
-	var uniform := RDUniform.new()
-	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	uniform.binding = 0
-	uniform.add_id(buffer)
-	var uniform_set := rd.uniform_set_create([uniform], shader, 0)
 	
+	uniform.add_id(buffer)
+	
+	var uniform_set := rd.uniform_set_create([uniform], shader, 0)
 	# Create a compute pipeline
 	var pipeline := rd.compute_pipeline_create(shader)
 	var compute_list := rd.compute_list_begin()
@@ -41,5 +46,7 @@ func runCompute(computeName):
 	# Read back the data from the buffers
 	var output_bytes := rd.buffer_get_data(buffer)
 	var output := output_bytes.to_int32_array()
+	print(rd.get_memory_usage(RenderingDevice.MEMORY_BUFFERS))
+	rd.buffer_clear(buffer,0,len(output_bytes))
 	
 	return output

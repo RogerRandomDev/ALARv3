@@ -46,7 +46,7 @@ func generateChunk(chunkPos,removedChunks=[]):
 	#otherwise it creates the new chunk
 	var chunkData=world.dataStore.getChunk(chunkPos)
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos)
-#	chunk.fill(chunkData)
+	chunk.fill(chunkData)
 	removedChunks.pop_back()
 	return [removedChunks,chunkData]
 
@@ -74,33 +74,6 @@ func buildChunks():
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
 		
-		compute()
-
-var computing=false
-func compute():
-		computing=true
-		world.shaderComp.input_data=world.dataStore.compileChunks()
-		var output=world.shaderComp.runCompute("updateWater")
-		
-#####
-##WARNING
-##DONT TOUCH THIS
-##WILL BREAK THE COMPUTE SHADER SYSTEM
-#####
-		
-		for cX in 7:for cY in 7:
-			var modBy=centerChunk-Vector2i(world.renderDistance,world.renderDistance)
-			var newChunk=[]
-			var c=(Vector2i(cX,cY)+modBy)
-			if !world.shaderComp.myChunks.has(c):continue
-			for y in 16:
-				newChunk.append_array(
-					output.slice(
-						y*112+cY*1792+cX*16,y*112+16+cY*1792+cX*16
-					))
-			
-			loadedChunks[c].fill([newChunk,[]])
-		computing=false
 
 #does basic thread prep for use
 func _prepThreads():
@@ -112,7 +85,7 @@ func _ready():
 
 
 func moveCurrentChunk(newCurChunk):
-	if computing:return
+	if GameTick.computing:return
 	if centerChunk==newCurChunk:return
 	centerChunk=newCurChunk
 	

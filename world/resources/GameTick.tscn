@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwyyj83ohonfi"]
+
+[ext_resource type="Script" path="res://world/resources/GameTick.gd" id="1_lxycr"]
+
+[node name="GameTick" type="Node"]
+script = ExtResource("1_lxycr")
+
+[node name="TickTimer" type="Timer" parent="."]
+wait_time = 0.125
+
+[node name="LoadTicks" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="TickTimer" to="." method="nextTick"]
+[connection signal="timeout" from="LoadTicks" to="." method="loadTicks"]
