@@ -6,6 +6,7 @@ var myChunks={}
 var rd := RenderingServer.create_local_rendering_device()
 var uniform := RDUniform.new()
 func _ready():
+	
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform.binding = 0
 
@@ -46,7 +47,7 @@ func runCompute(computeName):
 	# Read back the data from the buffers
 	var output_bytes := rd.buffer_get_data(buffer)
 	var output := output_bytes.to_int32_array()
-	print(rd.get_memory_usage(RenderingDevice.MEMORY_BUFFERS))
-	rd.buffer_clear(buffer,0,len(output_bytes))
 	
+	rd.free_rid(shader)
+	rd.free_rid(buffer)
 	return output

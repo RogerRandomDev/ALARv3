@@ -1,4 +1,4 @@
-res://testing/test.tscn
+res://world/resources/GameTick.tscn
 res://world/resources/mapTiles.tres
 res://world/noise/BiomeNoise0.tres
 res://world/noise/BiomeNoise2.tres
@@ -7,9 +7,8 @@ res://world/noise/caveNoise0.tres
 res://world/noise/caveNoise1.tres
 res://world/noise/plantNoise0.tres
 res://world/resources/shadowMat.tres
-res://Debug/DebugMenu.tscn
-res://world/resources/GameTick.tscn
+res://testing/test.tscn
 res://world/generation/runShader.gd
-res://world/generation/router.gd
-res://world/generation/worldShadows.gd
-res://world/generation/chunkFiller.gd
+res://Debug/DebugMenu.tscn
+res://world/Biomes/Forest.tres
+res://world/Biomes/Lake.tres
