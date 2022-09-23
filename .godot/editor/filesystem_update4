@@ -9,6 +9,11 @@ res://world/noise/plantNoise0.tres
 res://world/resources/shadowMat.tres
 res://testing/test.tscn
 res://Debug/DebugMenu.tscn
-res://world/generation/chunkFiller.gd
-res://world/resources/GameTick.gd
 res://world/generation/chunk.gd
+res://world/resources/GameTick.gd
+res://world/generation/mapGeneration.gd
+res://world/generation/router.gd
+res://world/generation/runShader.gd
+res://world/generation/fileManager.gd
+res://world/generation/rawChunkData.gd
+res://world/generation/chunkFiller.gd

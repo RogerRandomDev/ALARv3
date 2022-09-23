@@ -64,6 +64,9 @@ func getBiome(tilePos):
 #builds the chunk
 
 func buildChunkData(chunkPos):
+	world.fileManager.openChunkFile(chunkPos)
+	var fileData=world.fileManager.getFullChunk(chunkPos)
+	if fileData!=null:return fileData
 	var out =[[],[]]
 	out[0]=world.dataStore.emptyChunk
 	var TLcorner=chunkPos*world.chunkSize
@@ -114,6 +117,8 @@ func buildChunkData(chunkPos):
 				#regular handler for plants
 				cellID[0]=biomes[0][1].plantTiles[(int(groundLevel>TLcorner.y+y+int(plantSize*0.75)))]
 			if(int(groundLevel)==TLcorner.y+y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
+			#bottom of the world here
+			if(chunkPos.y>40):cellID[0]=0
 			out[0][x+y*16]=cellID[0]
 			
 

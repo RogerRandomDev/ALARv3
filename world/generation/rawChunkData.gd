@@ -36,6 +36,7 @@ func addChunk(chunk,chunkDataIn=[]):
 #if you want to load chunks after this, you need to store
 #as a file and then get this fill from getChunk
 func removeChunk(chunk):
+	world.fileManager.storeFullChunk(chunk,chunkData[chunk].duplicate())
 	chunkData.erase(chunk)
 func getChunk(chunk):
 	return chunkData[chunk]

@@ -14,10 +14,10 @@ func fill(contents):
 		if(contents[0][tileID]==-1):continue
 		call_deferred('set_cell',0,Vector2i(tileID%16,tileID/16),contents[0][tileID],atlas,0)
 	world.dataStore.chunkData[_pos]=contents
+	
 #handles the freeing of the chunk
 func prepForRemoval():
-	clear_layer(0)
-	clear_layer(1)
+	clear()
 
 
 #attempts to fill cell if it is not solid

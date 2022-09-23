@@ -54,7 +54,9 @@ var computing=false
 #builds the chunks for the map
 func buildChunks():
 	while true:
+		if world.exitGame:break
 		genSema.wait()
+		if world.exitGame:break
 		computing=true
 		threadedCenter=centerChunk
 		var validSpots=getChunksToRead()
@@ -65,8 +67,11 @@ func buildChunks():
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
 			world.dataStore.removeChunk(chunk)
+			
+			world.fileManager.closeChunkFile(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
+			world.fileManager.openChunkFile(chunk)
 			var dat=generateChunk(chunk,removeChunks)
 			removeChunks=dat[0]
 			

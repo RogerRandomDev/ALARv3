@@ -10,7 +10,9 @@ func _ready():
 
 func tickThread():
 	while true:
+		if world.exitGame:break
 		sem.wait()
+		if world.exitGame:break
 		compute()
 var computing=false
 func compute():

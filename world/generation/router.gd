@@ -7,6 +7,9 @@ var chunkFiller=load("res://world/generation/chunkFiller.gd").new()
 var worldShadows=load("res://world/generation/worldShadows.gd").new()
 var dataStore=load("res://world/generation/rawChunkData.gd").new()
 var shaderComp=load("res://world/generation/runShader.gd").new()
+var fileManager=load("res://world/generation/fileManager.gd").new()
+
+var saveName="testing"
 
 var root=null
 var chunkHolder=null
@@ -17,6 +20,8 @@ var chunkSize=16
 var tileSize=8
 var groundLevel=32
 var height = 1024
+var exitGame=false
+
 const oneUp=Vector2i(0,1)
 
 #block id to what the plant is made of
@@ -29,9 +34,11 @@ const plantsByFloor={
 
 func _ready():
 	fillBiomeList()
+	fileManager._ready()
 	mapGen._ready()
 	worldShadows.call_deferred('_ready')
 	shaderComp._ready()
+	
 	
 
 
@@ -45,3 +52,9 @@ func fillBiomeList():
 #converts cell position to the chunk position
 func cellToChunk(cellPos):
 	return Vector2i(cellPos/16.)
+
+func _notification(what):
+	if what==NOTIFICATION_EXIT_TREE:
+		exitGame=true
+		GameTick.thread.wait_to_finish()
+		mapGen.generationThread.wait_to_finish()
