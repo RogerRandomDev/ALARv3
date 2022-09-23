@@ -26,7 +26,7 @@ texture_filter = 1
 script = ExtResource("1_t34bj")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(17408, 0)
+position = Vector2(18432, 0)
 current = true
 zoom = Vector2(2, 2)
 script = SubResource("GDScript_k6a31")

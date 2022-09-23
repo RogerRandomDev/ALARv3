@@ -78,20 +78,22 @@ func buildChunkData(chunkPos):
 		var plantSize=int(
 			abs(plantNoise1.get_noise_1d(x+TLcorner.x)*(biomes[0][1].plantSizeMax-biomes[0][1].plantSizeMin))+
 			biomes[0][1].plantSizeMin)
+		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
+		var groundLevel=tH*(world.groundLevel*groundVariance)+groundOffset
 		#per cell in here
 		for y in world.chunkSize:
 			var cellID=[-1,-1]
 			#gets the terrainheight base value from terrainNoise0
-			var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
+			
 			#basic grass,dirt.stone
 			#grass
-			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
 			#dirt
-			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-1)*(biomeCells[1]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<TLcorner.y+y-1)*(biomeCells[1]-cellID[0])+cellID[0])
 			#middle layer
-			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
 			#stone
-			cellID[0]=(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y-12)*(biomeCells[3]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<TLcorner.y+y-12)*(biomeCells[3]-cellID[0])+cellID[0])
 			var beforeCaves=cellID[0]
 			#deals with water
 			if(
@@ -100,22 +102,17 @@ func buildChunkData(chunkPos):
 				cellID[0]==-1):
 				cellID[0]=8
 			#handles caves
-			#cave wont remove the cell if there is a tree
-			#and it wont remove if it will be under water
-			if (caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&
-			!(
-			cellID[0]==8)
-			):cellID[0]=-1
+			if (caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&groundLevel<TLcorner.y+y):cellID[0]=-1
 			
 			
 			#handles plant generation
 			if(canGrowPlant&&cellID[0]==-1&&
-			(int(tH*(world.groundLevel*groundVariance)+groundOffset<TLcorner.y+y+plantSize))&&
-			(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y))
+			(int(groundLevel<TLcorner.y+y+plantSize))&&
+			(int(groundLevel>TLcorner.y+y))
 			):
 				#regular handler for plants
-				cellID[0]=biomes[0][1].plantTiles[(int(tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y+int(plantSize*0.75)))]
-			if(int(tH*(world.groundLevel*groundVariance)+groundOffset)==TLcorner.y+y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
+				cellID[0]=biomes[0][1].plantTiles[(int(groundLevel>TLcorner.y+y+int(plantSize*0.75)))]
+			if(int(groundLevel)==TLcorner.y+y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
 			out[0][x+y*16]=cellID[0]
 			
 

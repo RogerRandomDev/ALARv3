@@ -31,7 +31,7 @@ func generateChunk(chunkPos,removedChunks=[]):
 	#calls if you need to build a new chunk
 	if removedChunks.size()==0:
 		chunk=chunk2D.new()
-		chunk.set_deferred('tile_set',world.mapTiles)
+		chunk.tile_set=world.mapTiles
 		world.chunkHolder.call_deferred('add_child',chunk)
 		
 	#otherwise just uses an already made chunk and sets new data in it
@@ -50,12 +50,12 @@ func generateChunk(chunkPos,removedChunks=[]):
 	removedChunks.pop_back()
 	return [removedChunks,chunkData]
 
-
+var computing=false
 #builds the chunks for the map
 func buildChunks():
 	while true:
-		
 		genSema.wait()
+		computing=true
 		threadedCenter=centerChunk
 		var validSpots=getChunksToRead()
 		var lKeys=loadedChunks.keys()
@@ -71,9 +71,10 @@ func buildChunks():
 			removeChunks=dat[0]
 			
 			world.dataStore.addChunk(chunk,dat[1])
+		
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
-		
+		computing=false
 
 #does basic thread prep for use
 func _prepThreads():

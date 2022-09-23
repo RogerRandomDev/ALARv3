@@ -46,10 +46,11 @@ func compileChunks():
 	var modBy=world.mapGen.centerChunk-Vector2i(world.renderDistance,world.renderDistance)
 	for cY in world.renderDistance*2+1:
 		for y in 16:
+			var temp=y*16
 			for cX in world.renderDistance*2+1:
 				var arr=chunkData[Vector2i(cX,cY)+modBy][0]
-				data.append_array(arr.slice(y*16,y*16+16))
-		
+				data.append_array(arr.slice(temp,temp+16))
+	
 	return data
 
 

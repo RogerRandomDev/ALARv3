@@ -5,21 +5,24 @@ var myCenterChunk=Vector2i.ZERO
 var myChunks={}
 var rd := RenderingServer.create_local_rendering_device()
 var uniform := RDUniform.new()
+var shader_file := preload("res://computeShaders/updateWater.glsl")
+var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
+var shader := rd.shader_create_from_spirv(shader_spirv)
+var pipeline := rd.compute_pipeline_create(shader)
 func _ready():
 	
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform.binding = 0
 
-func runCompute(computeName):
+func runCompute():
 	uniform.clear_ids()
 	
 	# Create a local rendering device.
 	myCenterChunk=world.mapGen.centerChunk
 	myChunks=world.mapGen.loadedChunks.keys()
 	# Load GLSL shader
-	var shader_file := load("res://computeShaders/%s.glsl"%computeName)
-	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
-	var shader := rd.shader_create_from_spirv(shader_spirv)
+	
+	
 	
 	# Prepare our data. We use doubles in the shader, so we need 64 bit.
 	var input := PackedInt32Array(input_data)
@@ -33,7 +36,7 @@ func runCompute(computeName):
 	
 	var uniform_set := rd.uniform_set_create([uniform], shader, 0)
 	# Create a compute pipeline
-	var pipeline := rd.compute_pipeline_create(shader)
+	
 	var compute_list := rd.compute_list_begin()
 	rd.compute_list_bind_compute_pipeline(compute_list, pipeline)
 	rd.compute_list_bind_uniform_set(compute_list, uniform_set, 0)
@@ -48,6 +51,7 @@ func runCompute(computeName):
 	var output_bytes := rd.buffer_get_data(buffer)
 	var output := output_bytes.to_int32_array()
 	
-	rd.free_rid(shader)
+	
 	rd.free_rid(buffer)
+	
 	return output
