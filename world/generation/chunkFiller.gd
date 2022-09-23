@@ -80,6 +80,7 @@ func buildChunkData(chunkPos):
 			biomes[0][1].plantSizeMin)
 		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
 		var groundLevel=tH*(world.groundLevel*groundVariance)+groundOffset
+		var humidity=biomes[0][1].Humidity
 		#per cell in here
 		for y in world.chunkSize:
 			var cellID=[-1,-1]

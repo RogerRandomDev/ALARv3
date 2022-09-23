@@ -10,18 +10,15 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="FPS" type="Label" parent="VBoxContainer"]
-layout_mode = 2
 offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="MEMORY" type="Label" parent="VBoxContainer"]
-layout_mode = 2
 offset_top = 27.0
 offset_right = 40.0
 offset_bottom = 50.0
 
 [node name="BIOME" type="Label" parent="VBoxContainer"]
-layout_mode = 2
 offset_top = 54.0
 offset_right = 40.0
 offset_bottom = 77.0

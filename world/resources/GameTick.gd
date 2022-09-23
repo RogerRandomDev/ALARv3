@@ -21,11 +21,11 @@ func compute():
 		world.shaderComp.input_data.append(tickCount)
 		var output=world.shaderComp.runCompute()
 		computing=true
-		for cX in 7:for cY in 7:
-			var modBy=storeCenter-Vector2i(world.renderDistance,world.renderDistance)
+		var modBy=storeCenter-Vector2i(world.renderDistance,world.renderDistance)
+		for cX in 49:
 			var newChunk=[]
-			var c=(Vector2i(cX,cY)+modBy)
-			var temp=cY*1792+cX*16
+			var c=(Vector2i(int(cX/7),cX%7)+modBy)
+			var temp=cX%7*1792+int(cX/7)*16
 			for y in 16:newChunk.append_array(output.slice(y*112+temp,y*112+16+temp))
 			if(world.mapGen.loadedChunks[c]==storeChunks[c]):
 				storeChunks[c].fill([newChunk,[]])
