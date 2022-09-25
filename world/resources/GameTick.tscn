@@ -6,7 +6,7 @@
 script = ExtResource("1_lxycr")
 
 [node name="TickTimer" type="Timer" parent="."]
-wait_time = 0.125
+wait_time = 0.05
 
 [node name="LoadTicks" type="Timer" parent="."]
 one_shot = true

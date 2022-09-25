@@ -1,0 +1,59 @@
+[gd_scene load_steps=11 format=3 uid="uid://c0uybjg4d5ksi"]
+
+[ext_resource type="Script" path="res://Player/player.gd" id="1_4eh3u"]
+[ext_resource type="Texture2D" uid="uid://bspjpq14mgdpf" path="res://icon.png" id="2_dhxw4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x6xc5"]
+size = Vector2(7, 7)
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3jkdo"]
+animation = &"idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2np4m"]
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_33sq2"]
+states/Start/position = Vector2(226, 117)
+states/idle/node = SubResource("AnimationNodeAnimation_3jkdo")
+states/idle/position = Vector2(389, 117)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_2np4m")]
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_27t01"]
+
+[sub_resource type="Animation" id="Animation_2gkuj"]
+resource_name = "idle"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_11wda"]
+_data = {
+"idle": SubResource("Animation_2gkuj")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wm6yf"]
+size = Vector2(6, 6)
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_4eh3u")
+
+[node name="CollisionShape2d" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_x6xc5")
+
+[node name="Icon" type="Sprite2D" parent="."]
+scale = Vector2(0.125, 0.125)
+texture = ExtResource("2_dhxw4")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_33sq2")
+anim_player = NodePath("../AnimationPlayer")
+advance_expression_base_node = NodePath("..")
+parameters/playback = SubResource("AnimationNodeStateMachinePlayback_27t01")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_11wda")
+}
+
+[node name="waterCheck" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 16
+
+[node name="CollisionShape2d" type="CollisionShape2D" parent="waterCheck"]
+shape = SubResource("RectangleShape2D_wm6yf")

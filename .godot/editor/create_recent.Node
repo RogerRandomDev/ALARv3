@@ -1,6 +1,11 @@
+CollisionShape2D
+Area2D
+TileMap
+AnimationPlayer
+AnimationTree
+CharacterBody2D
 Timer
 VBoxContainer
 Label
 CanvasLayer
-TileMap
 Sprite2D

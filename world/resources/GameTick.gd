@@ -30,9 +30,9 @@ func compute():
 			var temp=cX%7*1792+int(cX/7)*16
 			for y in 16:newChunk.append_array(output.slice(y*112+temp,y*112+16+temp))
 			if(world.mapGen.loadedChunks[c]==storeChunks[c]):
-				storeChunks[c].fill([newChunk,[]])
-				world.dataStore.chunkData[c]=[newChunk,[]]
+				storeChunks[c].fill([newChunk,[]],true)
 		computing=false
+		
 		tickCount+=1
 		if tickCount>128397:tickCount=0;
 func nextTick():

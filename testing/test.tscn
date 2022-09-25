@@ -1,32 +1,15 @@
 [gd_scene load_steps=3 format=3 uid="uid://e0cm3qyt5noc"]
 
 [ext_resource type="Script" path="res://testing/test.gd" id="1_t34bj"]
-
-[sub_resource type="GDScript" id="GDScript_k6a31"]
-script/source = "extends Camera2D
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	world.player=self
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	var myChunk=world.mapGen.globalToChunk(global_position)
-	world.mapGen.moveCurrentChunk(myChunk)
-	if Input.is_key_pressed(KEY_S):position.y+=delta*1024
-	if Input.is_key_pressed(KEY_W):position.y-=delta*1024
-	if Input.is_key_pressed(KEY_D):position.x+=delta*1024
-	if Input.is_key_pressed(KEY_A):position.x-=delta*1024
-"
+[ext_resource type="PackedScene" uid="uid://c0uybjg4d5ksi" path="res://Player/player.tscn" id="2_b8hye"]
 
 [node name="Node2D" type="Node2D"]
 texture_filter = 1
 script = ExtResource("1_t34bj")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(18432, 0)
+[node name="Player" parent="." instance=ExtResource("2_b8hye")]
+position = Vector2(0, 20)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
 current = true
-zoom = Vector2(2, 2)
-script = SubResource("GDScript_k6a31")
+zoom = Vector2(3, 3)

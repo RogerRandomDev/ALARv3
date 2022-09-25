@@ -6,9 +6,9 @@
 script = ExtResource("1_hec2q")
 biomeName = "Lake"
 baseTiles = PackedInt32Array(1, 1, 2, 2)
-Temperature = 0.375
-Humidity = 0.25
-Depth = 0.375
+Temperature = 0.5
+Humidity = 0.5
+Depth = 0.25
 groundOffset = 10
 groundVariance = 0.25
 growPlants = false

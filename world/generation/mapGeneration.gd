@@ -46,6 +46,7 @@ func generateChunk(chunkPos,removedChunks=[]):
 	#otherwise it creates the new chunk
 	var chunkData=world.dataStore.getChunk(chunkPos)
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos)
+	chunk.originalData=chunkData
 	chunk.fill(chunkData)
 	removedChunks.pop_back()
 	return [removedChunks,chunkData]
@@ -66,8 +67,10 @@ func buildChunks():
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
-			world.dataStore.removeChunk(chunk)
-			
+			#removes chunk from local, and checks if you have modified it at all
+			#so it only saves modified chunks
+			world.dataStore.removeChunk(chunk,
+			loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk])
 			world.fileManager.closeChunkFile(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
@@ -89,7 +92,7 @@ func _prepThreads():
 func _ready():
 	_prepThreads()
 
-
+#updates the world gen origin chunk
 func moveCurrentChunk(newCurChunk):
 	if GameTick.computing:return
 	if centerChunk==newCurChunk:return
@@ -107,6 +110,14 @@ func globalToChunk(globalPos):
 	globalPos.x-=globalPos.x%world.chunkSize;globalPos.y-=globalPos.y%world.chunkSize
 	return globalPos/world.chunkSize
 
+#converts global to cell pos
+func globalToCell(globalPos):
+	var cell=Vector2i(globalPos/8.)
+	var chunk=Vector2i(globalPos/8./16.)
+	cell-=Vector2i(int(globalPos.x<0),int(globalPos.y<0))
+	chunk-=Vector2i(int(globalPos.x<0),int(globalPos.y<0))
+	cell=cell-chunk*16
+	return [cell,chunk]
 
 
 

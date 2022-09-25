@@ -58,3 +58,9 @@ func _notification(what):
 		exitGame=true
 		GameTick.thread.wait_to_finish()
 		mapGen.generationThread.wait_to_finish()
+
+
+#changes cell in given chunk
+func changeCell(chunk,cell,id):
+	if !mapGen.loadedChunks.has(chunk):return
+	mapGen.loadedChunks[chunk].changeCell(cell,id)

@@ -39,17 +39,38 @@ func closeChunkFile(chunk):
 func storeFullChunk(chunk,data):
 	if !chunkFiles.has(chunk)||chunk.y>40:return
 #	chunkFiles[chunk].seek(0);
-	chunkFiles[chunk].store_line(var_to_str(data).replace(" ",""))
+	chunkFiles[chunk].store_line(compressChunkData(data))
 
 
 
 #gets the entire chunk's data
 func getFullChunk(chunk):
 	if !chunkFiles.has(chunk):return null
-	return str_to_var(chunkFiles[chunk].get_as_text())
+	return str_to_var(decompressChunkData(chunkFiles[chunk].get_as_text()))
 
 #loads the chunk data only if it is available
 func loadFullChunk(chunk):
 	var out=getFullChunk(chunk)
 	if out==null:return
 	world.dataStore.chunkData[chunk]=out
+
+const numCompression={
+}
+
+
+#compression of a chunk for storing
+func compressChunkData(chunkData):
+	var compressed=str(chunkData).replace(
+		" ","").replace(
+		"-2,","~").replace(
+		"-1","|")
+	return compressed
+
+
+#decompression of a chunk for use
+func decompressChunkData(chunkData):
+	var decompressed=chunkData.replace(
+		"~","-2,").replace(
+		"|","-1"
+		)
+	return decompressed
