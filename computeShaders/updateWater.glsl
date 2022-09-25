@@ -78,21 +78,22 @@ uint time;
 int growGrass(int neighborCells[3][3],int cellID,uint index){
   int cellOut=cellID;
   bool doGrow=wang_hash(index+time)>4200000000;
-
+  //creates grass if it can
   cellOut-=(
     int(
       doGrow&&neighborCells[0][1]<0&&
-      (neighborCells[1][0]==0||
-      neighborCells[1][1]==0||
-      neighborCells[1][2]==0||
+      (
       neighborCells[0][0]==0||
       neighborCells[0][2]==0||
+      neighborCells[1][0]==0||
+      neighborCells[1][2]==0||
       neighborCells[2][0]==0||
       neighborCells[2][2]==0
       )
-    ))*(cellOut);
+    ))*(cellOut)-
+    //turns grass to dirt if it is covered
+    int(neighborCells[0][1]>-1&&doGrow)*(1-cellOut);
 
-  cellOut+=int(neighborCells[0][1]>-1&&doGrow)*(1-cellOut);
   return cellOut;
 }
 
