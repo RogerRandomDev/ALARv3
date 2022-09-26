@@ -1,6 +1,14 @@
 extends Node
 
+func fireBomb(from,to,radius):
+	var direction=from.angle_to_point(to)
+	var bomb=itemBomb2D.new()
+	
+	bomb.global_position=from+Vector2(8,0).rotated(direction)
+	bomb.body.linear_velocity=Vector2(min((from-to).length()*8,512),0).rotated(direction)
+	world.root.add_child(bomb)
 
+#explodes the area in a radius
 func explode(global_pos,explosionRadius):
 	var removeTiles=[]
 	for x in range(-explosionRadius,explosionRadius):for y in range(-explosionRadius,explosionRadius):
@@ -11,4 +19,4 @@ func explode(global_pos,explosionRadius):
 		if !world.mapGen.loadedChunks.has(c[1]):continue
 		c[0].x=c[0].x%16;c[0].y=c[0].y%16;
 		c[0].x+=int(c[0].x<0)*16;c[0].y+=int(c[0].y<0)*16
-		world.mapGen.loadedChunks[c[1]].changeCell(c[0],-1)
+		world.mapGen.loadedChunks[c[1]].explodeCell(c[0])

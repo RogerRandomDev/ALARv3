@@ -32,8 +32,9 @@ func prepForRemoval():
 #gets basic cell data from tileset
 func getCellData(cell):
 	var id=get_cell_source_id(0,cell)
-	
 	if id<0:return {"name":"ERROR"}
+	var cellData=get_cell_tile_data(0,cell)
+	if cellData.get_custom_data("unmineable"):return {"name":"ERROR"}
 	
 	var raw=tile_set.get_source(id)
 	return {
@@ -53,7 +54,13 @@ func changeCell(cell,id):
 	changedCell[cell]=id
 #	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
 	return true
-
+#explodes the given cell if not immune to it
+func explodeCell(cell):
+	if _pos.y>40:return false
+	if get_cell_source_id(0,cell)<0:return
+	var cellData=get_cell_tile_data(0,cell)
+	if cellData==null||cellData.get_custom_data("ExplosionProof"):return
+	changeCell(cell,-1)
 #attempts to fill cell if it is not solid
 func attemptFillCell(cell,ignoreFull=false):
 	if get_cell_source_id(0,Vector2i(cell.x,cell.y),false)!=-1&&!ignoreFull:return false

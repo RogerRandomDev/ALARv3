@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://cwy766p0cn635"]
+
+[ext_resource type="Texture2D" uid="uid://cf6hyy4lc3h2w" path="res://entities/Explosives/explosionEffect/main.png" id="1_hhx66"]
+[ext_resource type="Script" path="res://entities/Explosives/explosionEffect/explosionAnimation.gd" id="2_liopa"]
+[ext_resource type="Material" uid="uid://loxtyldfwdmg" path="res://entities/Explosives/explosionEffect/explosionPArticle.tres" id="3_q7w2d"]
+[ext_resource type="Texture2D" uid="uid://cihwl2f1wbd2k" path="res://entities/Explosives/explosionEffect/particle.png" id="4_b5von"]
+
+[node name="anim" type="Sprite2D"]
+texture = ExtResource("1_hhx66")
+script = ExtResource("2_liopa")
+
+[node name="GpuParticles2d" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 16
+one_shot = true
+explosiveness = 1.0
+process_material = ExtResource("3_q7w2d")
+texture = ExtResource("4_b5von")

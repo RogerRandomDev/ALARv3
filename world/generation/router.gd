@@ -37,6 +37,7 @@ const plantsByFloor={
 #the default world gravity
 var defaultGravity=Vector2(0,980)
 
+var maxItemStack:int=99
 
 func _ready():
 	fillBiomeList()
@@ -83,3 +84,10 @@ func dropItem(globalCell,itemData):
 	item.buildItem(itemData)
 	item.global_position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
 	root.add_child(item)
+
+#reparents node to new one
+func reparent(node,newParent):
+	var originalParent=node.get_parent()
+	originalParent.remove_child(node)
+	originalParent.add_child(newParent)
+	newParent.add_child(node)

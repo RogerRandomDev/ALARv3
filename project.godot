@@ -22,7 +22,7 @@ _global_script_classes=[{
 "base": "itemDrop2D",
 "class": &"itemBomb2D",
 "language": &"GDScript",
-"path": "res://entities/resources/bomb.gd"
+"path": "res://entities/Explosives/bomb.gd"
 }, {
 "base": "Sprite2D",
 "class": &"itemDrop2D",

@@ -1,12 +1,14 @@
+GPUParticles2D
+CPUParticles2D
+AnimationPlayer
+Sprite2D
 WorldEnvironment
 CollisionShape2D
 Area2D
 TileMap
-AnimationPlayer
 AnimationTree
 CharacterBody2D
 Timer
 VBoxContainer
 Label
 CanvasLayer
-Sprite2D

@@ -1,0 +1,28 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=3 format=3 uid="uid://loxtyldfwdmg"]
+
+[sub_resource type="Gradient" id="Gradient_604v8"]
+offsets = PackedFloat32Array(0, 0.0682594, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6foop"]
+gradient = SubResource("Gradient_604v8")
+width = 64
+
+[resource]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 24.0
+emission_ring_inner_radius = 8.0
+particle_flag_disable_z = true
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+angular_velocity_min = -250.0
+angular_velocity_max = 250.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+angle_min = -180.0
+angle_max = 180.0
+color_ramp = SubResource("GradientTexture1D_6foop")

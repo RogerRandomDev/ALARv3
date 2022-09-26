@@ -51,6 +51,8 @@ texture_region_size = Vector2i(8, 8)
 0:0/0/physics_layer_1/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_1/angular_velocity = 0.0
 0:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, 0, 4, 0, 4, 4, -4, 4)
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_1 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qvgd8"]
 resource_name = "Water3"
@@ -64,6 +66,8 @@ texture_region_size = Vector2i(8, 8)
 0:0/0/physics_layer_1/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_1/angular_velocity = 0.0
 0:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, 2, 4, 2, 4, 4, -4, 4)
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_1 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_15rsi"]
 resource_name = "Cactus"
@@ -143,6 +147,8 @@ texture_region_size = Vector2i(8, 8)
 0:0/0/physics_layer_1/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_1/angular_velocity = 0.0
 0:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_1 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i8w5c"]
 resource_name = "WaterSource"
@@ -156,6 +162,8 @@ texture_region_size = Vector2i(8, 8)
 0:0/0/physics_layer_1/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_1/angular_velocity = 0.0
 0:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_1 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_na2et"]
 resource_name = "Water1"
@@ -169,6 +177,8 @@ texture_region_size = Vector2i(8, 8)
 0:0/0/physics_layer_1/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_1/angular_velocity = 0.0
 0:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -2, 4, -2, 4, 4, -4, 4)
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_1 = true
 
 [resource]
 tile_size = Vector2i(8, 8)
@@ -176,6 +186,10 @@ physics_layer_0/collision_layer = 3
 physics_layer_1/collision_layer = 16
 physics_layer_1/collision_mask = 0
 physics_layer_1/physics_material = SubResource("PhysicsMaterial_fte7k")
+custom_data_layer_0/name = "ExplosionProof"
+custom_data_layer_0/type = 1
+custom_data_layer_1/name = "unmineable"
+custom_data_layer_1/type = 1
 sources/1 = SubResource("TileSetAtlasSource_h3d3m")
 sources/0 = SubResource("TileSetAtlasSource_nqwvh")
 sources/2 = SubResource("TileSetAtlasSource_xwhkg")

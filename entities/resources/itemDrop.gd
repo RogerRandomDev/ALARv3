@@ -8,6 +8,7 @@ var pickable=true
 var velocity=Vector2.ZERO
 var nearChecks=0
 var quantityLabel=Label.new()
+var toFree=false
 func _ready():
 	world.itemList.append(self)
 	if !pickable:return
@@ -16,6 +17,7 @@ func _ready():
 #handles freeing itself
 func prepFree():
 	world.itemList.erase(self)
+	toFree=true
 	queue_free()
 
 
@@ -65,13 +67,18 @@ func inChunk(chunk):
 
 #stacks same items together to their stack limit
 func checkSameNearBy():
-	if quantity>=99:return
+	if quantity>=world.maxItemStack||toFree:return
 	for item in world.itemList:
-		if item==self||item.itemName!=itemName||(item.global_position-global_position).length_squared()>256||item.quantity>=99:continue
+		if(
+			item.toFree||item==self||
+			item.itemName!=itemName||
+			(item.global_position-global_position).length_squared()>256||
+			item.quantity>=world.maxItemStack):continue
+		
 		var itemQuantity=item.quantity+quantity
-		if itemQuantity>99:
-			item.quantity=itemQuantity-99
-			quantity=99
+		if itemQuantity>world.maxItemStack:
+			item.quantity=itemQuantity-world.maxItemStack
+			quantity=world.maxItemStack
 			return
 			
 		quantity+=item.quantity
