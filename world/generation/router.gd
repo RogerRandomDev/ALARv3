@@ -9,6 +9,8 @@ var dataStore=load("res://world/generation/rawChunkData.gd").new()
 var shaderComp=load("res://world/generation/runShader.gd").new()
 var fileManager=load("res://world/generation/fileManager.gd").new()
 
+var miscFunctions=load("res://entities/resources/miscActions.gd").new()
+
 var saveName="testing"
 
 var root=null
@@ -22,6 +24,8 @@ var groundLevel=32
 var height = 1024
 var exitGame=false
 
+var itemList=[]
+
 const oneUp=Vector2i(0,1)
 
 #block id to what the plant is made of
@@ -30,6 +34,8 @@ const plantsByFloor={
 	3:[5,5]
 }
 
+#the default world gravity
+var defaultGravity=Vector2(0,980)
 
 
 func _ready():
@@ -52,6 +58,11 @@ func fillBiomeList():
 #converts cell position to the chunk position
 func cellToChunk(cellPos):
 	return Vector2i(cellPos/16.)
+#removes items from scene that are in the array
+func removeItems(items):
+	for item in items:
+		item.prepFree()
+
 
 func _notification(what):
 	if what==NOTIFICATION_EXIT_TREE:
@@ -64,3 +75,11 @@ func _notification(what):
 func changeCell(chunk,cell,id):
 	if !mapGen.loadedChunks.has(chunk):return
 	mapGen.loadedChunks[chunk].changeCell(cell,id)
+
+#handles spawning in the item drop when you break something
+func dropItem(globalCell,itemData):
+	if itemData.name=="ERROR":return
+	var item=itemDrop2D.new()
+	item.buildItem(itemData)
+	item.global_position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
+	root.add_child(item)

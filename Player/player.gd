@@ -6,7 +6,7 @@ const JUMP_VELOCITY = -256.0
 
 @onready var waterCollision=$waterCheck
 # Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+
 func _ready():
 	world.player=self
 
@@ -17,7 +17,7 @@ func _physics_process(delta):
 	var inWater=waterCollision.get_overlapping_bodies().size()>0
 	# Add the gravity.
 	if not is_on_floor():
-		velocity.y += gravity * delta
+		velocity.y += world.defaultGravity.y * delta
 	else:velocity.y=0
 	# Handle Jump.
 	if Input.is_action_just_pressed("u") and is_on_floor():
@@ -49,3 +49,6 @@ func _input(event):
 		cell.x=cell.x%16;cell.y=cell.y%16;
 		cell.x+=int(cell.x<0)*16;cell.y+=int(cell.y<0)*16
 		world.call_deferred('changeCell',chunk,cell,int(Input.is_action_pressed("m2"))*2-1)
+		#drops a bomb where the mouse is
+		#currently very large explosion radius
+		world.miscFunctions.explode(mPos,8)

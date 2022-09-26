@@ -29,14 +29,29 @@ func fill(contents,randomTick=false):
 func prepForRemoval():
 	clear()
 
+#gets basic cell data from tileset
+func getCellData(cell):
+	var id=get_cell_source_id(0,cell)
+	
+	if id<0:return {"name":"ERROR"}
+	
+	var raw=tile_set.get_source(id)
+	return {
+		"texture":raw.get("texture"),
+		"name":raw.get("resource_name")
+	}
+
 
 #changes current cell
 func changeCell(cell,id):
 	if _pos.y>40:return false
-	if id<0:call_deferred('erase_cell',0,cell)
+	if id<0:
+		if !mineCell(cell):return false
+		call_deferred('erase_cell',0,cell)
 	else:call_deferred('set_cell',0,cell,id,atlas,0)
+	
 	changedCell[cell]=id
-	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
+#	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
 	return true
 
 #attempts to fill cell if it is not solid
@@ -44,4 +59,14 @@ func attemptFillCell(cell,ignoreFull=false):
 	if get_cell_source_id(0,Vector2i(cell.x,cell.y),false)!=-1&&!ignoreFull:return false
 	call_deferred('set_cell',0,Vector2i(cell.x,cell.y),cell.z,atlas,0)
 	
+	return true
+
+#handles mining a cell
+func mineCell(cell):
+	var cellData=getCellData(cell)
+	if cellData.name=="ERROR":return false
+	else:
+		cellData.weight=1
+		cellData.quantity=1
+		world.dropItem(cell+_pos*world.chunkSize,cellData)
 	return true

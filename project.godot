@@ -18,10 +18,22 @@ _global_script_classes=[{
 "class": &"chunk2D",
 "language": &"GDScript",
 "path": "res://world/generation/chunk.gd"
+}, {
+"base": "itemDrop2D",
+"class": &"itemBomb2D",
+"language": &"GDScript",
+"path": "res://entities/resources/bomb.gd"
+}, {
+"base": "Sprite2D",
+"class": &"itemDrop2D",
+"language": &"GDScript",
+"path": "res://entities/resources/itemDrop.gd"
 }]
 _global_script_class_icons={
 "biomeResource": "",
-"chunk2D": ""
+"chunk2D": "",
+"itemBomb2D": "",
+"itemDrop2D": ""
 }
 
 [application]
@@ -76,9 +88,12 @@ m2={
 ]
 }
 
+[physics]
+
+2d/physics_engine="GodotPhysics2D"
+
 [rendering]
 
-driver/threads/thread_model=2
 textures/decals/filter=0
 textures/light_projectors/filter=0
 textures/canvas_textures/default_texture_filter=0

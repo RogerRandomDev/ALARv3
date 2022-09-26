@@ -64,6 +64,14 @@ func buildChunks():
 		var lKeys=loadedChunks.keys()
 		var needChunks=validSpots.filter(func(cPos):return !lKeys.has(cPos))
 		var removeChunks=loadedChunks.keys().filter(func(cPos):return !validSpots.has(cPos))
+		#gets items by chunk
+		var itemsByChunk={}
+		for c in loadedChunks.keys():itemsByChunk[c]=[]
+		for item in world.itemList:
+			var c=item.getChunk()
+			if !itemsByChunk.has(c):continue
+			itemsByChunk[c].append(item)
+		
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
@@ -71,6 +79,8 @@ func buildChunks():
 			#so it only saves modified chunks
 			world.dataStore.removeChunk(chunk,
 			loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk])
+			if itemsByChunk.has(chunk):
+				world.removeItems(itemsByChunk[chunk])
 			world.fileManager.closeChunkFile(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
