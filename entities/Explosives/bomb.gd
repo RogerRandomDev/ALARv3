@@ -31,6 +31,7 @@ func _ready():
 func finishExplode():
 	time.disconnect("timeout",finishExplode)
 	world.miscFunctions.explode(global_position,explosionRadius)
+	
 	quantityLabel.queue_free()
 	body.queue_free()
 	

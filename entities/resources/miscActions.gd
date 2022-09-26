@@ -1,9 +1,9 @@
 extends Node
-
+const explosionFX=preload("res://entities/Explosives/explosionEffect/explosionAnimation.tscn")
 func fireBomb(from,to,radius):
 	var direction=from.angle_to_point(to)
 	var bomb=itemBomb2D.new()
-	
+	world.root.add_child(explosionFX.instantiate())
 	bomb.global_position=from+Vector2(8,0).rotated(direction)
 	bomb.body.linear_velocity=Vector2(min((from-to).length()*8,512),0).rotated(direction)
 	world.root.add_child(bomb)
