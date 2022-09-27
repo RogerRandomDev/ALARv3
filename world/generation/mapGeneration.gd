@@ -44,8 +44,12 @@ func generateChunk(chunkPos,removedChunks=[]):
 	
 	#uses already made data if it is there
 	#otherwise it creates the new chunk
-	var chunkData=world.dataStore.getChunk(chunkPos)
-	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos)
+	var fileData=world.fileManager.getFullChunk(chunkPos)
+	var chunkData
+	if fileData!=null:
+		chunkData=fileData[0]
+		chunk.fillEntities(fileData[1])
+	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos,false)
 	chunk.originalData=chunkData
 	chunk.fill(chunkData)
 	removedChunks.pop_back()
@@ -66,24 +70,27 @@ func buildChunks():
 		var removeChunks=loadedChunks.keys().filter(func(cPos):return !validSpots.has(cPos))
 		#gets items by chunk
 		var itemsByChunk={}
-		for c in loadedChunks.keys():itemsByChunk[c]=[]
+		for c in loadedChunks.keys():itemsByChunk[c]=[[],[]]
 		for item in world.itemList:
 			var c=item.getChunk()
 			if !itemsByChunk.has(c):continue
-			itemsByChunk[c].append(item)
+			var data=item.storageFormat()
+			data.append(globalToCell(item.global_position)[0])
+			itemsByChunk[c][0].append(data)
+			itemsByChunk[c][1].append(item)
 		
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
 			#handles items first
 			if itemsByChunk.has(chunk):
-				world.dataStore.entityData[chunk]=itemsByChunk[chunk]
-				world.removeItems(itemsByChunk[chunk])
+				world.dataStore.entityData[chunk]=itemsByChunk[chunk][0].duplicate()
+				world.removeItems(itemsByChunk[chunk][1])
 			#removes chunk from local, and checks if you have modified it at all
 			#so it only saves modified chunks
 			world.dataStore.removeChunk(chunk,
 			(loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk]||
-			itemsByChunk.has(chunk)||true)
+			itemsByChunk.has(chunk))
 			)
 			
 			world.fileManager.closeChunkFile(chunk)
@@ -140,9 +147,10 @@ func modifyUnloaded(chunkPos,data):
 	world.fileManager.openChunkFile(chunkPos)
 	var fullData=world.fileManager.getFullChunk(chunkPos)
 	var chunkData
-	if fullData==null:fullData=[world.chunkFiller.buildChunkData(chunkPos),[]]
+	var entData=[]
+	if fullData==null:fullData=[world.chunkFiller.buildChunkData(chunkPos,false),[]]
 	chunkData=fullData[0]
-	
+	entData=fullData[1]
 	
 	for c in len(data)/2:
 		
@@ -154,10 +162,11 @@ func modifyUnloaded(chunkPos,data):
 		cellData.get_custom_data("ExplosionProof")):continue
 		var dropItem=getCellData(chunkData[0][cell.x+cell.y*16])
 		dropItem.append(cell)
-		fullData[1].append(dropItem)
+		entData.append(dropItem)
 		chunkData[0][cell.x+cell.y*16]=-1
 #	world.fileManager.storeFullChunk(chunkPos,[chunkData,fullData[1]])
-	world.fileManager.storeFullChunk(chunkPos,[chunkData,[]])
+	
+	world.fileManager.storeFullChunk(chunkPos,[chunkData.duplicate(),entData])
 	world.fileManager.closeChunkFile(chunkPos)
 
 

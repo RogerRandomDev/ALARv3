@@ -30,8 +30,11 @@ func fillEntities(entities):
 	
 	for entity in entities:
 		var ent = itemDrop2D.new()
+		
+		ent.position=(_pos*world.chunkSize+entity[len(entity)-1])*world.tileSize+Vector2(
+			4,6
+		)
 		ent.fromStorageFormat(entity)
-		ent.position=(_pos*world.chunkSize+entity[0])*world.tileSize
 		get_parent().add_child(ent)
 
 

@@ -40,7 +40,7 @@ func removeChunk(chunk,doSave):
 	if doSave:
 		world.fileManager.storeFullChunk(chunk,[
 			chunkData[chunk].duplicate(),
-			[]])
+			entityData[chunk]])
 	entityData.erase(chunk)
 	chunkData.erase(chunk)
 func getChunk(chunk):

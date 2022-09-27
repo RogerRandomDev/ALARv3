@@ -11,15 +11,17 @@ var ray=PhysicsRayQueryParameters2D.new()
 var pickable=true
 var velocity=Vector2.ZERO
 var nearChecks=0
-
+signal changed()
 
 var quantityLabel=Label.new()
 
 var toFree=false
 func _ready():
+	z_index=100
 	world.itemList.append(self)
 	if !pickable:return
 	add_child(quantityLabel)
+	quantityLabel.theme=world.itemTheme
 	checkSameNearBy()
 #handles freeing itself
 func prepFree():
@@ -52,11 +54,15 @@ func rayCheck(delta):
 		velocity=Vector2.ZERO
 		global_position += (hit.position-global_position)*delta*15
 		if hit.collider.name=="Player":
-			if world.inventory.storeItem(
+			var newStack=world.inventory.storeItem(
 				{"quantity":quantity,
 				"name":itemName,
 				"id":id,
-				"actionType":actionType}):prepFree()
+				"actionType":actionType})
+			if newStack>0:
+				quantity=newStack
+				quantityLabel.text=str(newStack)
+			else:prepFree()
 	position+=velocity*delta
 	
 
@@ -85,8 +91,8 @@ func checkSameNearBy():
 	if quantity>=world.maxItemStack||toFree:return
 	for item in world.itemList:
 		if(
-			item.toFree||item==self||
-			item.itemName!=itemName||item==null||
+			item==null||item.toFree||item==self||
+			item.itemName!=itemName||
 			(item.global_position-global_position).length_squared()>128||
 			item.quantity>=world.maxItemStack):continue
 		

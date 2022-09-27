@@ -63,9 +63,13 @@ func getBiome(tilePos):
 
 #builds the chunk
 
-func buildChunkData(chunkPos):
-	world.fileManager.openChunkFile(chunkPos)
+func buildChunkData(chunkPos,stored=true):
+	
+	if stored:
+		world.fileManager.openChunkFile(chunkPos)
 	var fileData=world.fileManager.getFullChunk(chunkPos)
+	if stored:
+		world.fileManager.closeChunkFile(chunkPos)
 	if fileData!=null:return fileData[0]
 	var out =[[],[]]
 	out[0]=world.dataStore.emptyChunk

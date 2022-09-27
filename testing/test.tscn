@@ -57,3 +57,7 @@ z_index = 100
 frames = SubResource("SpriteFrames_ryr7t")
 playing = true
 centered = false
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0

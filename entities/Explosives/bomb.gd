@@ -27,14 +27,14 @@ func _ready():
 	body.gravity_scale=0.75
 	add_child(time)
 	time.one_shot=true
-	time.wait_time=4
+	time.wait_time=1
 	time.start()
 	time.connect("timeout",finishExplode)
 
 #finishes the explosion once the timer is done
 func finishExplode():
 	time.disconnect("timeout",finishExplode)
-	world.miscFunctions.call_deferred('explode',global_position,explosionRadius)
+	world.miscFunctions.explode(global_position,explosionRadius)
 	
 	quantityLabel.queue_free()
 	body.queue_free()

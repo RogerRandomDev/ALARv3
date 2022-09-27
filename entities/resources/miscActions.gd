@@ -18,13 +18,15 @@ func explode(global_pos,explosionRadius):
 	var outSide={}
 	for tile in removeTiles:
 		var c=world.mapGen.globalToCell(global_pos+Vector2(tile*world.tileSize))
-		if !world.mapGen.loadedChunks.has(c[1]):
-			if !outSide.has(c[1]):outSide[c[1]]=[]
-			outSide[c[1]].append_array([c[0],-1])
-			continue
+
 		c[0].x=c[0].x%16;c[0].y=c[0].y%16;
 		c[0].x+=int(c[0].x<0)*16;c[0].y+=int(c[0].y<0)*16
-		world.mapGen.loadedChunks[c[1]].explodeCell(c[0])
+		if world.mapGen.loadedChunks.has(c[1]):
+			world.mapGen.loadedChunks[c[1]].explodeCell(c[0])
+			continue
+		if !outSide.has(c[1]):outSide[c[1]]=[]
+		outSide[c[1]].append_array([c[0],-1])
+		
 	for chunk in outSide:
 		world.mapGen.modifyUnloaded(chunk,outSide[chunk])
 	var fx=explosionFX.instantiate()

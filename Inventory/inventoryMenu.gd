@@ -21,10 +21,12 @@ func buildMenu():
 		slot.custom_minimum_size=Vector2(12,12)
 		var count=Label.new()
 		count.name="itemCount"
-		count.position=Vector2(0,-6)
+		count.position=Vector2(0,6)
+		count.size=Vector2(8,12)
+		count.text_direction=Control.TEXT_DIRECTION_RTL
 		
 		var itemTex=TextureRect.new()
-		
+		count.theme=world.itemTheme
 		itemTex.ignore_texture_size=true
 		itemTex.set_size(Vector2(8,8))
 		itemTex.position=Vector2(2,2)

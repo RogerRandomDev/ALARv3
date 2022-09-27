@@ -18,7 +18,7 @@ func mine(id):
 	if world.mineCell(c):mineTex.visible=true
 
 func throw(id):
-#	if !Input.is_action_just_pressed("m1"):return
+	if !Input.is_action_just_pressed("m1"):return
 	var mPos=root.get_global_mouse_position()
 	world.miscFunctions.fireBomb(
 		root.global_position,mPos,id.actionRadius).bombType=id.name

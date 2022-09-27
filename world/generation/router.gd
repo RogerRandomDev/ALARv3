@@ -1,6 +1,8 @@
 extends Node
 
 const mapTiles=preload("res://world/resources/mapTiles.tres")
+const font=preload("res://themes/Retro Gaming.ttf")
+const itemTheme=preload("res://themes/itemTheme.tres")
 
 var mapGen=load("res://world/generation/mapGeneration.gd").new()
 var chunkFiller=load("res://world/generation/chunkFiller.gd").new()

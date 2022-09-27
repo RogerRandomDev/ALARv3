@@ -1,3 +1,4 @@
+Label
 AnimatedSprite2D
 Sprite2D
 GridContainer
@@ -15,4 +16,3 @@ AnimationTree
 CharacterBody2D
 Timer
 VBoxContainer
-Label

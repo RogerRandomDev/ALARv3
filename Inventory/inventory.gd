@@ -18,25 +18,31 @@ func _ready():
 		inventoryData[slot]=emptySlotb.duplicate()
 		inventoryData[slot].slotNum=slot
 	call_deferred('storeItem',{
+			"name":"Dynamite",
+			"quantity":1,
+			"id":-1,
+			"actionType":"throw",
+			"actionRadius":8})
+	call_deferred('storeItem',{
 			"name":"Bomb",
 			"quantity":1,
 			"id":-1,
 			"actionType":"throw",
 			"actionRadius":5})
-
 func storeItem(item):
 	var count = item.quantity
 	var slots=inventoryData.filter(
-		func(slot):return (slot.name==item.name||slot.name==null)&&slot.quantity<world.maxItemStack
+		func(slot):return (slot.name==item.name)&&slot.quantity<world.maxItemStack
+		);slots.append_array(
+			inventoryData.filter(func(slot):return slot.name==null)
 		)
-	
 	for slot in slots:
 		var combined=count+slot.quantity
 		if(slot.name)==null:
 			inventoryData[slot.slotNum]=item
 			inventoryData[slot.slotNum].slotNum=slot.slotNum
 			emit_signal("updateSlot",slot.slotNum)
-			return true
+			return 0
 		elif(combined>world.maxItemStack):
 			count=combined-world.maxItemStack
 			inventoryData[slot.slotNum].quantity=world.maxItemStack
@@ -44,8 +50,8 @@ func storeItem(item):
 		else:
 			inventoryData[slot.slotNum].quantity+=count
 			emit_signal("updateSlot",slot.slotNum)
-			return true
-	return false
+			return 0
+	return count
 #removes given number from the slot
 func reduceSlotBy(slot,count):
 	inventoryData[slot].quantity-=count

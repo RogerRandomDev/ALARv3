@@ -7,8 +7,8 @@ func _ready():
 	#one extra for a margin chunk
 	#used when temporary loading outside chunks
 	#to modify mainly, I.E. explosions at the edge of the chunk
-	for chunk in (world.renderDistance*2+1) **2 +2:
-		unusedChunkFiles.append(File.new())
+#	for chunk in (world.renderDistance*2+1) **2 +5:
+#		unusedChunkFiles.append(File.new())
 	if !dir.dir_exists("user://Saves/%s/chunks"%world.saveName):
 		dir.make_dir_recursive("user://Saves/%s/chunks"%world.saveName)
 		
@@ -18,8 +18,7 @@ func _ready():
 func openChunkFile(chunk):
 	if(chunkFiles.has(chunk))||chunk.y>40:return
 	var path="user://Saves/%s/chunks/%s.dat"%[world.saveName,str(chunk)]
-	var file=unusedChunkFiles.pop_back()
-	
+	var file=File.new()
 	if !dir.file_exists(path):
 		file.open(path,File.WRITE_READ)
 	else:
@@ -31,8 +30,8 @@ func openChunkFile(chunk):
 
 func closeChunkFile(chunk):
 	if !chunkFiles.has(chunk):return
+	
 	chunkFiles[chunk].close()
-	unusedChunkFiles.append(chunkFiles[chunk])
 	chunkFiles.erase(chunk)
 
 
@@ -71,7 +70,7 @@ const numCompression={
 
 #compression of a chunk for storing
 func compressChunkData(chunkData):
-	var compressed=str(chunkData).replace(
+	var compressed=var_to_str(chunkData).replace(
 		" ","").replace(
 		"-2,","~").replace(
 		"-1,","|")
