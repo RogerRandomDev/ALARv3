@@ -80,7 +80,7 @@ func explodeCell(cell):
 	if !mineCell(cell):return
 	erase_cell(0,cell)
 	changedCell[cell]=-1
-	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
+	
 #attempts to fill cell if it is not solid
 func attemptFillCell(cell,ignoreFull=false):
 	if get_cell_source_id(0,Vector2i(cell.x,cell.y),false)!=-1&&!ignoreFull:return false
