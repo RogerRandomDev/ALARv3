@@ -6,8 +6,10 @@ func _ready():
 	time.wait_time=0.125
 	time.one_shot=true
 	time.connect("timeout",hideBlast)
+	time.start()
 	$GpuParticles2d.emitting=true
-
+func _process(delta):
+	scale+=(scale*1.05)*delta
 func hideBlast():
 	time.disconnect("timeout",hideBlast)
 	time.connect("timeout",freeSelf)

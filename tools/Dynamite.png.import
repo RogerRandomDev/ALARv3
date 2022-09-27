@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hoyg1moucj5i"
-path="res://.godot/imported/Bomb.png-7473306a441539784252e424cf8f4c07.ctex"
+uid="uid://cdyxpwximni72"
+path="res://.godot/imported/Dynamite.png-ed06f84ecd0c9640431fc7dec8c6a2a2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/Explosives/Bomb.png"
-dest_files=["res://.godot/imported/Bomb.png-7473306a441539784252e424cf8f4c07.ctex"]
+source_file="res://tools/Dynamite.png"
+dest_files=["res://.godot/imported/Dynamite.png-ed06f84ecd0c9640431fc7dec8c6a2a2.ctex"]
 
 [params]
 

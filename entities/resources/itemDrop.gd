@@ -3,11 +3,18 @@ class_name itemDrop2D
 @export var itemName:String="ERROR_NAME"
 @export var quantity:int=1
 @export var itemWeight:int=1
+@export var actionRadius:int=8
+@export var actionType:String="mine"
+@export var id:int=-1
+
 var ray=PhysicsRayQueryParameters2D.new()
 var pickable=true
 var velocity=Vector2.ZERO
 var nearChecks=0
+
+
 var quantityLabel=Label.new()
+
 var toFree=false
 func _ready():
 	world.itemList.append(self)
@@ -43,7 +50,13 @@ func rayCheck(delta):
 	velocity=clamp(velocity+world.defaultGravity*delta,-world.defaultGravity,world.defaultGravity)
 	if hit:
 		velocity=Vector2.ZERO
-		global_position = hit.position
+		global_position += (hit.position-global_position)*delta*15
+		if hit.collider.name=="Player":
+			if world.inventory.storeItem(
+				{"quantity":quantity,
+				"name":itemName,
+				"id":id,
+				"actionType":actionType}):prepFree()
 	position+=velocity*delta
 	
 
@@ -53,6 +66,8 @@ func buildItem(itemData):
 	quantity=itemData.quantity
 	itemWeight=itemData.weight
 	itemName=itemData.name
+	id=itemData.id
+	actionType=itemData.actionType
 
 #gets the chunk the item is in
 func getChunk():
@@ -71,8 +86,8 @@ func checkSameNearBy():
 	for item in world.itemList:
 		if(
 			item.toFree||item==self||
-			item.itemName!=itemName||
-			(item.global_position-global_position).length_squared()>256||
+			item.itemName!=itemName||item==null||
+			(item.global_position-global_position).length_squared()>128||
 			item.quantity>=world.maxItemStack):continue
 		
 		var itemQuantity=item.quantity+quantity
@@ -83,4 +98,27 @@ func checkSameNearBy():
 			
 		quantity+=item.quantity
 		item.prepFree()
+
+
+#formats the item to data to get stored
+func storageFormat():
 	
+	return [
+		quantity,
+		actionRadius,
+		itemName,
+		actionType,
+		id
+	]
+#rebuilds from storage format
+func fromStorageFormat(data):
+	var texPath = ("res://tools/%s.png" if data[3]!="place" else "res://world/Tiles/%s.png")
+	buildItem({
+		"quantity":data[0],
+		"actionRadius":data[1],
+		"name":data[2],
+		"weight":1,
+		"actionType":data[3],
+		"texture":load(texPath%data[2]),
+		"id":data[4]
+	})

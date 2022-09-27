@@ -1,7 +1,12 @@
+AnimatedSprite2D
+Sprite2D
+GridContainer
+ItemList
+TextureRect
+CanvasLayer
 GPUParticles2D
 CPUParticles2D
 AnimationPlayer
-Sprite2D
 WorldEnvironment
 CollisionShape2D
 Area2D
@@ -11,4 +16,3 @@ CharacterBody2D
 Timer
 VBoxContainer
 Label
-CanvasLayer

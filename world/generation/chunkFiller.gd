@@ -66,7 +66,7 @@ func getBiome(tilePos):
 func buildChunkData(chunkPos):
 	world.fileManager.openChunkFile(chunkPos)
 	var fileData=world.fileManager.getFullChunk(chunkPos)
-	if fileData!=null:return fileData
+	if fileData!=null:return fileData[0]
 	var out =[[],[]]
 	out[0]=world.dataStore.emptyChunk
 	var TLcorner=chunkPos*world.chunkSize

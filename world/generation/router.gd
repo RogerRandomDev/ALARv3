@@ -10,6 +10,12 @@ var shaderComp=load("res://world/generation/runShader.gd").new()
 var fileManager=load("res://world/generation/fileManager.gd").new()
 
 var miscFunctions=load("res://entities/resources/miscActions.gd").new()
+var itemActions=load("res://Player/itemActions.gd").new()
+
+
+var inventory=load("res://Inventory/inventory.gd").new()
+
+
 
 var saveName="testing"
 
@@ -45,7 +51,10 @@ func _ready():
 	mapGen._ready()
 	worldShadows.call_deferred('_ready')
 	shaderComp._ready()
-	
+	inventory._ready()
+	add_child(mineTimer)
+	mineTimer.wait_time=1
+	mineTimer.connect("timeout",progressMine)
 	
 
 
@@ -74,16 +83,18 @@ func _notification(what):
 
 #changes cell in given chunk
 func changeCell(chunk,cell,id):
-	if !mapGen.loadedChunks.has(chunk):return
-	mapGen.loadedChunks[chunk].changeCell(cell,id)
+	if !mapGen.loadedChunks.has(chunk):return false
+	return mapGen.loadedChunks[chunk].changeCell(cell,id)
 
 #handles spawning in the item drop when you break something
-func dropItem(globalCell,itemData):
+func dropItem(globalCell,itemData,place=true):
 	if itemData.name=="ERROR":return
 	var item=itemDrop2D.new()
 	item.buildItem(itemData)
-	item.global_position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
-	root.add_child(item)
+	if place:
+		item.global_position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
+		root.add_child(item)
+	return item
 
 #reparents node to new one
 func reparent(node,newParent):
@@ -91,3 +102,28 @@ func reparent(node,newParent):
 	originalParent.remove_child(node)
 	originalParent.add_child(newParent)
 	newParent.add_child(node)
+
+var curMining=[]
+var mineTimer=Timer.new()
+#handles mining for you
+func mineCell(c):
+	
+	if curMining!=c:
+		mineTimer.stop()
+		itemActions.mineTex.frame=0
+		curMining=c
+	if mineTimer.is_stopped():mineTimer.start()
+	return mapGen.loadedChunks[c[0]].getCellData(c[1]).name!="ERROR"
+	
+#increase the mine progress
+func progressMine():
+	itemActions.mineTex.visible=false
+	mineTimer.stop()
+	mapGen.loadedChunks[curMining[0]].changeCell(curMining[1],-1)
+
+
+#finds texture for given item
+func findItemTexture(itemData):
+	if itemData.actionType=="place":return load("res://world/Tiles/%s.png"%itemData.name)
+	else:
+		return load("res://tools/%s.png"%itemData.name)

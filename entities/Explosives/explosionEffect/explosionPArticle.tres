@@ -1,4 +1,4 @@
-[gd_resource type="ParticleProcessMaterial" load_steps=3 format=3 uid="uid://loxtyldfwdmg"]
+[gd_resource type="ParticleProcessMaterial" load_steps=5 format=3 uid="uid://loxtyldfwdmg"]
 
 [sub_resource type="Gradient" id="Gradient_604v8"]
 offsets = PackedFloat32Array(0, 0.0682594, 1)
@@ -7,6 +7,14 @@ colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_6foop"]
 gradient = SubResource("Gradient_604v8")
 width = 64
+
+[sub_resource type="Curve" id="Curve_ky4ka"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.117089, 1), 19.3909, -3.41136, 0, 0, Vector2(0.658228, 0.272727), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.91515, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_epmea"]
+width = 64
+curve = SubResource("Curve_ky4ka")
 
 [resource]
 emission_shape = 6
@@ -25,4 +33,6 @@ orbit_velocity_min = 0.0
 orbit_velocity_max = 0.0
 angle_min = -180.0
 angle_max = 180.0
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_epmea")
 color_ramp = SubResource("GradientTexture1D_6foop")

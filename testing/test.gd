@@ -5,3 +5,6 @@ extends Node2D
 func _ready():
 	world.root=self
 	world.chunkHolder=self
+	var playerInventory=load("res://Inventory/inventoryMenu.tscn").instantiate()
+	add_child(playerInventory)
+	world.itemActions.mineTex=$Sprite2d

@@ -75,12 +75,17 @@ func buildChunks():
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			loadedChunks[chunk].call_deferred('prepForRemoval')
+			#handles items first
+			if itemsByChunk.has(chunk):
+				world.dataStore.entityData[chunk]=itemsByChunk[chunk]
+				world.removeItems(itemsByChunk[chunk])
 			#removes chunk from local, and checks if you have modified it at all
 			#so it only saves modified chunks
 			world.dataStore.removeChunk(chunk,
-			loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk])
-			if itemsByChunk.has(chunk):
-				world.removeItems(itemsByChunk[chunk])
+			(loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk]||
+			itemsByChunk.has(chunk)||true)
+			)
+			
 			world.fileManager.closeChunkFile(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
@@ -130,6 +135,41 @@ func globalToCell(globalPos):
 	return [cell,chunk]
 
 
+#lets you modify an unloaded chunk
+func modifyUnloaded(chunkPos,data):
+	world.fileManager.openChunkFile(chunkPos)
+	var fullData=world.fileManager.getFullChunk(chunkPos)
+	var chunkData
+	if fullData==null:fullData=[world.chunkFiller.buildChunkData(chunkPos),[]]
+	chunkData=fullData[0]
+	
+	
+	for c in len(data)/2:
+		
+		var cell=data[c*2]
+		var id=chunkData[0][cell.x+cell.y*16]
+		if chunkData[0][cell.x+cell.y*16]<0:continue
+		var cellData=world.mapTiles.get_source(id).get_tile_data(Vector2i.ZERO,0)
+		if(cellData.get_custom_data("unmineable")||
+		cellData.get_custom_data("ExplosionProof")):continue
+		var dropItem=getCellData(chunkData[0][cell.x+cell.y*16])
+		dropItem.append(cell)
+		fullData[1].append(dropItem)
+		chunkData[0][cell.x+cell.y*16]=-1
+#	world.fileManager.storeFullChunk(chunkPos,[chunkData,fullData[1]])
+	world.fileManager.storeFullChunk(chunkPos,[chunkData,[]])
+	world.fileManager.closeChunkFile(chunkPos)
 
 
 
+func getCellData(id):
+	var raw=world.mapTiles.get_source(id)
+	var cellData={
+		"texture":raw.get("texture"),
+		"name":raw.get("resource_name"),
+		"id":id,
+		"actionType":"place"
+	}
+	cellData.weight=1
+	cellData.quantity=1
+	return world.dropItem(Vector2(0,0),cellData,false).storageFormat()

@@ -10,11 +10,13 @@ const JUMP_VELOCITY = -256.0
 func _ready():
 	canMove=true
 	world.player=self
+	world.itemActions.root=self
 
 
 
 var inWater
 func _physics_process(delta):
+	checkInputs()
 	if !canMove:return
 	inWater=waterCollision.get_overlapping_bodies().size()>0
 	if not is_on_floor():
@@ -34,23 +36,19 @@ func _physics_process(delta):
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	#dampens motion when in water
 	if(inWater):
-		var resist=Vector2(sqrt(velocity.x**2 * 0.5)*sign(velocity.x),sqrt(velocity.y**2 * 0.01)*sign(velocity.y))
+		var resist=Vector2(sqrt(velocity.x**2 * 0.125)*sign(velocity.x),sqrt(velocity.y**2 * 0.01)*sign(velocity.y))
 		velocity-=resist
 	if velocity.x!=0:$Icon.flip_h=velocity.x<0
 	move_and_slide()
 	var myChunk=world.mapGen.globalToChunk(global_position)
 	world.mapGen.moveCurrentChunk(myChunk)
+	
 
-func _input(event):
-	if Input.is_action_pressed("m1")||Input.is_action_pressed("m2"):
-		var mPos=get_global_mouse_position()
-		var c=world.mapGen.globalToCell(mPos)
-		var chunk=c[1]
-		var cell=c[0]
-		cell.x=cell.x%16;cell.y=cell.y%16;
-		cell.x+=int(cell.x<0)*16;cell.y+=int(cell.y<0)*16
-		world.call_deferred('changeCell',chunk,cell,int(Input.is_action_pressed("m2"))*2-1)
-		#drops a bomb where the mouse is
-		#currently very large explosion radius
-		world.miscFunctions.fireBomb(global_position,mPos,8)
-
+func checkInputs():
+	#handles the actions for the current held item
+	if Input.is_action_pressed("m1"):
+		var action=world.inventory.get_active()
+		world.itemActions.call(action.actionType,action)
+	else:
+		world.itemActions.mineTex.visible=false
+		world.mineTimer.stop()

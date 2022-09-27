@@ -29,6 +29,7 @@ func _ready():
 func addChunk(chunk,chunkDataIn=[]):
 	
 	chunkData[chunk]=chunkDataIn.duplicate(true)
+	entityData[chunk]=[]
 	if chunkDataIn==[]:chunkDataIn=[emptyChunk.duplicate(true),emptyChunk.duplicate(true)]
 	
 
@@ -36,7 +37,11 @@ func addChunk(chunk,chunkDataIn=[]):
 #if you want to load chunks after this, you need to store
 #as a file and then get this fill from getChunk
 func removeChunk(chunk,doSave):
-	if doSave:world.fileManager.storeFullChunk(chunk,chunkData[chunk].duplicate())
+	if doSave:
+		world.fileManager.storeFullChunk(chunk,[
+			chunkData[chunk].duplicate(),
+			[]])
+	entityData.erase(chunk)
 	chunkData.erase(chunk)
 func getChunk(chunk):
 	return chunkData[chunk]

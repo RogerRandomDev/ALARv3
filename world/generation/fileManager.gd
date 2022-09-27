@@ -4,7 +4,10 @@ var chunkFiles={}
 var unusedChunkFiles=[]
 var dir=Directory.new()
 func _ready():
-	for chunk in (world.renderDistance*2+1) **2:
+	#one extra for a margin chunk
+	#used when temporary loading outside chunks
+	#to modify mainly, I.E. explosions at the edge of the chunk
+	for chunk in (world.renderDistance*2+1) **2 +2:
 		unusedChunkFiles.append(File.new())
 	if !dir.dir_exists("user://Saves/%s/chunks"%world.saveName):
 		dir.make_dir_recursive("user://Saves/%s/chunks"%world.saveName)
@@ -38,21 +41,29 @@ func closeChunkFile(chunk):
 #stores entire chunk worth of data
 func storeFullChunk(chunk,data):
 	if !chunkFiles.has(chunk)||chunk.y>40:return
-#	chunkFiles[chunk].seek(0);
+	chunkFiles[chunk].seek(0)
 	chunkFiles[chunk].store_line(compressChunkData(data))
 
 
 
 #gets the entire chunk's data
 func getFullChunk(chunk):
+	
 	if !chunkFiles.has(chunk):return null
-	return str_to_var(decompressChunkData(chunkFiles[chunk].get_as_text()))
+	var base=decompressChunkData(chunkFiles[chunk].get_as_text())
+	var out=str_to_var(base)
+	return out
 
 #loads the chunk data only if it is available
 func loadFullChunk(chunk):
 	var out=getFullChunk(chunk)
 	if out==null:return
-	world.dataStore.chunkData[chunk]=out
+	world.dataStore.chunkData[chunk]=out[0]
+	world.dataStore.entityData[chunk]=out[1]
+	
+#opens chunk temporarily
+
+
 
 const numCompression={
 }
@@ -63,7 +74,7 @@ func compressChunkData(chunkData):
 	var compressed=str(chunkData).replace(
 		" ","").replace(
 		"-2,","~").replace(
-		"-1","|")
+		"-1,","|")
 	return compressed
 
 
@@ -71,6 +82,6 @@ func compressChunkData(chunkData):
 func decompressChunkData(chunkData):
 	var decompressed=chunkData.replace(
 		"~","-2,").replace(
-		"|","-1"
+		"|","-1,"
 		)
 	return decompressed

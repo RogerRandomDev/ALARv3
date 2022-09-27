@@ -7,6 +7,7 @@ var changedCell={}
 var originalData=[]
 
 func _ready():
+	z_index=10
 	add_layer(1)
 	set_layer_z_index(1,-1)
 	set_layer_modulate(1,Color(0.5,0.5,0.5))
@@ -24,7 +25,16 @@ func fill(contents,randomTick=false):
 		call_deferred('set_cell',0,cellPos,contents[0][tileID],atlas,0)
 	
 	world.dataStore.chunkData[_pos]=contents
+#fills in entities for given chunk
+func fillEntities(entities):
 	
+	for entity in entities:
+		var ent = itemDrop2D.new()
+		ent.fromStorageFormat(entity)
+		ent.position=(_pos*world.chunkSize+entity[0])*world.tileSize
+		get_parent().add_child(ent)
+
+
 #handles the freeing of the chunk
 func prepForRemoval():
 	clear()
@@ -39,7 +49,9 @@ func getCellData(cell):
 	var raw=tile_set.get_source(id)
 	return {
 		"texture":raw.get("texture"),
-		"name":raw.get("resource_name")
+		"name":raw.get("resource_name"),
+		"id":id,
+		"actionType":"place"
 	}
 
 
@@ -49,10 +61,12 @@ func changeCell(cell,id):
 	if id<0:
 		if !mineCell(cell):return false
 		call_deferred('erase_cell',0,cell)
-	else:call_deferred('set_cell',0,cell,id,atlas,0)
+	else:
+		if get_cell_source_id(0,cell)> -1:return false
+		call_deferred('set_cell',0,cell,id,atlas,0)
 	
 	changedCell[cell]=id
-#	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
+	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
 	return true
 #explodes the given cell if not immune to it
 func explodeCell(cell):
@@ -60,7 +74,10 @@ func explodeCell(cell):
 	if get_cell_source_id(0,cell)<0:return
 	var cellData=get_cell_tile_data(0,cell)
 	if cellData==null||cellData.get_custom_data("ExplosionProof"):return
-	changeCell(cell,-1)
+	if !mineCell(cell):return
+	erase_cell(0,cell)
+	changedCell[cell]=-1
+	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
 #attempts to fill cell if it is not solid
 func attemptFillCell(cell,ignoreFull=false):
 	if get_cell_source_id(0,Vector2i(cell.x,cell.y),false)!=-1&&!ignoreFull:return false
