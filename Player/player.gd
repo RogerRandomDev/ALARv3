@@ -5,6 +5,8 @@ const SPEED = 128.0
 const JUMP_VELOCITY = -256.0
 @export var canMove=true
 @onready var waterCollision=$waterCheck
+var accelSpeed=10
+var decelSpeed=10
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 
 func _ready():
@@ -31,9 +33,10 @@ func _physics_process(delta):
 	# Get the input direction and handle the movement/deceleration.
 	var direction = Input.get_axis("l", "r")
 	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.x += direction * SPEED*delta*accelSpeed * (float(is_on_floor())*0.25+1.0)
+	#only decelerates above a certain speed or on ground
+	if is_on_floor()||abs(velocity.x)>SPEED*1.5:velocity.x-=velocity.x*decelSpeed*delta
+		
 	#dampens motion when in water
 	if(inWater):
 		var resist=Vector2(sqrt(velocity.x**2 * 0.125)*sign(velocity.x),sqrt(velocity.y**2 * 0.01)*sign(velocity.y))

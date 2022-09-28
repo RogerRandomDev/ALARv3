@@ -17,3 +17,7 @@ res://entities/Explosives/bomb.gd
 res://Inventory/inventoryMenu.gd
 res://Inventory/inventory.gd
 res://Player/player.gd
+res://entities/resources/itemDrop.gd
+res://world/generation/router.gd
+res://entities/resources/miscActions.gd
+res://world/generation/chunk.gd

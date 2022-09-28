@@ -11,6 +11,7 @@ var ray=PhysicsRayQueryParameters2D.new()
 var pickable=true
 var velocity=Vector2.ZERO
 var nearChecks=0
+var lifeTime:float=0.0
 signal changed()
 
 var quantityLabel=Label.new()
@@ -31,6 +32,7 @@ func prepFree():
 
 
 func _physics_process(delta):
+	lifeTime+=delta
 	var variable=world.renderDistance
 	var mult=world.chunkSize*world.tileSize
 	if(position.x>(world.mapGen.centerChunk.x+variable+1)*mult||
@@ -51,9 +53,9 @@ func rayCheck(delta):
 	var hit:=get_world_2d().direct_space_state.intersect_ray(ray)
 	velocity=clamp(velocity+world.defaultGravity*delta,-world.defaultGravity,world.defaultGravity)
 	if hit:
-		velocity=Vector2.ZERO
-		global_position += (hit.position-global_position)*delta*15
+		
 		if hit.collider.name=="Player":
+			if !lifeTime>world.itemPickupBuffer:return
 			var newStack=world.inventory.storeItem(
 				{"quantity":quantity,
 				"name":itemName,
@@ -63,6 +65,9 @@ func rayCheck(delta):
 				quantity=newStack
 				quantityLabel.text=str(newStack)
 			else:prepFree()
+		else:
+			velocity=Vector2.ZERO
+			global_position += (hit.position-global_position)*delta*15
 	position+=velocity*delta
 	
 

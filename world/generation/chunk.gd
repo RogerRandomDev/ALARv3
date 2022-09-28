@@ -77,10 +77,12 @@ func explodeCell(cell):
 	if get_cell_source_id(0,cell)<0:return
 	var cellData=get_cell_tile_data(0,cell)
 	if cellData==null||cellData.get_custom_data("ExplosionProof"):return
+	
 	if !mineCell(cell):return
-	erase_cell(0,cell)
-	changedCell[cell]=-1
+	call_deferred('erase_cell',0,cell)
 	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
+	changedCell[cell]=-1
+
 #attempts to fill cell if it is not solid
 func attemptFillCell(cell,ignoreFull=false):
 	if get_cell_source_id(0,Vector2i(cell.x,cell.y),false)!=-1&&!ignoreFull:return false

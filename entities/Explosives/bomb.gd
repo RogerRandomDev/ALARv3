@@ -35,7 +35,11 @@ func _ready():
 func finishExplode():
 	time.disconnect("timeout",finishExplode)
 	world.miscFunctions.call_deferred('explode',global_position,explosionRadius)
-	
+	var knockBack=world.player.global_position-global_position
+	if knockBack.length_squared()<(explosionRadius*world.tileSize)**2:
+		var dir=(1-max(knockBack.length()/(explosionRadius*world.tileSize),0.25))*knockBack.normalized()
+		world.player.velocity+=dir*explosionRadius*world.explosionForce
+		
 	quantityLabel.queue_free()
 	body.queue_free()
 	

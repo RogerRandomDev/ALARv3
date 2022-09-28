@@ -31,6 +31,8 @@ var tileSize=8
 var groundLevel=32
 var height = 1024
 var exitGame=false
+var itemPickupBuffer=0.75;
+var explosionForce:int=200
 
 var itemList=[]
 
