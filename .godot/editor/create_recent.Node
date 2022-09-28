@@ -1,9 +1,9 @@
+TextureRect
 Label
 AnimatedSprite2D
 Sprite2D
 GridContainer
 ItemList
-TextureRect
 CanvasLayer
 GPUParticles2D
 CPUParticles2D

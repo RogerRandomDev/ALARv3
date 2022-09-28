@@ -34,7 +34,7 @@ func _ready():
 #finishes the explosion once the timer is done
 func finishExplode():
 	time.disconnect("timeout",finishExplode)
-	world.miscFunctions.explode(global_position,explosionRadius)
+	world.miscFunctions.call_deferred('explode',global_position,explosionRadius)
 	
 	quantityLabel.queue_free()
 	body.queue_free()

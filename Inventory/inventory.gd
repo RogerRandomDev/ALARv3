@@ -3,6 +3,7 @@ extends Node
 var inventoryData=[]
 var inventorySize:int=32
 var holdingSlot=0
+var toggled=false
 signal updateSlot(slot,data)
 var emptySlotb={
 			"name":null,
@@ -68,3 +69,25 @@ func emptySlot(slot):
 #gets the active slot data
 func get_active():
 	return inventoryData[holdingSlot]
+#swaps two slots with one another
+func swapSlots(slotA,slotB,replaceA:bool=true):
+	if slotA==slotB:return
+	var slotAData=inventoryData[slotA]
+	var slotBData=inventoryData[slotB]
+	if slotAData.name==slotBData.name:
+		var combined=slotAData.quantity+slotBData.quantity
+		if combined>world.maxItemStack:
+			slotBData.quantity=world.maxItemStack
+			slotAData.quantity=combined-world.maxItemStack
+		else:
+			slotBData.quantity+=slotAData.quantity
+			slotAData=emptySlotb.duplicate()
+	else:
+		slotAData=slotBData
+		slotBData=inventoryData[slotA]
+	inventoryData[slotB]=slotBData
+	inventoryData[slotA]=slotAData
+	emit_signal("updateSlot",slotA)
+	emit_signal("updateSlot",slotB)
+	return slotAData
+	

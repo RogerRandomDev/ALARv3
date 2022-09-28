@@ -10,8 +10,15 @@ script = ExtResource("1_3nrox")
 
 [node name="ItemList" type="GridContainer" parent="."]
 custom_minimum_size = Vector2i(96, 96)
-offset_right = 104.0
-offset_bottom = 68.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 108.0
+offset_bottom = 100.0
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
 columns = 8
+
+[node name="heldItem" type="TextureRect" parent="."]
+offset_right = 8.0
+offset_bottom = 8.0
+ignore_texture_size = true
