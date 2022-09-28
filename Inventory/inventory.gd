@@ -23,7 +23,7 @@ func _ready():
 			"quantity":1,
 			"id":-1,
 			"actionType":"throw",
-			"actionRadius":16})
+			"actionRadius":12})
 	call_deferred('storeItem',{
 			"name":"Bomb",
 			"quantity":1,
