@@ -11,26 +11,29 @@ var ray=PhysicsRayQueryParameters2D.new()
 var pickable=true
 var velocity=Vector2.ZERO
 var nearChecks=0
-signal changed()
+var lifeTime:float=0.0
+
+
 
 var quantityLabel=Label.new()
 
 var toFree=false
 func _ready():
 	z_index=100
-	world.itemList.append(self)
+	if !world.itemList.has(self):world.itemList.append(self)
 	if !pickable:return
 	add_child(quantityLabel)
 	quantityLabel.theme=world.itemTheme
-	checkSameNearBy()
 #handles freeing itself
 func prepFree():
-	world.itemList.erase(self)
+	if world.itemList.has(self):
+		world.itemList.erase(self)
 	toFree=true
 	queue_free()
 
 
 func _physics_process(delta):
+	lifeTime+=delta
 	var variable=world.renderDistance
 	var mult=world.chunkSize*world.tileSize
 	if(position.x>(world.mapGen.centerChunk.x+variable+1)*mult||
@@ -46,14 +49,14 @@ func _physics_process(delta):
 	quantityLabel.text=str(quantity)
 #handles the falling and moving up of items to stay on the floor
 func rayCheck(delta):
-	ray.from=global_position-Vector2(0,8.1)
-	ray.to=global_position+Vector2(0,3)
+	ray.from=position-Vector2(0,8.1)
+	ray.to=position+Vector2(0,3)
 	var hit:=get_world_2d().direct_space_state.intersect_ray(ray)
 	velocity=clamp(velocity+world.defaultGravity*delta,-world.defaultGravity,world.defaultGravity)
 	if hit:
-		velocity=Vector2.ZERO
-		global_position += (hit.position-global_position)*delta*15
+		
 		if hit.collider.name=="Player":
+			if !lifeTime>world.itemPickupBuffer:return
 			var newStack=world.inventory.storeItem(
 				{"quantity":quantity,
 				"name":itemName,
@@ -63,6 +66,9 @@ func rayCheck(delta):
 				quantity=newStack
 				quantityLabel.text=str(newStack)
 			else:prepFree()
+		else:
+			velocity=Vector2.ZERO
+			global_position += (hit.position-position)*delta*15
 	position+=velocity*delta
 	
 
@@ -77,7 +83,7 @@ func buildItem(itemData):
 
 #gets the chunk the item is in
 func getChunk():
-	var pos=global_position
+	var pos=position
 	var c=world.mapGen.globalToCell(pos)[1]
 	
 	return c
@@ -90,10 +96,11 @@ func inChunk(chunk):
 func checkSameNearBy():
 	if quantity>=world.maxItemStack||toFree:return
 	for item in world.itemList:
+		if toFree:break
 		if(
 			item==null||item.toFree||item==self||
 			item.itemName!=itemName||
-			(item.global_position-global_position).length_squared()>128||
+			(item.position-position).length_squared()>80||
 			item.quantity>=world.maxItemStack):continue
 		
 		var itemQuantity=item.quantity+quantity
@@ -128,3 +135,4 @@ func fromStorageFormat(data):
 		"texture":load(texPath%data[2]),
 		"id":data[4]
 	})
+	

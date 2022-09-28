@@ -10,7 +10,6 @@ var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
 var shader := rd.shader_create_from_spirv(shader_spirv)
 var pipeline := rd.compute_pipeline_create(shader)
 func _ready():
-	
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform.binding = 0
 

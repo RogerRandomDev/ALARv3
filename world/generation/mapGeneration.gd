@@ -152,7 +152,7 @@ func modifyUnloaded(chunkPos,data):
 	chunkData=fullData[0]
 	entData=fullData[1]
 	
-	for c in len(data)/2:
+	for c in float(len(data))/2:
 		
 		var cell=data[c*2]
 		var id=chunkData[0][cell.x+cell.y*16]
@@ -164,8 +164,8 @@ func modifyUnloaded(chunkPos,data):
 		dropItem.append(cell)
 		entData.append(dropItem)
 		chunkData[0][cell.x+cell.y*16]=-1
-#	world.fileManager.storeFullChunk(chunkPos,[chunkData,fullData[1]])
 	
+#	world.fileManager.storeFullChunk(chunkPos,[chunkData,fullData[1]])
 	world.fileManager.storeFullChunk(chunkPos,[chunkData.duplicate(),entData])
 	world.fileManager.closeChunkFile(chunkPos)
 

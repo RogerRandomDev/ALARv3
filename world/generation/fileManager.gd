@@ -70,17 +70,19 @@ const numCompression={
 
 #compression of a chunk for storing
 func compressChunkData(chunkData):
-	var compressed=var_to_str(chunkData).replace(
-		" ","").replace(
-		"-2,","~").replace(
-		"-1,","|")
+	var compressed=var_to_str(chunkData)
+#	.replace(
+#		" ","").replace(
+#		"-2,","~").replace(
+#		"-1,","|")
 	return compressed
 
 
 #decompression of a chunk for use
 func decompressChunkData(chunkData):
-	var decompressed=chunkData.replace(
-		"~","-2,").replace(
-		"|","-1,"
-		)
+	var decompressed=chunkData
+#	.replace(
+#		"~","-2,").replace(
+#		"|","-1,"
+#		)
 	return decompressed

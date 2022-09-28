@@ -31,6 +31,8 @@ var tileSize=8
 var groundLevel=32
 var height = 1024
 var exitGame=false
+var itemPickupBuffer=0.75;
+var explosionForce:int=200
 
 var itemList=[]
 
@@ -57,7 +59,10 @@ func _ready():
 	add_child(mineTimer)
 	mineTimer.wait_time=1
 	mineTimer.connect("timeout",progressMine)
-	
+	var timer=Timer.new()
+	add_child(timer)
+	timer.start()
+	timer.connect("timeout",checkThreads)
 
 
 #loads all the biomes into an array
@@ -80,7 +85,9 @@ func _notification(what):
 	if what==NOTIFICATION_EXIT_TREE:
 		exitGame=true
 		GameTick.thread.wait_to_finish()
+		GameTick.sem.post()
 		mapGen.generationThread.wait_to_finish()
+		GameTick.genSema.post(1)
 
 
 #changes cell in given chunk
@@ -129,3 +136,10 @@ func findItemTexture(itemData):
 	if itemData.actionType=="place":return load("res://world/Tiles/%s.png"%itemData.name)
 	else:
 		return load("res://tools/%s.png"%itemData.name)
+
+#restarts threads if they are found to have crashed
+func checkThreads():
+	if !mapGen.generationThread.is_alive():
+		print("a")
+		mapGen.generationThread.wait_to_finish()
+		mapGen._prepThreads()

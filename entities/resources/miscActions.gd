@@ -29,6 +29,9 @@ func explode(global_pos,explosionRadius):
 		
 	for chunk in outSide:
 		world.mapGen.modifyUnloaded(chunk,outSide[chunk])
+	triggerExplosionFx(global_pos,explosionRadius)
+#explosion fx
+func triggerExplosionFx(global_pos,explosionRadius):
 	var fx=explosionFX.instantiate()
 	fx.scale*=(explosionRadius/3)
 	world.root.add_child(fx)

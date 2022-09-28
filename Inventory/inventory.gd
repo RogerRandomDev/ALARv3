@@ -3,6 +3,7 @@ extends Node
 var inventoryData=[]
 var inventorySize:int=32
 var holdingSlot=0
+var toggled=false
 signal updateSlot(slot,data)
 var emptySlotb={
 			"name":null,
@@ -22,13 +23,13 @@ func _ready():
 			"quantity":1,
 			"id":-1,
 			"actionType":"throw",
-			"actionRadius":8})
+			"actionRadius":16})
 	call_deferred('storeItem',{
 			"name":"Bomb",
 			"quantity":1,
 			"id":-1,
 			"actionType":"throw",
-			"actionRadius":5})
+			"actionRadius":-8})
 func storeItem(item):
 	var count = item.quantity
 	var slots=inventoryData.filter(
@@ -68,3 +69,29 @@ func emptySlot(slot):
 #gets the active slot data
 func get_active():
 	return inventoryData[holdingSlot]
+#swaps two slots with one another
+func swapSlots(slotA,slotB,_replaceA:bool=true):
+	if slotA==slotB:return
+	var slotAData=inventoryData[slotA]
+	var slotBData=inventoryData[slotB]
+	
+	if slotAData.name==slotBData.name:
+		var combined=slotAData.quantity+slotBData.quantity
+		if combined>world.maxItemStack:
+			slotBData.quantity=world.maxItemStack
+			slotAData.quantity=combined-world.maxItemStack
+		else:
+			slotBData.quantity+=slotAData.quantity
+			slotAData=emptySlotb.duplicate()
+	else:
+		slotAData=slotBData
+		slotBData=inventoryData[slotA]
+	slotAData.slotNum=slotA
+	slotBData.slotNum=slotB
+	
+	inventoryData[slotB]=slotBData
+	inventoryData[slotA]=slotAData
+	emit_signal("updateSlot",slotA)
+	emit_signal("updateSlot",slotB)
+	return slotAData
+	

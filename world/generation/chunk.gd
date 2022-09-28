@@ -27,21 +27,29 @@ func fill(contents,randomTick=false):
 	world.dataStore.chunkData[_pos]=contents
 #fills in entities for given chunk
 func fillEntities(entities):
-	
+	return
+	var entList=[]
 	for entity in entities:
 		var ent = itemDrop2D.new()
-		
-		ent.position=(_pos*world.chunkSize+entity[len(entity)-1])*world.tileSize+Vector2(
+		ent.fromStorageFormat(entity)
+		world.itemList.append(ent)
+		ent.position=(_pos*world.chunkSize+entity[len(entity)-1])*world.tileSize+Vector2i(
 			4,6
 		)
-		ent.fromStorageFormat(entity)
-		get_parent().add_child(ent)
-
+		entList.append(ent)
+	call_deferred('finishFill',entList)
+func finishFill(entList):
+	for ent in entList:world.chunkHolder.add_child(ent)
 
 #handles the freeing of the chunk
 func prepForRemoval():
 	clear()
-
+#returns cell custom data
+func getCustomCellData(cell):
+	var id=get_cell_source_id(0,cell)
+	if id<0:return null
+	var cellData=get_cell_tile_data(0,cell)
+	return cellData
 #gets basic cell data from tileset
 func getCellData(cell):
 	var id=get_cell_source_id(0,cell)
@@ -65,7 +73,8 @@ func changeCell(cell,id):
 		if !mineCell(cell):return false
 		call_deferred('erase_cell',0,cell)
 	else:
-		if get_cell_source_id(0,cell)> -1:return false
+		var cellData=getCustomCellData(cell)
+		if cellData!=null&&!cellData.get_custom_data("replacable"):return false
 		call_deferred('set_cell',0,cell,id,atlas,0)
 	
 	changedCell[cell]=id
@@ -77,10 +86,12 @@ func explodeCell(cell):
 	if get_cell_source_id(0,cell)<0:return
 	var cellData=get_cell_tile_data(0,cell)
 	if cellData==null||cellData.get_custom_data("ExplosionProof"):return
-	if !mineCell(cell):return
-	erase_cell(0,cell)
-	changedCell[cell]=-1
 	
+	if !mineCell(cell):return
+	call_deferred('erase_cell',0,cell)
+	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
+	changedCell[cell]=-1
+
 #attempts to fill cell if it is not solid
 func attemptFillCell(cell,ignoreFull=false):
 	if get_cell_source_id(0,Vector2i(cell.x,cell.y),false)!=-1&&!ignoreFull:return false

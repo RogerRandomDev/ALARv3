@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dj35hqn4uf68h"]
+[gd_scene load_steps=3 format=3 uid="uid://dj35hqn4uf68h"]
 
 [ext_resource type="Script" path="res://Inventory/inventoryMenu.gd" id="1_3nrox"]
+[ext_resource type="Theme" uid="uid://crpseelpjc3gp" path="res://themes/itemTheme.tres" id="2_v3kn0"]
 
 [node name="inventoryMenu" type="CanvasLayer"]
 layer = 4
@@ -10,8 +11,22 @@ script = ExtResource("1_3nrox")
 
 [node name="ItemList" type="GridContainer" parent="."]
 custom_minimum_size = Vector2i(96, 96)
-offset_right = 104.0
-offset_bottom = 68.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 108.0
+offset_bottom = 100.0
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
 columns = 8
+
+[node name="heldItem" type="TextureRect" parent="."]
+offset_right = 8.0
+offset_bottom = 8.0
+ignore_texture_size = true
+
+[node name="Label" type="Label" parent="heldItem"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 44.0
+offset_bottom = 27.0
+theme = ExtResource("2_v3kn0")

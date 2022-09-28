@@ -16,6 +16,7 @@ func mine(id):
 	mineTex.global_position=(c[0]*world.chunkSize+c[1])*world.tileSize
 	
 	if world.mineCell(c):mineTex.visible=true
+	else:mineTex.visible=false
 
 func throw(id):
 	if !Input.is_action_just_pressed("m1"):return

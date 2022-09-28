@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://e0cm3qyt5noc"]
+[gd_scene load_steps=12 format=3 uid="uid://c7i8pgeometvu"]
 
 [ext_resource type="Script" path="res://testing/test.gd" id="1_t34bj"]
 [ext_resource type="PackedScene" uid="uid://c0uybjg4d5ksi" path="res://Player/player.tscn" id="2_b8hye"]
@@ -57,7 +57,3 @@ z_index = 100
 frames = SubResource("SpriteFrames_ryr7t")
 playing = true
 centered = false
-
-[node name="Label" type="Label" parent="."]
-offset_right = 40.0
-offset_bottom = 23.0

@@ -17,7 +17,7 @@ func _ready():
 	body.can_sleep=false
 	body.add_child(shape)
 	body.physics_material_override=physics
-	body.angular_velocity=randi_range(-PI*3,PI*3)
+	body.angular_velocity=randf_range(-PI*3,PI*3)
 	body.linear_velocity.y=min(body.linear_velocity.y,128)
 	body.continuous_cd=true
 	world.reparent(self,body)
@@ -34,8 +34,17 @@ func _ready():
 #finishes the explosion once the timer is done
 func finishExplode():
 	time.disconnect("timeout",finishExplode)
-	world.miscFunctions.explode(global_position,explosionRadius)
+	var rad=abs(explosionRadius)
+	if explosionRadius>0:world.miscFunctions.call_deferred('explode',global_position,explosionRadius)
+	else:world.miscFunctions.triggerExplosionFx(global_position,rad)
 	
+	
+	var knockBack=world.player.global_position-global_position
+	if knockBack.length_squared()<(rad*world.tileSize)**2:
+		var dir=(1-max(knockBack.length()/(rad*world.tileSize),0.25))*knockBack.normalized()
+		#if radius is zero, then it still launches you
+		world.player.velocity+=dir*rad*world.explosionForce
+		
 	quantityLabel.queue_free()
 	body.queue_free()
 	
