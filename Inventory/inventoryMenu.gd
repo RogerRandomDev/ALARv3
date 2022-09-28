@@ -113,5 +113,7 @@ func checkInv(e):
 	if not e is InputEventMouseButton or not e.pressed:return
 	var pos=$ItemList.get_local_mouse_position()
 	var itemPos=Vector2i(pos/14)
-	if itemPos.y>0&&!world.inventory.toggled:return
+	if (
+		itemPos.y>0&&!world.inventory.toggled||
+		itemPos.y*8+itemPos.x>world.inventory.inventorySize):return
 	slotInput(itemPos.x+itemPos.y*8)
