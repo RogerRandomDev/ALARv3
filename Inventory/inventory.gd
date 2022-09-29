@@ -20,16 +20,16 @@ func _ready():
 		inventoryData[slot].slotNum=slot
 	call_deferred('storeItem',{
 			"name":"Dynamite",
-			"quantity":4,
-			"id":2,
+			"quantity":400,
+			"id":3,
 			"actionType":"throw",
-			"actionRadius":8})
+			"actionRadius":16})
 	call_deferred('storeItem',{
 			"name":"Bomb",
-			"quantity":1,
+			"quantity":100,
 			"id":1,
 			"actionType":"throw",
-			"actionRadius":8})
+			"actionRadius":6})
 func storeItem(item):
 	var count = item.quantity
 	var slots=inventoryData.filter(
@@ -102,7 +102,7 @@ func dropItem(slotID):
 	if dropData.name==null:return
 	dropData.texture=world.playerInventory.get_node("heldItem").texture
 	dropData.weight=1
-	world.dropItem(world.player.global_position/world.tileSize,dropData)
+	world.dropItem(world.player.global_position/world.tileSize-Vector2(0.5,0.5),dropData)
 	inventoryData[slotID]=emptySlotb.duplicate()
 	inventoryData[slotID].slotNum=slotID
 	emit_signal("updateSlot",slotID)

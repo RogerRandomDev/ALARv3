@@ -106,7 +106,7 @@ func clusterBomb():
 	for bomb in launchNum:
 		
 		var angle=Vector2(sin(PI*2*float(bomb)/float(launchNum)),cos(PI*2*float(bomb)/float(launchNum)))*512
-		var b=GameTick.storeAction(self,world.miscFunctions.fireBomb,[global_position,global_position+angle,8])
+		var b=GameTick.storeAction(self,world.miscFunctions.fireBomb,[global_position,global_position+angle,6])
 		
 
 
