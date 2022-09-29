@@ -42,7 +42,7 @@ func generateChunk(chunkPos):
 	var chunkData
 	if fileData!=null:
 		chunkData=fileData[0]
-		chunk.fillEntities(fileData[1])
+#		chunk.fillEntities(fileData[1])
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos,false)
 	chunk.originalData=chunkData
 	chunk.fill(chunkData)

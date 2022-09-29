@@ -80,14 +80,18 @@ func changeCell(cell,id):
 	changedCell[cell]=id
 	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
 	return true
+#checks if can explode given cell
+func canExplode(cell):
+	if _pos.y>40:return false
+	if get_cell_source_id(0,cell)<0:return false
+	var cellData=get_cell_tile_data(0,cell)
+	if cellData==null||cellData.get_custom_data("ExplosionProof"):return false
+	return true
 #explodes the given cell if not immune to it
 func explodeCell(cell):
-	if _pos.y>40:return false
-	if get_cell_source_id(0,cell)<0:return
-	var cellData=get_cell_tile_data(0,cell)
-	if cellData==null||cellData.get_custom_data("ExplosionProof"):return
-	
+	if !canExplode(cell):return
 	if !mineCell(cell):return
+	
 	call_deferred('erase_cell',0,cell)
 #	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
 	changedCell[cell]=-1
@@ -108,3 +112,11 @@ func mineCell(cell):
 		cellData.quantity=1
 		world.dropItem(cell+_pos*world.chunkSize,cellData)
 	return true
+
+#removes given cells
+func removeCells(cellList):
+	for i in cellList:
+		mineCell(i)
+		erase_cell(0,i)
+		
+		changedCell[i]=-1

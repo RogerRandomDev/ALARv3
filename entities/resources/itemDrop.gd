@@ -97,12 +97,15 @@ func inChunk(chunk):
 #stacks same items together to their stack limit
 func checkSameNearBy():
 	if quantity>=world.maxItemStack||toFree:return
+	var itemCountMult=int(len(world.itemList)/60)
 	for item in world.itemList:
 		if toFree:break
 		if(
 			item==null||item.toFree||item==self||
 			item.itemName!=itemName||
-			(item.position-position).length_squared()>80||
+			#increases the radius them ore items there are
+			#does this to reduce lag from large item counts
+			(item.position-position).length_squared()>(65*itemCountMult)||
 			item.quantity>=world.maxItemStack):continue
 		
 		var itemQuantity=item.quantity+quantity

@@ -103,7 +103,7 @@ func dropItem(globalCell,itemData,place=true):
 	item.buildItem(itemData)
 	if place:
 		item.global_position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
-		root.add_child(item)
+		root.add_child.call_deferred(item)
 	return item
 
 #reparents node to new one

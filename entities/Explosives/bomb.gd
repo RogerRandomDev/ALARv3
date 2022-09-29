@@ -9,6 +9,7 @@ var type=0
 var num=0
 const physics=preload("res://entities/Explosives/BombPhysics.tres")
 var throwDir=Vector2.ZERO
+var sticky=false
 func _ready():
 	randomize()
 	texture=load("res://tools/%s.png"%bombType)
@@ -40,15 +41,16 @@ func _ready():
 	type=id+1
 	#updates throw direction
 	throwDir=body.linear_velocity.normalized()
+	sticky=float(type)/3 >= 1
 
 #finishes the explosion once the timer is done
 func finishExplode():
 	time.disconnect("timeout",finishExplode)
-	match type:
+	match type%3:
 		0:
 			defaultExplosion()
 		1:
-			depthCharge()
+			stripCharge()
 		2:
 			clusterBomb()
 	quantityLabel.queue_free()
@@ -56,12 +58,14 @@ func finishExplode():
 #the default explosion method
 func defaultExplosion():
 	var rad=abs(explosionRadius)
-	if explosionRadius>0:world.miscFunctions.call_deferred('explode',global_position,explosionRadius)
+	if explosionRadius>0:GameTick.storeAction(self,world.miscFunctions.explode,[global_position,explosionRadius])
 	else:world.miscFunctions.triggerExplosionFx(global_position,rad)
 	knockbackPlayer()
-#depthcharge goes horizontally only in a straight line
-func depthCharge():
-	if (type==1&&body.get_contact_count()):throwDir=lastVelocity.normalized()
+	
+#Stripcharge goes only in a straight line, based on where you threw it,
+#or how it was moving when it landed
+func stripCharge():
+	if (sticky&&body.get_contact_count()):throwDir=lastVelocity.normalized()
 	var removeTiles=[]
 	var lineNormal=throwDir
 	var dir=Vector2i(-explosionRadius*int(throwDir.x<0),-explosionRadius*int(throwDir.y<0))
@@ -73,7 +77,8 @@ func depthCharge():
 	var lay1=ceil(abs(addDir))*sign(addDir)
 	var lay0=floor(abs(addDir))*sign(addDir)
 	lineNormal=lineNormal.normalized()
-	
+	#changes explosion range to be the desired value
+	var explosionMult=3/explosionRadius
 	for x in explosionRadius*2:
 		cPos=floor(lineNormal*x)
 		
@@ -85,21 +90,31 @@ func depthCharge():
 			Vector2i(cPos+lay1),
 			Vector2i(cPos-lay1)
 			])
+		#only triggers explosion every explosion radius
+		#makes a long line of explosions for you
+		#it looks nice
 		if int(cPos.length())%3==0:
 			world.miscFunctions.triggerExplosionFx(global_position+cPos*world.tileSize,3)
-	world.miscFunctions.call_deferred('explode',global_position,explosionRadius,removeTiles,false)
-	knockbackPlayer(Vector2(1,0),0.25)
+			knockbackPlayer(Vector2(1,0),explosionMult,cPos*world.tileSize)
+	GameTick.storeAction(self,world.miscFunctions.explode,[global_position,explosionRadius,removeTiles,false])
+	
 
 #clusterbomb launches normal bombs in the area around it
+#the bomb-bomb
 func clusterBomb():
-	pass
+	var launchNum=explosionRadius
+	for bomb in launchNum:
+		
+		var angle=Vector2(sin(PI*2*float(bomb)/float(launchNum)),cos(PI*2*float(bomb)/float(launchNum)))*512
+		var b=GameTick.storeAction(self,world.miscFunctions.fireBomb,[global_position,global_position+angle,8])
+		
 
 
 
 #player knockback force
-func knockbackPlayer(dirMult=Vector2.ONE,rangeMult:=1.0):
+func knockbackPlayer(dirMult=Vector2.ONE,rangeMult:=1.0,offset:Vector2=Vector2.ZERO):
 	var rad=abs(explosionRadius)*rangeMult
-	var knockBack=world.player.global_position-global_position
+	var knockBack=world.player.global_position-global_position-offset
 	if knockBack.length_squared()<(rad*world.tileSize)**2:
 		var dir=(1-max(knockBack.length()/(rad*world.tileSize),0.25))*knockBack.normalized()
 		world.player.velocity+=dir*rad*world.explosionForce*dirMult
@@ -110,7 +125,7 @@ func _physics_process(_delta):
 	var variable=world.renderDistance
 	var mult=world.chunkSize*world.tileSize
 	body.freeze=(
-		(type==1&&body.get_contact_count())||
+		(sticky&&body.get_contact_count())||
 		body.position.x>(world.mapGen.centerChunk.x+variable+1)*mult||
 		body.position.x<(world.mapGen.centerChunk.x-variable)*mult||
 		body.position.y>(world.mapGen.centerChunk.y+variable+1)*mult||

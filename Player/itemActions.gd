@@ -25,6 +25,7 @@ func throw(id):
 		root.global_position,mPos,id.actionRadius)
 	bomb.bombType=id.name
 	bomb.id=id.id
+	world.inventory.reduceSlotBy(id.slotNum,1)
 
 
 func getChunkAndCell(mPos):

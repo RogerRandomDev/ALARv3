@@ -14,6 +14,7 @@ func tickThread():
 		sem.wait()
 		if world.exitGame:break
 		compute()
+		miscActions()
 var computing=false
 func compute():
 		
@@ -35,6 +36,37 @@ func compute():
 		
 		tickCount+=1
 		if tickCount>128397:tickCount=0;
+
+var miscStored=[]
+#stored action for miscAction
+func storeAction(requester,action,data):
+	miscStored.append([requester,action,data])
+
+
+
+#miscactions handles things such as explosions for me
+#very nice and convenient to do here, since it won't collide
+#and it does it at a consistent pace
+func miscActions():
+	computing=true
+	for action in len(miscStored):
+		var act=miscStored[action]
+		doCallBack(act[1],act[2])
+		miscStored.remove_at(action)
+	computing=false
+
+
+func doCallBack(callBack,data):
+	match len(data):
+		0:return callBack.call()
+		1:return callBack.call(data[0])
+		2:return callBack.call(data[0],data[1])
+		3:return callBack.call(data[0],data[1],data[2])
+		4:return callBack.call(data[0],data[1],data[2],data[3])
+		5:return callBack.call(data[0],data[1],data[2],data[3],data[4])
+	
+
+
 func nextTick():
 	sem.post()
 	

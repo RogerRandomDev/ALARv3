@@ -20,16 +20,16 @@ func _ready():
 		inventoryData[slot].slotNum=slot
 	call_deferred('storeItem',{
 			"name":"Dynamite",
-			"quantity":1,
-			"id":-1,
+			"quantity":4,
+			"id":2,
 			"actionType":"throw",
-			"actionRadius":12})
+			"actionRadius":8})
 	call_deferred('storeItem',{
 			"name":"Bomb",
 			"quantity":1,
-			"id":0,
+			"id":1,
 			"actionType":"throw",
-			"actionRadius":12})
+			"actionRadius":8})
 func storeItem(item):
 	var count = item.quantity
 	var slots=inventoryData.filter(
