@@ -61,7 +61,8 @@ func rayCheck(delta):
 				{"quantity":quantity,
 				"name":itemName,
 				"id":id,
-				"actionType":actionType})
+				"actionType":actionType,
+				"actionRadius":actionRadius})
 			if newStack>0:
 				quantity=newStack
 				quantityLabel.text=str(newStack)
@@ -80,6 +81,7 @@ func buildItem(itemData):
 	itemName=itemData.name
 	id=itemData.id
 	actionType=itemData.actionType
+	actionRadius=itemData.actionRadius
 
 #gets the chunk the item is in
 func getChunk():
@@ -135,4 +137,5 @@ func fromStorageFormat(data):
 		"texture":load(texPath%data[2]),
 		"id":data[4]
 	})
+	
 	

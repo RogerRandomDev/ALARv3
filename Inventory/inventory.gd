@@ -27,9 +27,9 @@ func _ready():
 	call_deferred('storeItem',{
 			"name":"Bomb",
 			"quantity":1,
-			"id":-1,
+			"id":0,
 			"actionType":"throw",
-			"actionRadius":-8})
+			"actionRadius":12})
 func storeItem(item):
 	var count = item.quantity
 	var slots=inventoryData.filter(
@@ -94,4 +94,15 @@ func swapSlots(slotA,slotB,_replaceA:bool=true):
 	emit_signal("updateSlot",slotA)
 	emit_signal("updateSlot",slotB)
 	return slotAData
-	
+
+
+#drops items into world
+func dropItem(slotID):
+	var dropData=inventoryData[slotID]
+	if dropData.name==null:return
+	dropData.texture=world.playerInventory.get_node("heldItem").texture
+	dropData.weight=1
+	world.dropItem(world.player.global_position/world.tileSize,dropData)
+	inventoryData[slotID]=emptySlotb.duplicate()
+	inventoryData[slotID].slotNum=slotID
+	emit_signal("updateSlot",slotID)

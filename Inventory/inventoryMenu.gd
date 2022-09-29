@@ -65,6 +65,7 @@ func updateSlot(slot):
 
 #changes which slot is held
 func _input(_event):
+	justHeld=false
 	checkInv(_event)
 	heldItem.global_position=heldItem.get_global_mouse_position()
 	
@@ -86,9 +87,12 @@ func _input(_event):
 		emit_signal("toggleVisible",int(world.inventory.toggled)*(world.inventory.inventorySize-8)+8)
 	emit_signal("toggleActive",world.inventory.holdingSlot)
 
-
+var justHeld=false
 #hold given item
 func hold(item):
+	if item==-1:
+		justHeld=true
+		heldItem.visible=false
 	var data=world.inventory.inventoryData[item]
 	if data.name==null:return
 	heldItem.visible=true
@@ -108,6 +112,7 @@ func slotInput(item):
 		world.inventory.swapSlots(curHeld,item)
 		hold(curHeld)
 		heldItem.visible=false
+		justHeld=true
 		curHeld=-1
 
 
@@ -120,5 +125,12 @@ func checkInv(e):
 		itemPos.y>0&&!world.inventory.toggled||
 		itemPos.x>7||
 		itemPos.x<0||
-		itemPos.y*8+itemPos.x>world.inventory.inventorySize-1):return
+		itemPos.y*8+itemPos.x>world.inventory.inventorySize-1):
+			#drops held item if holding one
+			if curHeld!=-1:
+				world.inventory.dropItem(curHeld)
+				curHeld=-1;hold(curHeld)
+				
+			
+			return
 	slotInput(itemPos.x+itemPos.y*8)

@@ -16,7 +16,7 @@ var itemActions=load("res://Player/itemActions.gd").new()
 
 
 var inventory=load("res://Inventory/inventory.gd").new()
-
+var playerInventory=load("res://Inventory/inventoryMenu.tscn").instantiate()
 
 
 var saveName="testing"
@@ -59,6 +59,7 @@ func _ready():
 	add_child(mineTimer)
 	mineTimer.wait_time=1
 	mineTimer.connect("timeout",progressMine)
+	add_child(playerInventory)
 	var timer=Timer.new()
 	add_child(timer)
 	timer.start()
@@ -140,6 +141,9 @@ func findItemTexture(itemData):
 #restarts threads if they are found to have crashed
 func checkThreads():
 	if !mapGen.generationThread.is_alive():
-		print("a")
+		mapGen.breakNow=true
+		mapGen.genSema.post()
 		mapGen.generationThread.wait_to_finish()
+		mapGen.breakNow=false
 		mapGen._prepThreads()
+		

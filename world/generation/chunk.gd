@@ -27,7 +27,6 @@ func fill(contents,randomTick=false):
 	world.dataStore.chunkData[_pos]=contents
 #fills in entities for given chunk
 func fillEntities(entities):
-	return
 	var entList=[]
 	for entity in entities:
 		var ent = itemDrop2D.new()
@@ -62,7 +61,8 @@ func getCellData(cell):
 		"texture":raw.get("texture"),
 		"name":raw.get("resource_name"),
 		"id":id,
-		"actionType":"place"
+		"actionType":"place",
+		"actionRadius":0
 	}
 
 
@@ -89,7 +89,7 @@ func explodeCell(cell):
 	
 	if !mineCell(cell):return
 	call_deferred('erase_cell',0,cell)
-	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
+#	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
 	changedCell[cell]=-1
 
 #attempts to fill cell if it is not solid

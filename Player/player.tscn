@@ -156,6 +156,7 @@ _data = {
 size = Vector2(6, 6)
 
 [node name="Player" type="CharacterBody2D"]
+process_priority = -2
 script = ExtResource("1_4eh3u")
 
 [node name="CollisionShape2d" type="CollisionShape2D" parent="."]

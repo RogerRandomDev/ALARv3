@@ -52,6 +52,7 @@ func _physics_process(delta):
 func checkInputs():
 	#handles the actions for the current held item
 	if Input.is_action_pressed("m1"):
+		if world.playerInventory.justHeld:return
 		var lPos=(get_global_mouse_position()-global_position)
 		#does not do action when hovering items in inventory
 		if lPos.x< -112 && lPos.y<-64-(28*int(!world.inventory.toggled)):return

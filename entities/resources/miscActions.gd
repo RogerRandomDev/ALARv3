@@ -6,14 +6,16 @@ func fireBomb(from,to,radius):
 	bomb.explosionRadius=radius
 	bomb.global_position=from
 	bomb.body.linear_velocity=Vector2(min((from-to).length()*8,384),0).rotated(direction)
+	
 	world.root.call_deferred('add_child',bomb)
 	return bomb
 
 #explodes the area in a radius
-func explode(global_pos,explosionRadius):
-	var removeTiles=[]
-	for x in range(-explosionRadius,explosionRadius):for y in range(-explosionRadius,explosionRadius):
+func explode(global_pos,explosionRadius,removeTiles=[],showFx=true):
+	#if it's empty, fills it with a default explosion
+	if removeTiles==[]:for x in range(-explosionRadius,explosionRadius):for y in range(-explosionRadius,explosionRadius):
 		if(Vector2(x,y).distance_squared_to(Vector2.ZERO)<(explosionRadius)**2):removeTiles.append(Vector2i(x,y))
+	
 	var center=world.mapGen.globalToCell(global_pos)
 	var outSide={}
 	for tile in removeTiles:
@@ -29,10 +31,18 @@ func explode(global_pos,explosionRadius):
 		
 	for chunk in outSide:
 		world.mapGen.modifyUnloaded(chunk,outSide[chunk])
-	triggerExplosionFx(global_pos,explosionRadius)
+	if showFx:triggerExplosionFx(global_pos,explosionRadius)
 #explosion fx
 func triggerExplosionFx(global_pos,explosionRadius):
 	var fx=explosionFX.instantiate()
 	fx.scale*=(explosionRadius/3)
 	world.root.add_child(fx)
 	fx.global_position=global_pos
+
+
+
+#math to get distance to a line
+func distToLine(lineNormal,pos):
+	#gets the line angle as a slope form
+	var line = lineNormal.dot(pos)
+	return abs(line)

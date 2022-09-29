@@ -26,18 +26,12 @@ func getChunksToRead():
 	return validSpots
 
 #builds single chunk
-func generateChunk(chunkPos,removedChunks=[]):
-	var chunk
-	#calls if you need to build a new chunk
-	if removedChunks.size()==0:
-		chunk=chunk2D.new()
-		chunk.tile_set=world.mapTiles
-		world.chunkHolder.call_deferred('add_child',chunk)
-		
-	#otherwise just uses an already made chunk and sets new data in it
-	else:
-		chunk=loadedChunks[removedChunks[removedChunks.size()-1]]
-		loadedChunks.erase(chunk._pos)
+func generateChunk(chunkPos):
+	
+	var chunk=chunk2D.new()
+	chunk.tile_set=world.mapTiles
+	world.chunkHolder.call_deferred('add_child',chunk)
+	
 	loadedChunks[chunkPos]=chunk
 	chunk._pos=chunkPos
 	chunk.position=chunkPos*world.tileSize*world.chunkSize
@@ -52,16 +46,16 @@ func generateChunk(chunkPos,removedChunks=[]):
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos,false)
 	chunk.originalData=chunkData
 	chunk.fill(chunkData)
-	removedChunks.pop_back()
-	return [removedChunks,chunkData]
+	return chunkData
 
 var computing=false
+var breakNow=false
 #builds the chunks for the map
 func buildChunks():
 	while true:
-		if world.exitGame:break
+		if world.exitGame||breakNow:break
 		genSema.wait()
-		if world.exitGame:break
+		if world.exitGame||breakNow:break
 		computing=true
 		threadedCenter=centerChunk
 		var validSpots=getChunksToRead()
@@ -81,6 +75,7 @@ func buildChunks():
 		
 		#removes chunks outside of range
 		for chunk in removeChunks:
+			
 			loadedChunks[chunk].call_deferred('prepForRemoval')
 			#handles items first
 			if itemsByChunk.has(chunk):
@@ -92,15 +87,12 @@ func buildChunks():
 			(loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk]||
 			itemsByChunk.has(chunk))
 			)
-			
+			loadedChunks.erase(chunk)
 			world.fileManager.closeChunkFile(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
 			world.fileManager.openChunkFile(chunk)
-			var dat=generateChunk(chunk,removeChunks)
-			removeChunks=dat[0]
-			
-			world.dataStore.addChunk(chunk,dat[1])
+			world.dataStore.addChunk(chunk,generateChunk(chunk))
 		
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
@@ -177,7 +169,8 @@ func getCellData(id):
 		"texture":raw.get("texture"),
 		"name":raw.get("resource_name"),
 		"id":id,
-		"actionType":"place"
+		"actionType":"place",
+		"actionRadius":0
 	}
 	cellData.weight=1
 	cellData.quantity=1
