@@ -6,8 +6,11 @@ var sem=Semaphore.new()
 var tickCount:int=0
 func _ready():
 	thread.start(tickThread)
-
-
+signal updateItems()
+var rlX=0
+var rrX=0
+var rtY=0
+var rbY=0
 func tickThread():
 	while true:
 		if world.exitGame:break
@@ -15,6 +18,7 @@ func tickThread():
 		if world.exitGame:break
 		compute()
 		miscActions()
+		updateItemSignal()
 var computing=false
 func compute():
 		
@@ -54,7 +58,15 @@ func miscActions():
 		doCallBack(act[1],act[2])
 		miscStored.remove_at(action)
 	computing=false
-
+	#handles the storing entities outside the chunk
+#	for chunk in world.toStoreChunkEnt:
+#		world.fileManager.openChunkFile(chunk)
+#		var fullData=world.fileManager.getFullChunk(chunk)
+#		if fullData==null:fullData=[world.chunkFiller.buildChunkData(chunk,false),[]]
+#		fullData[1].append_array(world.toStoreChunkEnt[chunk])
+#		world.fileManager.storeFullChunk(chunk,fullData)
+#		world.fileManager.closeChunkFile(chunk)
+#		world.toStoreChunkEnt.erase(chunk)
 
 func doCallBack(callBack,data):
 	match len(data):
@@ -73,3 +85,11 @@ func nextTick():
 
 func loadTicks():
 	$TickTimer.start()
+
+#prevents orphaned item nodes
+func updateItemSignal():
+	rlX=(world.mapGen.centerChunk.x-world.renderDistance)*world.chunkSize*world.tileSize
+	rrX=(world.mapGen.centerChunk.x+world.renderDistance)*world.chunkSize*world.tileSize
+	rtY=(world.mapGen.centerChunk.y-world.renderDistance)*world.chunkSize*world.tileSize
+	rbY=(world.mapGen.centerChunk.y+world.renderDistance)*world.chunkSize*world.tileSize
+	emit_signal.call_deferred("updateItems")

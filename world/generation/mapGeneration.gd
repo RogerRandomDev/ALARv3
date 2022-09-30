@@ -25,13 +25,15 @@ func getChunksToRead():
 			i+=1
 	return validSpots
 
+var unusedChunks=[]
 #builds single chunk
 func generateChunk(chunkPos):
-	
-	var chunk=chunk2D.new()
-	chunk.tile_set=world.mapTiles
-	world.chunkHolder.call_deferred('add_child',chunk)
-	
+	var chunk=unusedChunks.pop_back()
+	if chunk==null:
+		chunk=chunk2D.new()
+		chunk.tile_set=world.mapTiles
+		world.chunkHolder.call_deferred('add_child',chunk)
+	else:chunk.clear()
 	loadedChunks[chunkPos]=chunk
 	chunk._pos=chunkPos
 	chunk.position=chunkPos*world.tileSize*world.chunkSize
@@ -42,10 +44,12 @@ func generateChunk(chunkPos):
 	var chunkData
 	if fileData!=null:
 		chunkData=fileData[0]
-#		chunk.fillEntities(fileData[1])
+		
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos,false)
 	chunk.originalData=chunkData
-	chunk.fill(chunkData)
+	if !GameTick.computing:
+		chunk.fill(chunkData)
+		chunk.fillEntities(fileData[1])
 	return chunkData
 
 var computing=false
@@ -53,6 +57,7 @@ var breakNow=false
 #builds the chunks for the map
 func buildChunks():
 	while true:
+		
 		if world.exitGame||breakNow:break
 		genSema.wait()
 		if world.exitGame||breakNow:break
@@ -76,7 +81,8 @@ func buildChunks():
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			
-			loadedChunks[chunk].call_deferred('prepForRemoval')
+			loadedChunks[chunk].prepForRemoval()
+			unusedChunks.push_back(loadedChunks[chunk])
 			#handles items first
 			if itemsByChunk.has(chunk):
 				world.dataStore.entityData[chunk]=itemsByChunk[chunk][0].duplicate()
@@ -88,6 +94,7 @@ func buildChunks():
 			itemsByChunk.has(chunk))
 			)
 			loadedChunks.erase(chunk)
+			
 			world.fileManager.closeChunkFile(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
@@ -97,6 +104,7 @@ func buildChunks():
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
 		computing=false
+
 
 #does basic thread prep for use
 func _prepThreads():
@@ -155,7 +163,9 @@ func modifyUnloaded(chunkPos,data):
 		var dropItem=getCellData(chunkData[0][cell.x+cell.y*16])
 		dropItem.append(cell)
 		entData.append(dropItem)
+		
 		chunkData[0][cell.x+cell.y*16]=-1
+	
 	
 #	world.fileManager.storeFullChunk(chunkPos,[chunkData,fullData[1]])
 	world.fileManager.storeFullChunk(chunkPos,[chunkData.duplicate(),entData])

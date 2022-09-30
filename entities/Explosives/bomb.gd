@@ -42,7 +42,7 @@ func _ready():
 	#updates throw direction
 	throwDir=body.linear_velocity.normalized()
 	sticky=float(type)/3 >= 1
-
+func _init():pass
 #finishes the explosion once the timer is done
 func finishExplode():
 	time.disconnect("timeout",finishExplode)

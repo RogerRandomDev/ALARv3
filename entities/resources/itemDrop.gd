@@ -24,25 +24,27 @@ func _ready():
 	if !pickable:return
 	add_child(quantityLabel)
 	quantityLabel.theme=world.itemTheme
+#prevent it from being orphaned and taking up memory as a leak
+func _init():GameTick.connect("updateItems",checkInRenderDistance)
 #handles freeing itself
 func prepFree():
 	if world.itemList.has(self):
 		world.itemList.erase(self)
 	toFree=true
+	quantityLabel.queue_free()
 	queue_free()
 
 
 func _physics_process(delta):
 	lifeTime+=delta
-	var variable=world.renderDistance
-	var mult=world.chunkSize*world.tileSize
-	if(position.x>(world.mapGen.centerChunk.x+variable+1)*mult||
-	position.x<(world.mapGen.centerChunk.x-variable)*mult||
-	position.y>(world.mapGen.centerChunk.y+variable+1)*mult||
-	position.y<(world.mapGen.centerChunk.y-variable)*mult||
+	if(position.x>GameTick.rrX||
+	position.x<GameTick.rlX||
+	position.y>GameTick.rbY||
+	position.y<GameTick.rtY||
 	!pickable):return
 	rayCheck(delta)
 	if(nearChecks>8):
+		
 		nearChecks=0
 		checkSameNearBy()
 	else:nearChecks+=1
@@ -86,10 +88,21 @@ func buildItem(itemData):
 #gets the chunk the item is in
 func getChunk():
 	var pos=position
-	var c=world.mapGen.globalToCell(pos)[1]
-	
-	return c
-
+	var ce=world.mapGen.globalToCell(pos)
+	return ce[1]
+#checks if in render distance, if not it stores in the chunk it is in
+func checkInRenderDistance():
+	if !pickable:return
+	var ce=world.mapGen.globalToCell(position)
+	if !(position.x>GameTick.rrX||
+	position.x<GameTick.rlX||
+	position.y>GameTick.rbY||
+	position.y<GameTick.rtY):return
+	var dat=storageFormat()
+	dat.append(ce[0])
+	world.storeEntityToChunk(ce[1],dat)
+	prepFree()
+		
 #checks if inside the given chunk
 func inChunk(chunk):
 	return getChunk()==chunk

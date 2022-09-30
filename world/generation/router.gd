@@ -146,4 +146,10 @@ func checkThreads():
 		mapGen.generationThread.wait_to_finish()
 		mapGen.breakNow=false
 		mapGen._prepThreads()
-		
+var toStoreChunkEnt={}
+
+
+func storeEntityToChunk(c,entData):
+	if !toStoreChunkEnt.has(c):toStoreChunkEnt[c]=[]
+	toStoreChunkEnt[c].append(entData)
+	

@@ -19,10 +19,7 @@ const emptyChunk=[
 var dir=Directory.new()
 
 func _ready():
-	addChunk(Vector2i(0,0))
-	addChunk(Vector2i(1,0))
-	chunkData[Vector2i(0,0)][0][0]=1
-	chunkData[Vector2i(1,0)][0][0]=1
+	pass
 ##
 #CHUNK DATA
 ##
@@ -41,6 +38,7 @@ func removeChunk(chunk,doSave):
 		world.fileManager.storeFullChunk(chunk,[
 			chunkData[chunk].duplicate(),
 			entityData[chunk]])
+	print(entityData[chunk])
 	entityData.erase(chunk)
 	chunkData.erase(chunk)
 func getChunk(chunk):

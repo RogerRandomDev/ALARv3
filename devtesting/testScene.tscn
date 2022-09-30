@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dawdjij04eom"]
+
+[ext_resource type="Script" path="res://devtesting/testScene.gd" id="1_6yqwk"]
+
+[node name="testScene" type="Node2D"]
+script = ExtResource("1_6yqwk")
+
+[node name="Polygon2d" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, 0)
+polygons = [null, null]
+internal_vertex_count = 2
+
+[node name="CollisionPolygon2d" type="CollisionPolygon2D" parent="."]
