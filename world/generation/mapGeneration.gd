@@ -77,7 +77,6 @@ func buildChunks():
 			data.append(globalToCell(item.global_position)[0])
 			itemsByChunk[c][0].append(data)
 			itemsByChunk[c][1].append(item)
-		
 		#removes chunks outside of range
 		for chunk in removeChunks:
 			
@@ -85,7 +84,8 @@ func buildChunks():
 			unusedChunks.push_back(loadedChunks[chunk])
 			#handles items first
 			if itemsByChunk.has(chunk):
-				world.dataStore.entityData[chunk]=itemsByChunk[chunk][0].duplicate()
+				world.dataStore.entityData[chunk]=itemsByChunk[chunk][0]
+				
 				world.removeItems(itemsByChunk[chunk][1])
 			#removes chunk from local, and checks if you have modified it at all
 			#so it only saves modified chunks

@@ -28,9 +28,11 @@ func _ready():
 func _init():GameTick.connect("updateItems",checkInRenderDistance)
 #handles freeing itself
 func prepFree():
+	if is_queued_for_deletion():return
 	if world.itemList.has(self):
 		world.itemList.erase(self)
 	toFree=true
+	
 	quantityLabel.queue_free()
 	queue_free()
 

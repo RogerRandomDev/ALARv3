@@ -83,7 +83,7 @@ func changeCell(cell,id):
 		var cellData=getCustomCellData(cell)
 		if cellData!=null&&!cellData.get_custom_data("replacable"):return false
 		pattern.set_cell(cell,id,atlas,0)
-	
+		call_deferred("set_cell",0,cell,id,atlas,0)
 	changedCell[cell]=id
 	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
 	return true

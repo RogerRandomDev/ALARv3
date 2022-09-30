@@ -16,7 +16,7 @@ func explode(global_pos,explosionRadius,removeTiles=[],showFx=true):
 	if removeTiles==[]:for x in range(-explosionRadius,explosionRadius):for y in range(-explosionRadius,explosionRadius):
 		if(Geometry2D.is_point_in_circle(Vector2(x,y),Vector2.ZERO,explosionRadius)):removeTiles.append(Vector2i(x,y))
 	
-	var center=world.mapGen.globalToCell(global_pos)
+	var _center=world.mapGen.globalToCell(global_pos)
 	var outSide={}
 	for tile in removeTiles:
 		var c=world.mapGen.globalToCell(global_pos+Vector2(tile*world.tileSize))

@@ -68,14 +68,14 @@ func stripCharge():
 	if (sticky&&body.get_contact_count()):throwDir=lastVelocity.normalized()
 	var removeTiles=[]
 	var lineNormal=throwDir
-	var dir=Vector2i(-explosionRadius*int(throwDir.x<0),-explosionRadius*int(throwDir.y<0))
+	var _dir=Vector2i(-explosionRadius*int(throwDir.x<0),-explosionRadius*int(throwDir.y<0))
 	var angle=Vector2.ZERO.angle_to_point(lineNormal)
 	var cPos=Vector2(0,0)
 	
 	lineNormal=Vector2(1,0).rotated(angle).normalized()
 	var addDir=Vector2(0,1).rotated(angle)
 	var lay1=ceil(abs(addDir))*sign(addDir)
-	var lay0=floor(abs(addDir))*sign(addDir)
+	var _lay0=floor(abs(addDir))*sign(addDir)
 	lineNormal=lineNormal.normalized()
 	#changes explosion range to be the desired value
 	var explosionMult=3/explosionRadius
@@ -106,15 +106,15 @@ func clusterBomb():
 	for bomb in launchNum:
 		
 		var angle=Vector2(sin(PI*2*float(bomb)/float(launchNum)),cos(PI*2*float(bomb)/float(launchNum)))*512
-		var b=GameTick.storeAction(self,world.miscFunctions.fireBomb,[global_position,global_position+angle,6])
+		GameTick.storeAction(self,world.miscFunctions.fireBomb,[global_position,global_position+angle,6])
 		
 
 
 
 #player knockback force
-func knockbackPlayer(dirMult=Vector2.ONE,rangeMult:=1.0,offset:Vector2=Vector2.ZERO):
+func knockbackPlayer(dirMult=Vector2.ONE,rangeMult:=1.0,_offset:Vector2=Vector2.ZERO):
 	var rad=abs(explosionRadius)*rangeMult
-	var knockBack=world.player.global_position-global_position-offset
+	var knockBack=world.player.global_position-global_position-_offset
 	if knockBack.length_squared()<(rad*world.tileSize)**2:
 		var dir=(1-max(knockBack.length()/(rad*world.tileSize),0.25))*knockBack.normalized()
 		world.player.velocity+=dir*rad*world.explosionForce*dirMult

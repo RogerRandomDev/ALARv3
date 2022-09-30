@@ -11,6 +11,7 @@ var rlX=0
 var rrX=0
 var rtY=0
 var rbY=0
+	
 func tickThread():
 	while true:
 		if world.exitGame:break
@@ -89,7 +90,7 @@ func loadTicks():
 #prevents orphaned item nodes
 func updateItemSignal():
 	rlX=(world.mapGen.centerChunk.x-world.renderDistance)*world.chunkSize*world.tileSize
-	rrX=(world.mapGen.centerChunk.x+world.renderDistance)*world.chunkSize*world.tileSize
+	rrX=(world.mapGen.centerChunk.x+world.renderDistance+1)*world.chunkSize*world.tileSize
 	rtY=(world.mapGen.centerChunk.y-world.renderDistance)*world.chunkSize*world.tileSize
-	rbY=(world.mapGen.centerChunk.y+world.renderDistance)*world.chunkSize*world.tileSize
+	rbY=(world.mapGen.centerChunk.y+world.renderDistance+1)*world.chunkSize*world.tileSize
 	emit_signal.call_deferred("updateItems")

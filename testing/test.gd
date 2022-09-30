@@ -7,3 +7,4 @@ func _ready():
 	world.chunkHolder=self
 	
 	world.itemActions.mineTex=$Sprite2d
+	

@@ -8,7 +8,7 @@ func place(id):
 	var c=getChunkAndCell(mPos)
 	if world.changeCell(c[0],c[1],id.id):
 		world.inventory.reduceSlotBy(id.slotNum,1)
-func mine(id):
+func mine(_id):
 	
 	var mPos=root.get_global_mouse_position()
 	
