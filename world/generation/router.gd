@@ -98,7 +98,7 @@ func changeCell(chunk,cell,id):
 
 #handles spawning in the item drop when you break something
 func dropItem(globalCell,itemData,place=true):
-	if itemData.name=="ERROR":return
+	if itemData.name=="ERROR_NAME":return
 	var item=itemDrop2D.new()
 	item.buildItem(itemData)
 	if place:

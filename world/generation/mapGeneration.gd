@@ -44,12 +44,14 @@ func generateChunk(chunkPos):
 	var chunkData
 	if fileData!=null:
 		chunkData=fileData[0]
-		
+	
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos,false)
 	chunk.originalData=chunkData
+	world.dataStore.chunkData[chunk]=chunkData
+	
 	if !GameTick.computing:
 		chunk.fill(chunkData)
-		chunk.fillEntities(fileData[1])
+		chunk.call_deferred('fillEntities',fileData[1])
 	return chunkData
 
 var computing=false
@@ -185,3 +187,4 @@ func getCellData(id):
 	cellData.weight=1
 	cellData.quantity=1
 	return world.dropItem(Vector2(0,0),cellData,false).storageFormat()
+
