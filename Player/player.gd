@@ -10,6 +10,7 @@ var decelSpeed=20
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 
 func _ready():
+	world.playerInventory.visible=true
 	canMove=true
 	world.player=self
 	world.itemActions.root=self

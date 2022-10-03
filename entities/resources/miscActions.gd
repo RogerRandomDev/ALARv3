@@ -4,7 +4,7 @@ func fireBomb(from,to,radius):
 	var direction=from.angle_to_point(to)
 	var bomb=itemBomb2D.new()
 	bomb.explosionRadius=radius
-	bomb.global_position=from
+	bomb.position=from
 	bomb.body.linear_velocity=Vector2(min((from-to).length_squared(),384),0).rotated(direction)
 	world.root.call_deferred('add_child',bomb)
 	return bomb

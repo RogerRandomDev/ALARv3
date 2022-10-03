@@ -28,9 +28,7 @@ func fill(contents,randomTick=false):
 	set_pattern.call_deferred(0,atlas,pattern)
 	var used =get_used_cells(0).filter(func(cell):return !pattern.has_cell(cell))
 	for cell in used:erase_cell(0,cell)
-	
-	
-	
+
 
 #fills in entities for given chunk
 func fillEntities(entities):
@@ -38,14 +36,14 @@ func fillEntities(entities):
 	var entList=[]
 	for entity in entities:
 		if entity[2]=="ERROR_NAME":continue
-		var ent = itemDrop2D.new()
+		var ent = world.getItem()
 		
 		ent.fromStorageFormat(entity)
 		ent.position=(_pos*world.chunkSize+entity[len(entity)-1])*world.tileSize+Vector2i(
 			4,6
 		)
 		entList.append(ent)
-	finishFill(entList)
+	finishFill.call_deferred(entList)
 func finishFill(entList):
 	
 	for ent in entList:world.chunkHolder.add_child(ent)

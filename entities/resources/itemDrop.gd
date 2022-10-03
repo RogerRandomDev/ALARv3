@@ -18,24 +18,37 @@ var lifeTime:float=0.0
 var quantityLabel=Label.new()
 
 var toFree=false
-func _ready():
+#prevent it from being orphaned and taking up memory as a leak
+func _init():
 	z_index=100
-	if !world.itemList.has(self):world.itemList.append(self)
 	if !pickable:return
 	add_child(quantityLabel)
 	quantityLabel.theme=world.itemTheme
-#prevent it from being orphaned and taking up memory as a leak
-func _init():GameTick.connect("updateItems",checkInRenderDistance)
+	GameTick.connect("updateItems",checkInRenderDistance)
 #handles freeing itself
 func prepFree():
-	if is_queued_for_deletion():return
+	
+	if is_queued_for_deletion()||toFree:return
+	toFree=true
+	if get_parent()!=null:get_parent().remove_child(self)
 	if world.itemList.has(self):
 		world.itemList.erase(self)
-	toFree=true
+	if world.itemDropStore.has(self):
+		world.itemDropStore.erase(self)
+		quantityLabel.queue_free()
+		queue_free()
+	else:if world.itemDropStore.size()<2499:
+		world.itemDropStore.push_back(self)
+	else:
+		quantityLabel.queue_free()
+		queue_free()
 	
-	quantityLabel.queue_free()
-	queue_free()
-
+	toggleActive(false)
+#toggle item activity
+func toggleActive(isActive):
+	set_physics_process_internal(isActive)
+	set_physics_process(isActive)
+	visible=isActive
 
 func _physics_process(delta):
 	lifeTime+=delta
@@ -53,6 +66,7 @@ func _physics_process(delta):
 	quantityLabel.text=str(quantity)
 #handles the falling and moving up of items to stay on the floor
 func rayCheck(delta):
+	if get_parent()==null:return
 	ray.from=position-Vector2(0,8.1)
 	ray.to=position+Vector2(0,3)
 	var hit:=get_world_2d().direct_space_state.intersect_ray(ray)
@@ -70,15 +84,19 @@ func rayCheck(delta):
 			if newStack>0:
 				quantity=newStack
 				quantityLabel.text=str(newStack)
-			else:prepFree()
+			else:prepFree.call_deferred()
 		else:
 			velocity=Vector2.ZERO
-			global_position += (hit.position-position)*delta*15
+			position += (hit.position-position)*delta*15
 	position+=velocity*delta
 	
 
 func buildItem(itemData):
-	scale*=0.5
+	toggleActive(true)
+	toFree=false
+	if !world.itemList.has(self):world.itemList.append(self)
+	
+	scale=Vector2(0.5,0.5)
 	texture=itemData.texture
 	quantity=itemData.quantity
 	itemWeight=itemData.weight
@@ -86,7 +104,7 @@ func buildItem(itemData):
 	id=itemData.id
 	actionType=itemData.actionType
 	actionRadius=itemData.actionRadius
-
+	toggleActive(true)
 #gets the chunk the item is in
 func getChunk():
 	var pos=position
@@ -94,8 +112,8 @@ func getChunk():
 	return ce[1]
 #checks if in render distance, if not it stores in the chunk it is in
 func checkInRenderDistance():
-	if !pickable:return
-	var ce=world.mapGen.globalToCell(position)
+	if !pickable||toFree:return
+	var ce=world.mapGen.globalToCell(position-Vector2(0,7))
 	if !(position.x>GameTick.rrX||
 	position.x<GameTick.rlX||
 	position.y>GameTick.rbY||
@@ -103,7 +121,7 @@ func checkInRenderDistance():
 	var dat=storageFormat()
 	dat.append(ce[0])
 	world.storeEntityToChunk(ce[1],dat)
-	prepFree()
+	prepFree.call_deferred()
 		
 #checks if inside the given chunk
 func inChunk(chunk):
@@ -114,9 +132,9 @@ func checkSameNearBy():
 	if quantity>=world.maxItemStack||toFree:return
 	var itemCountMult=int(len(world.itemList)/60)
 	for item in world.itemList:
-		if toFree:break
+		if toFree||free:break
 		if(
-			item==null||item.toFree||item==self||
+			item==null||item.toFree||item==self||item.free||
 			item.itemName!=itemName||
 			#increases the radius them ore items there are
 			#does this to reduce lag from large item counts
@@ -130,8 +148,10 @@ func checkSameNearBy():
 			return
 			
 		quantity+=item.quantity
-		item.prepFree()
-
+		item.free=true
+		item.prepFree.call_deferred()
+		
+var free=false
 
 #formats the item to data to get stored
 func storageFormat():

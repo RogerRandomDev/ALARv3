@@ -18,14 +18,16 @@ layout_direction = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -23.5
-offset_right = 23.5
-offset_bottom = 57.0
+offset_left = -97.0
+offset_top = 48.0
+offset_right = 129.0
+offset_bottom = 498.0
 grow_horizontal = 2
 
 [node name="Label" type="Label" parent="VBoxContainer"]
-offset_right = 194.0
-offset_bottom = 82.0
+offset_right = 226.0
+offset_bottom = 321.0
+size_flags_vertical = 3
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/shadow_outline_size = 12
@@ -34,29 +36,31 @@ text = "ALAR"
 horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="VBoxContainer"]
-offset_top = 86.0
-offset_right = 194.0
-offset_bottom = 125.0
+offset_top = 325.0
+offset_right = 226.0
+offset_bottom = 364.0
 text = "Launch"
 
 [node name="Button2" type="Button" parent="VBoxContainer"]
-offset_top = 129.0
-offset_right = 194.0
-offset_bottom = 168.0
+offset_top = 368.0
+offset_right = 226.0
+offset_bottom = 407.0
 text = "Settings"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-offset_top = 172.0
-offset_right = 194.0
-offset_bottom = 211.0
+offset_top = 411.0
+offset_right = 226.0
+offset_bottom = 450.0
 
 [node name="Button3" type="Button" parent="VBoxContainer/HBoxContainer"]
 offset_right = 122.0
 offset_bottom = 39.0
+size_flags_horizontal = 3
 text = "Credits"
 
 [node name="Button4" type="Button" parent="VBoxContainer/HBoxContainer"]
 offset_left = 126.0
-offset_right = 194.0
+offset_right = 226.0
 offset_bottom = 39.0
+size_flags_horizontal = 3
 text = "Quit"

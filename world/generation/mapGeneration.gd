@@ -9,7 +9,7 @@ var centerChunk=Vector2i(100000,1000000)
 var threadedCenter=Vector2i.ZERO
 
 var globalChunkData={}
-
+signal chunksLoaded
 
 
 
@@ -41,9 +41,9 @@ func generateChunk(chunkPos):
 	#uses already made data if it is there
 	#otherwise it creates the new chunk
 	var fileData=world.fileManager.getFullChunk(chunkPos)
-	var chunkData
-	if fileData!=null:
-		chunkData=fileData[0]
+	
+	if fileData==null:fileData=[null,[]]
+	var chunkData=fileData[0]
 	
 	if chunkData==null:chunkData=world.chunkFiller.buildChunkData(chunkPos,false)
 	chunk.originalData=chunkData
@@ -51,7 +51,7 @@ func generateChunk(chunkPos):
 	
 	if !GameTick.computing:
 		chunk.fill(chunkData)
-		chunk.call_deferred('fillEntities',fileData[1])
+	chunk.fillEntities.call_deferred(fileData[1])
 	return chunkData
 
 var computing=false
@@ -76,7 +76,7 @@ func buildChunks():
 			var c=item.getChunk()
 			if !itemsByChunk.has(c):continue
 			var data=item.storageFormat()
-			data.append(globalToCell(item.global_position)[0])
+			data.append(globalToCell(item.position)[0])
 			itemsByChunk[c][0].append(data)
 			itemsByChunk[c][1].append(item)
 		#removes chunks outside of range
@@ -106,6 +106,7 @@ func buildChunks():
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
 		computing=false
+		emit_signal("chunksLoaded")
 
 
 #does basic thread prep for use

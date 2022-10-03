@@ -28,7 +28,7 @@ func _ready():
 	body.contact_monitor=true
 	body.max_contacts_reported=1
 	world.reparent(self,body)
-	body.global_position=global_position
+	body.position=position
 	position=Vector2.ZERO
 	pickable=false
 	body.gravity_scale=0.75
@@ -58,8 +58,8 @@ func finishExplode():
 #the default explosion method
 func defaultExplosion():
 	var rad=abs(explosionRadius)
-	if explosionRadius>0:GameTick.storeAction(self,world.miscFunctions.explode,[global_position,explosionRadius])
-	else:world.miscFunctions.triggerExplosionFx(global_position,rad)
+	if explosionRadius>0:GameTick.storeAction(self,world.miscFunctions.explode,[body.position,explosionRadius])
+	else:world.miscFunctions.triggerExplosionFx(body.position,rad)
 	knockbackPlayer()
 	
 #Stripcharge goes only in a straight line, based on where you threw it,
@@ -94,9 +94,9 @@ func stripCharge():
 		#makes a long line of explosions for you
 		#it looks nice
 		if int(cPos.length())%3==0:
-			world.miscFunctions.triggerExplosionFx(global_position+cPos*world.tileSize,3)
+			world.miscFunctions.triggerExplosionFx(position+cPos*world.tileSize,3)
 			knockbackPlayer(Vector2(1,0),explosionMult,cPos*world.tileSize)
-	GameTick.storeAction(self,world.miscFunctions.explode,[global_position,explosionRadius,removeTiles,false])
+	GameTick.storeAction(self,world.miscFunctions.explode,[body.position,explosionRadius,removeTiles,false])
 	
 
 #clusterbomb launches normal bombs in the area around it
@@ -106,7 +106,7 @@ func clusterBomb():
 	for bomb in launchNum:
 		
 		var angle=Vector2(sin(PI*2*float(bomb)/float(launchNum)),cos(PI*2*float(bomb)/float(launchNum)))*512
-		GameTick.storeAction(self,world.miscFunctions.fireBomb,[global_position,global_position+angle,6])
+		GameTick.storeAction(self,world.miscFunctions.fireBomb,[body.position,body.position+angle,6])
 		
 
 
@@ -114,7 +114,7 @@ func clusterBomb():
 #player knockback force
 func knockbackPlayer(dirMult=Vector2.ONE,rangeMult:=1.0,_offset:Vector2=Vector2.ZERO):
 	var rad=abs(explosionRadius)*rangeMult
-	var knockBack=world.player.global_position-global_position-_offset
+	var knockBack=world.player.global_position-body.position-_offset
 	if knockBack.length_squared()<(rad*world.tileSize)**2:
 		var dir=(1-max(knockBack.length()/(rad*world.tileSize),0.25))*knockBack.normalized()
 		world.player.velocity+=dir*rad*world.explosionForce*dirMult

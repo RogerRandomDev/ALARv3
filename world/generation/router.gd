@@ -35,6 +35,10 @@ var itemPickupBuffer=0.75;
 var explosionForce:int=200
 
 var itemList=[]
+#stores item objects to reduce lag to a certain extent
+var itemDropStore=[]
+
+
 
 const oneUp=Vector2i(0,1)
 
@@ -48,12 +52,13 @@ const plantsByFloor={
 var defaultGravity=Vector2(0,980)
 
 var maxItemStack:int=99
-
+#default number of item objects to preload
+var defaultItemStoreCount:int=2500
 func _ready():
 	fillBiomeList()
 	fileManager._ready()
 	mapGen._ready()
-	worldShadows.call_deferred('_ready')
+#	worldShadows.call_deferred('_ready')
 	shaderComp._ready()
 	inventory._ready()
 	add_child(mineTimer)
@@ -64,6 +69,9 @@ func _ready():
 	add_child(timer)
 	timer.start()
 	timer.connect("timeout",checkThreads)
+	for item in defaultItemStoreCount:
+		
+		itemDropStore.append(itemDrop2D.new())
 
 
 #loads all the biomes into an array
@@ -79,7 +87,7 @@ func cellToChunk(cellPos):
 #removes items from scene that are in the array
 func removeItems(items):
 	for item in items:
-		item.prepFree()
+		item.prepFree.call_deferred()
 
 
 func _notification(what):
@@ -99,10 +107,10 @@ func changeCell(chunk,cell,id):
 #handles spawning in the item drop when you break something
 func dropItem(globalCell,itemData,place=true):
 	if itemData.name=="ERROR_NAME":return
-	var item=itemDrop2D.new()
+	var item=getItem()
 	item.buildItem(itemData)
 	if place:
-		item.global_position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
+		item.position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
 		root.add_child.call_deferred(item)
 	return item
 
@@ -152,4 +160,11 @@ var toStoreChunkEnt={}
 func storeEntityToChunk(c,entData):
 	if !toStoreChunkEnt.has(c):toStoreChunkEnt[c]=[]
 	toStoreChunkEnt[c].append(entData)
+
+
+#gets item from item store
+func getItem():
+	var item=itemDropStore.pop_back()
+	if item==null:return itemDrop2D.new()
+	return item
 	
