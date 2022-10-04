@@ -20,11 +20,11 @@ var quantityLabel=Label.new()
 var toFree=false
 #prevent it from being orphaned and taking up memory as a leak
 func _init():
+	GameTick.connect("updateItems",checkInRenderDistance)
 	z_index=100
 	if !pickable:return
 	add_child(quantityLabel)
 	quantityLabel.theme=world.itemTheme
-	GameTick.connect("updateItems",checkInRenderDistance)
 #handles freeing itself
 func prepFree():
 	
@@ -80,7 +80,7 @@ func rayCheck(delta):
 				"name":itemName,
 				"id":id,
 				"actionType":actionType,
-				"actionRadius":actionRadius})
+				"actionRange":actionRadius})
 			if newStack>0:
 				quantity=newStack
 				quantityLabel.text=str(newStack)
@@ -95,15 +95,16 @@ func buildItem(itemData):
 	toggleActive(true)
 	toFree=false
 	if !world.itemList.has(self):world.itemList.append(self)
-	
+	if !itemData.has("texture"):
+		var texPath = ("res://tools/%s.png" if itemData.actionType!="place" else "res://world/Tiles/%s.png")
+		itemData.texture=load(texPath%itemData.name)
 	scale=Vector2(0.5,0.5)
 	texture=itemData.texture
 	quantity=itemData.quantity
-	itemWeight=itemData.weight
 	itemName=itemData.name
 	id=itemData.id
 	actionType=itemData.actionType
-	actionRadius=itemData.actionRadius
+	if itemData.actionRange!=null:actionRadius=itemData.actionRange
 	toggleActive(true)
 #gets the chunk the item is in
 func getChunk():
@@ -156,19 +157,19 @@ var free=false
 #formats the item to data to get stored
 func storageFormat():
 	
-	return [
-		quantity,
-		actionRadius,
-		itemName,
-		actionType,
-		id
-	]
+	return world.itemManager.compressToStorage({
+		"quantity":quantity,
+		"actionRange":actionRadius,
+		"name":itemName,
+		"actionType":actionType,
+		"id":id
+	})
 #rebuilds from storage format
 func fromStorageFormat(data):
 	var texPath = ("res://tools/%s.png" if data[3]!="place" else "res://world/Tiles/%s.png")
 	buildItem({
 		"quantity":data[0],
-		"actionRadius":data[1],
+		"actionRange":data[1],
 		"name":data[2],
 		"weight":1,
 		"actionType":data[3],

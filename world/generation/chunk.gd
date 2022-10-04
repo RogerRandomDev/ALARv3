@@ -37,7 +37,7 @@ func fillEntities(entities):
 	for entity in entities:
 		if entity[2]=="ERROR_NAME":continue
 		var ent = world.getItem()
-		
+		if(ent.get_parent()!=null):ent.get_parent().remove_child(ent)
 		ent.fromStorageFormat(entity)
 		ent.position=(_pos*world.chunkSize+entity[len(entity)-1])*world.tileSize+Vector2i(
 			4,6
@@ -70,7 +70,7 @@ func getCellData(cell):
 		"name":raw.get("resource_name"),
 		"id":id,
 		"actionType":"place",
-		"actionRadius":0
+		"actionRange":0
 	}
 
 
@@ -115,7 +115,6 @@ func mineCell(cell):
 	var cellData=getCellData(cell)
 	if cellData.name=="ERROR":return false
 	else:
-		cellData.weight=1
 		cellData.quantity=1
 		world.dropItem(cell+_pos*world.chunkSize,cellData)
 	return true

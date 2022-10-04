@@ -1,0 +1,9 @@
+name,id,actionRange,actionType,SmeltTo,BreakTo
+Grass,0,,,,Dirt
+Dirt,1,,,,
+Stone,2,,,,
+Sand,3,,,Glass,
+SandStone,4,,,,
+Log,5,,,,
+Leaves,6,,,,
+Cactus,12,,,,

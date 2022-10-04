@@ -17,7 +17,7 @@ var itemActions=load("res://Player/itemActions.gd").new()
 
 var inventory=load("res://Inventory/inventory.gd").new()
 var playerInventory=load("res://Inventory/inventoryMenu.tscn").instantiate()
-
+var itemManager=load("res://world/generation/itemManager.gd").new()
 
 var saveName="testing"
 
@@ -55,6 +55,7 @@ var maxItemStack:int=99
 #default number of item objects to preload
 var defaultItemStoreCount:int=2500
 func _ready():
+	itemManager._ready()
 	fillBiomeList()
 	fileManager._ready()
 	mapGen._ready()
@@ -106,9 +107,15 @@ func changeCell(chunk,cell,id):
 
 #handles spawning in the item drop when you break something
 func dropItem(globalCell,itemData,place=true):
-	if itemData.name=="ERROR_NAME":return
+	if itemData.name=="ERROR_NAME"||itemData.name=="NONE":return
 	var item=getItem()
+	var drop=world.itemManager.getDrop(itemData.name)
+	var quant=itemData.quantity
+	
+	itemData=world.itemManager.getItemData(drop)
+	itemData.quantity=quant
 	item.buildItem(itemData)
+	
 	if place:
 		item.position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
 		root.add_child.call_deferred(item)
