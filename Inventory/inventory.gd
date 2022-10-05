@@ -10,7 +10,7 @@ var emptySlotb={
 			"quantity":0,
 			"id":-1,
 			"actionType":"mine",
-			"actionRadius":1,
+			"actionRange":1,
 			"slotNum":0}
 
 func _ready():
@@ -23,14 +23,15 @@ func _ready():
 			"quantity":400,
 			"id":-1,
 			"actionType":"throw",
-			"actionRadius":12})
+			"actionRange":12})
 	call_deferred('storeItem',{
 			"name":"Bomb",
 			"quantity":100,
 			"id":1,
 			"actionType":"throw",
-			"actionRadius":6})
+			"actionRange":6})
 func storeItem(item):
+
 	var count = item.quantity
 	var slots=inventoryData.filter(
 		func(slot):return (slot.name==item.name)&&slot.quantity<world.maxItemStack
@@ -38,10 +39,12 @@ func storeItem(item):
 			inventoryData.filter(func(slot):return slot.name==null)
 		)
 	for slot in slots:
+		
 		var combined=count+slot.quantity
 		if(slot.name)==null:
 			inventoryData[slot.slotNum]=item
 			inventoryData[slot.slotNum].slotNum=slot.slotNum
+			
 			emit_signal("updateSlot",slot.slotNum)
 			return 0
 		elif(combined>world.maxItemStack):
@@ -52,6 +55,7 @@ func storeItem(item):
 			inventoryData[slot.slotNum].quantity+=count
 			emit_signal("updateSlot",slot.slotNum)
 			return 0
+	
 	return count
 #removes given number from the slot
 func reduceSlotBy(slot,count):

@@ -6,6 +6,7 @@ var sem=Semaphore.new()
 var tickCount:int=0
 var threadRunning=false
 func _ready():
+
 	world.mapGen.connect("chunksLoaded",func():
 		if(threadRunning):return
 		threadRunning=true
@@ -96,4 +97,4 @@ func updateItemSignal():
 	rrX=(world.mapGen.centerChunk.x+world.renderDistance+1)*world.chunkSize*world.tileSize+16
 	rtY=(world.mapGen.centerChunk.y-world.renderDistance)*world.chunkSize*world.tileSize-16
 	rbY=(world.mapGen.centerChunk.y+world.renderDistance+1)*world.chunkSize*world.tileSize+16
-	emit_signal("updateItems")
+	emit_signal.call_deferred("updateItems")

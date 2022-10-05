@@ -43,7 +43,7 @@ func fillEntities(entities):
 			4,6
 		)
 		entList.append(ent)
-	finishFill.call_deferred(entList)
+	finishFill(entList)
 func finishFill(entList):
 	
 	for ent in entList:world.chunkHolder.add_child(ent)
@@ -75,19 +75,22 @@ func getCellData(cell):
 
 
 #changes current cell
-func changeCell(cell,id):
+func changeCell(cell,id,dropItem=true):
 	if _pos.y>40:return false
+	var cellData=null
 	if id<0:
-		if !mineCell(cell):return false
+		if mineCell(cell,dropItem)==null:return false
+		cellData=getCellData(cell)
 		pattern.remove_cell(cell,false)
 	else:
-		var cellData=getCustomCellData(cell)
-		if cellData!=null&&!cellData.get_custom_data("replacable"):return false
+		var cellDat=getCustomCellData(cell)
+		if cellDat!=null&&!cellDat.get_custom_data("replacable"):return false
 		pattern.set_cell(cell,id,atlas,0)
 		call_deferred("set_cell",0,cell,id,atlas,0)
+		cellData = true
 	changedCell[cell]=id
 	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
-	return true
+	return cellData
 #checks if can explode given cell
 func canExplode(cell):
 	if _pos.y>40:return false
@@ -111,12 +114,14 @@ func attemptFillCell(cell,ignoreFull=false):
 	return true
 
 #handles mining a cell
-func mineCell(cell):
+func mineCell(cell,dropItem=true):
 	var cellData=getCellData(cell)
 	if cellData.name=="ERROR":return false
 	else:
+		cellData=world.itemManager.getItemData(cellData.name)
 		cellData.quantity=1
-		world.dropItem(cell+_pos*world.chunkSize,cellData)
+		if dropItem:world.dropItem(cell+_pos*world.chunkSize,cellData)
+		
 	return true
 
 #removes given cells

@@ -106,7 +106,7 @@ func buildChunks():
 		#loads the shadows
 #		world.worldShadows.call_deferred("loadShadows",loadedChunks.duplicate(),centerChunk)
 		computing=false
-		emit_signal("chunksLoaded")
+		emit_signal.call_deferred("chunksLoaded")
 
 
 #does basic thread prep for use

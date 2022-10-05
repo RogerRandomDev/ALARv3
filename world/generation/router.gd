@@ -55,10 +55,11 @@ var maxItemStack:int=99
 #default number of item objects to preload
 var defaultItemStoreCount:int=2500
 func _ready():
+
 	itemManager._ready()
 	fillBiomeList()
 	fileManager._ready()
-	mapGen._ready()
+	mapGen.call_deferred('_ready')
 #	worldShadows.call_deferred('_ready')
 	shaderComp._ready()
 	inventory._ready()
@@ -71,8 +72,11 @@ func _ready():
 	timer.start()
 	timer.connect("timeout",checkThreads)
 	for item in defaultItemStoreCount:
-		
-		itemDropStore.append(itemDrop2D.new())
+		var drop=itemDrop2D.new()
+		#why does this crash me
+		GameTick.connect("updateItems",drop.checkInRenderDistance)
+		itemDropStore.append(drop)
+		await get_tree().process_frame
 
 
 #loads all the biomes into an array
@@ -106,19 +110,19 @@ func changeCell(chunk,cell,id):
 	return mapGen.loadedChunks[chunk].changeCell(cell,id)
 
 #handles spawning in the item drop when you break something
-func dropItem(globalCell,itemData,place=true):
+func dropItem(globalCell,itemData,place=true,dropping=true):
 	if itemData.name=="ERROR_NAME"||itemData.name=="NONE":return
 	var item=getItem()
-	var drop=world.itemManager.getDrop(itemData.name)
-	var quant=itemData.quantity
-	
-	itemData=world.itemManager.getItemData(drop)
-	itemData.quantity=quant
+	if dropping:
+		var drop=world.itemManager.getDrop(itemData.name)
+		var quant=itemData.quantity
+		itemData=world.itemManager.getItemData(drop)
+		itemData.quantity=quant
 	item.buildItem(itemData)
 	
 	if place:
 		item.position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
-		root.add_child.call_deferred(item)
+		root.add_child(item)
 	return item
 
 #reparents node to new one
@@ -144,8 +148,21 @@ func mineCell(c):
 func progressMine():
 	itemActions.mineTex.visible=false
 	mineTimer.stop()
-	mapGen.loadedChunks[curMining[0]].changeCell(curMining[1],-1)
-
+	var minedItem=mapGen.loadedChunks[curMining[0]].changeCell(curMining[1],-1,false)
+	minedItem=itemManager.getDrop(minedItem.name)
+	#if the used tool smelts, then it will auto-smelt the drop
+	
+	if (
+		inventory.get_active().id==1&&
+		itemManager.canSmelt(minedItem)
+		):
+			minedItem=itemManager.getItemData(
+			itemManager.getItemData(minedItem).SmeltTo)
+	
+	else:minedItem=itemManager.getItemData(minedItem)
+	minedItem.quantity=1
+	if minedItem.name=="NONE":return
+	dropItem(curMining[1]+curMining[0]*world.chunkSize,minedItem,true,false)
 
 #finds texture for given item
 func findItemTexture(itemData):
@@ -172,6 +189,9 @@ func storeEntityToChunk(c,entData):
 #gets item from item store
 func getItem():
 	var item=itemDropStore.pop_back()
-	if item==null:return itemDrop2D.new()
+	if item==null:
+		var out=itemDrop2D.new();
+		GameTick.connect("updateItems",out.checkInRenderDistance)
+		return out
 	return item
 	

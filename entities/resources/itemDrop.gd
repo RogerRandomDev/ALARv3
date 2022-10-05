@@ -20,7 +20,7 @@ var quantityLabel=Label.new()
 var toFree=false
 #prevent it from being orphaned and taking up memory as a leak
 func _init():
-	GameTick.connect("updateItems",checkInRenderDistance)
+	
 	z_index=100
 	if !pickable:return
 	add_child(quantityLabel)
@@ -94,6 +94,7 @@ func rayCheck(delta):
 func buildItem(itemData):
 	toggleActive(true)
 	toFree=false
+	free=false
 	if !world.itemList.has(self):world.itemList.append(self)
 	if !itemData.has("texture"):
 		var texPath = ("res://tools/%s.png" if itemData.actionType!="place" else "res://world/Tiles/%s.png")
@@ -113,7 +114,7 @@ func getChunk():
 	return ce[1]
 #checks if in render distance, if not it stores in the chunk it is in
 func checkInRenderDistance():
-	if !pickable||toFree:return
+	if !visible||!pickable||toFree:return
 	var ce=world.mapGen.globalToCell(position-Vector2(0,7))
 	if !(position.x>GameTick.rrX||
 	position.x<GameTick.rlX||
@@ -131,15 +132,14 @@ func inChunk(chunk):
 #stacks same items together to their stack limit
 func checkSameNearBy():
 	if quantity>=world.maxItemStack||toFree:return
-	var itemCountMult=int(len(world.itemList)/60)
 	for item in world.itemList:
-		if toFree||free:break
+		if toFree:break
 		if(
 			item==null||item.toFree||item==self||item.free||
 			item.itemName!=itemName||
 			#increases the radius them ore items there are
 			#does this to reduce lag from large item counts
-			(item.position-position).length_squared()>(65*itemCountMult)||
+			(item.position-position).length_squared()>(65)||
 			item.quantity>=world.maxItemStack):continue
 		
 		var itemQuantity=item.quantity+quantity

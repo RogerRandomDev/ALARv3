@@ -8,8 +8,7 @@ func place(id):
 	var c=getChunkAndCell(mPos)
 	if world.changeCell(c[0],c[1],id.id):
 		world.inventory.reduceSlotBy(id.slotNum,1)
-func mine(_id):
-	
+func mine(id):
 	var mPos=root.get_global_mouse_position()
 	
 	var c=getChunkAndCell(mPos)
@@ -22,7 +21,7 @@ func throw(id):
 	if !Input.is_action_just_pressed("m1"):return
 	var mPos=root.get_global_mouse_position()
 	var bomb=world.miscFunctions.fireBomb(
-		root.global_position,mPos,id.actionRadius)
+		root.global_position,mPos,id.actionRange)
 	bomb.bombType=id.name
 	bomb.id=id.id
 	world.inventory.reduceSlotBy(id.slotNum,1)

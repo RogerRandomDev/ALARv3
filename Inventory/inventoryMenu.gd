@@ -18,6 +18,7 @@ func buildMenu():
 	var holder=$ItemList
 	for item in world.inventory.inventorySize:
 		var slot=TextureRect.new()
+		slot.self_modulate=Color(0.75,0.75,0.75,1.0)
 		#slot update actions
 		connect("toggleVisible",func(c):slot.visible=c>item)
 		connect("toggleActive",func(c):

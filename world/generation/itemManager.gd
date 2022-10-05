@@ -1,6 +1,6 @@
 extends Node
 #none is for empty objects
-var itemData={"NONE":{}}
+var itemData={"NONE":{"name":"NONE"}}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	buildCSV()
@@ -24,12 +24,13 @@ func buildCSV():
 			keys[3]:line[3],
 			keys[4]:line[4],
 			keys[5]:line[5]
+			
 		}
 func compressToStorage(itemData):
 	return [
 		itemData.quantity,
 		itemData.actionRange,
-		itemData.Name,
+		itemData.name,
 		itemData.actionType,
 		itemData.id
 	]
@@ -37,10 +38,10 @@ func compressToStorage(itemData):
 
 
 func canSmelt(itemName):
-	return itemData[itemName].SmeltTo!=""
+	return itemName!="NONE"&&itemData[itemName].SmeltTo!=""
 func getDrop(itemName):
 	if(itemData[itemName].BreakTo==""):return itemName
 	return itemData[itemName].BreakTo
 
 func getItemData(itemName):
-	return itemData[itemName]
+	return itemData[itemName].duplicate()
