@@ -2,6 +2,3 @@ res://testing/test.tscn
 res://world/resources/mapTiles.tres
 res://entities/Explosives/explosionEffect/explosionPArticle.tres
 res://world/resources/shadowMat.tres
-res://world/generation/router.gd
-res://world/generation/mapGeneration.gd
-res://world/generation/itemManager.gd
