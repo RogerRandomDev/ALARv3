@@ -43,9 +43,8 @@ func fillEntities(entities):
 			4,6
 		)
 		entList.append(ent)
-	finishFill(entList)
+#	finishFill(entList)
 func finishFill(entList):
-	
 	for ent in entList:world.chunkHolder.add_child(ent)
 
 #handles the freeing of the chunk

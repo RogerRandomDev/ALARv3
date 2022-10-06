@@ -30,14 +30,11 @@ func prepFree():
 	
 	if is_queued_for_deletion()||toFree:return
 	toFree=true
-	if get_parent()!=null:get_parent().remove_child(self)
 	if world.itemList.has(self):
 		world.itemList.erase(self)
 	if world.itemDropStore.has(self):
 		world.itemDropStore.erase(self)
-		quantityLabel.queue_free()
-		queue_free()
-	else:if world.itemDropStore.size()<2499:
+	if world.itemDropStore.size()<2499:
 		world.itemDropStore.push_back(self)
 	else:
 		quantityLabel.queue_free()
@@ -66,7 +63,7 @@ func _physics_process(delta):
 	quantityLabel.text=str(quantity)
 #handles the falling and moving up of items to stay on the floor
 func rayCheck(delta):
-	if get_parent()==null:return
+	if get_parent()==null||free||toFree:return
 	ray.from=position-Vector2(0,8.1)
 	ray.to=position+Vector2(0,3)
 	var hit:=get_world_2d().direct_space_state.intersect_ray(ray)
@@ -133,7 +130,7 @@ func inChunk(chunk):
 func checkSameNearBy():
 	if quantity>=world.maxItemStack||toFree:return
 	for item in world.itemList:
-		if toFree:break
+		if toFree||free:break
 		if(
 			item==null||item.toFree||item==self||item.free||
 			item.itemName!=itemName||

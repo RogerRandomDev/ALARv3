@@ -71,12 +71,14 @@ func _ready():
 	add_child(timer)
 	timer.start()
 	timer.connect("timeout",checkThreads)
+func loadItems(toNode):
 	for item in defaultItemStoreCount:
 		var drop=itemDrop2D.new()
 		#why does this crash me
 		GameTick.connect("updateItems",drop.checkInRenderDistance)
 		itemDropStore.append(drop)
 		await get_tree().process_frame
+		toNode.add_child(drop)
 
 
 #loads all the biomes into an array
@@ -122,7 +124,6 @@ func dropItem(globalCell,itemData,place=true,dropping=true):
 	
 	if place:
 		item.position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
-		root.add_child(item)
 	return item
 
 #reparents node to new one
@@ -141,7 +142,9 @@ func mineCell(c):
 		mineTimer.stop()
 		itemActions.mineTex.frame=0
 		curMining=c
-	if mineTimer.is_stopped():mineTimer.start()
+	if mineTimer.is_stopped():
+		itemActions.mineTex.frame=0
+		mineTimer.start()
 	return mapGen.loadedChunks[c[0]].getCellData(c[1]).name!="ERROR"
 	
 #increase the mine progress
@@ -192,6 +195,7 @@ func getItem():
 	if item==null:
 		var out=itemDrop2D.new();
 		GameTick.connect("updateItems",out.checkInRenderDistance)
+		root.add_child(out)
 		return out
 	return item
 	

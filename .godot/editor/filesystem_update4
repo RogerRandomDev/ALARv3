@@ -4,11 +4,8 @@ res://entities/Explosives/explosionEffect/explosionPArticle.tres
 res://world/resources/shadowMat.tres
 res://world/resources/GameTick.tscn
 res://testing/test.tscn
-res://world/generation/chunk.gd
-res://entities/resources/itemDrop.gd
-res://world/generation/router.gd
-res://world/resources/GameTick.gd
 res://Inventory/inventoryMenu.gd
-res://Inventory/inventory.gd
-res://Player/itemActions.gd
-res://world/generation/itemManager.gd
+res://world/generation/router.gd
+res://entities/resources/itemDrop.gd
+res://testing/test.gd
+res://world/generation/chunk.gd

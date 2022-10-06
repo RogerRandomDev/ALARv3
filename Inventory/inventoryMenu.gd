@@ -71,7 +71,7 @@ func _input(_event):
 	heldItem.global_position=heldItem.get_global_mouse_position()
 	
 	if not _event is InputEventKey:return
-	
+	var held=world.inventory.holdingSlot
 	match _event.keycode:
 		49:world.inventory.holdingSlot=0
 		50:world.inventory.holdingSlot=1
@@ -81,12 +81,17 @@ func _input(_event):
 		54:world.inventory.holdingSlot=5
 		55:world.inventory.holdingSlot=6
 		56:world.inventory.holdingSlot=7
-	
+	#resets mine progress if changing held item
+	if held!=world.inventory.holdingSlot:
+		if(world.inventory.get_active().actionType!="mine"):
+			world.itemActions.mineTex.visible=false
+		world.mineTimer.stop()
 	
 	if Input.is_key_pressed(KEY_E):
 		world.inventory.toggled=!world.inventory.toggled
 		emit_signal("toggleVisible",int(world.inventory.toggled)*(world.inventory.inventorySize-8)+8)
 	emit_signal("toggleActive",world.inventory.holdingSlot)
+	
 
 var justHeld=false
 #hold given item
