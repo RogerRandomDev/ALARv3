@@ -1,11 +1,9 @@
-res://Title/Title.tscn
+res://testing/test.tscn
 res://world/resources/mapTiles.tres
 res://entities/Explosives/explosionEffect/explosionPArticle.tres
 res://world/resources/shadowMat.tres
+res://InputManager.gd
+res://Title/Title.tscn
 res://world/resources/GameTick.tscn
-res://testing/test.tscn
-res://Inventory/inventoryMenu.gd
-res://world/generation/router.gd
-res://entities/resources/itemDrop.gd
-res://testing/test.gd
 res://world/generation/chunk.gd
+res://Inventory/inventoryMenu.gd

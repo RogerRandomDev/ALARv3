@@ -100,9 +100,9 @@ func canExplode(cell):
 #explodes the given cell if not immune to it
 func explodeCell(cell):
 	if !canExplode(cell)||!mineCell(cell):return
-	
 	pattern.remove_cell(cell,false)
 	changedCell[cell]=-1
+	if !world.dataStore.chunkData.has(_pos):return
 	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
 
 #attempts to fill cell if it is not solid
@@ -130,6 +130,7 @@ func removeCells(cellList):
 	
 #returns tile data from the pattern
 func getTileData(cell):
+	if !pattern.has_cell(cell):return null
 	return tile_set.get_source(pattern.get_cell_source_id(cell)).get_tile_data(atlas,0)
 
 

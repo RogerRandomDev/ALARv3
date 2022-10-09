@@ -63,24 +63,33 @@ func updateSlot(slot):
 		slotItem.get_node("itemCount").text=str(slotData.quantity)
 	else:
 		slotItem.get_node("itemCount").text=""
-
+var releasedChange=true
 #changes which slot is held
 func _input(_event):
 	justHeld=false
 	checkInv(_event)
 	heldItem.global_position=heldItem.get_global_mouse_position()
-	
-	if not _event is InputEventKey:return
 	var held=world.inventory.holdingSlot
-	match _event.keycode:
-		49:world.inventory.holdingSlot=0
-		50:world.inventory.holdingSlot=1
-		51:world.inventory.holdingSlot=2
-		52:world.inventory.holdingSlot=3
-		53:world.inventory.holdingSlot=4
-		54:world.inventory.holdingSlot=5
-		55:world.inventory.holdingSlot=6
-		56:world.inventory.holdingSlot=7
+	if _event is InputEventKey:
+		
+		match _event.keycode:
+			49:world.inventory.holdingSlot=0
+			50:world.inventory.holdingSlot=1
+			51:world.inventory.holdingSlot=2
+			52:world.inventory.holdingSlot=3
+			53:world.inventory.holdingSlot=4
+			54:world.inventory.holdingSlot=5
+			55:world.inventory.holdingSlot=6
+			56:world.inventory.holdingSlot=7
+	else:
+		if releasedChange:
+			#handles scroll wheel and controller switching
+			world.inventory.holdingSlot=(held+(
+				int(Input.is_action_just_pressed("nextHotBar"))-
+				int(Input.is_action_just_pressed("prevHotBar"))
+				))%8
+			if world.inventory.holdingSlot!=held:releasedChange=false
+	if world.inventory.holdingSlot<0:world.inventory.holdingSlot=7
 	#resets mine progress if changing held item
 	if held!=world.inventory.holdingSlot:
 		if(world.inventory.get_active().actionType!="mine"):
@@ -91,7 +100,9 @@ func _input(_event):
 		world.inventory.toggled=!world.inventory.toggled
 		emit_signal("toggleVisible",int(world.inventory.toggled)*(world.inventory.inventorySize-8)+8)
 	emit_signal("toggleActive",world.inventory.holdingSlot)
-	
+	releasedChange=releasedChange||(Input.is_action_just_released("nextHotBar")||
+	Input.is_action_just_released("prevHotBar")
+	)
 
 var justHeld=false
 #hold given item
