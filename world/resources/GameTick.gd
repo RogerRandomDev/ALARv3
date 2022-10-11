@@ -5,6 +5,7 @@ var thread=Thread.new()
 var sem=Semaphore.new()
 var tickCount:int=0
 var threadRunning=false
+var pause=false
 func _ready():
 
 	world.mapGen.connect("chunksLoaded",func():
@@ -88,6 +89,7 @@ func doCallBack(callBack,data):
 
 
 func nextTick():
+	if pause:return
 	sem.post()
 
 

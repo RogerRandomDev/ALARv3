@@ -26,14 +26,14 @@ func explode(global_pos,explosionRadius,removeTiles=[],showFx=true):
 		if world.mapGen.loadedChunks.has(c[1]):
 			#makes sure you can explode the given cell
 			if !world.mapGen.loadedChunks[c[1]].canExplode(c[0]):continue
-			world.mapGen.loadedChunks[c[1]].explodeCell.call_deferred(c[0])
+			world.mapGen.loadedChunks[c[1]].explodeCell(c[0])
 			
 			continue
 		if !outSide.has(c[1]):outSide[c[1]]=[]
 		outSide[c[1]].append_array([c[0],-1])
 	#fills in unloaded chunks
 	for chunk in outSide:
-		world.mapGen.modifyUnloaded(chunk,outSide[chunk])
+		world.mapGen.modifyUnloaded.call_deferred(chunk,outSide[chunk])
 	if showFx:triggerExplosionFx(global_pos,explosionRadius)
 #explosion fx
 func triggerExplosionFx(global_pos,explosionRadius):

@@ -163,7 +163,8 @@ func modifyUnloaded(chunkPos,data):
 		var source=world.mapTiles.get_source(id)
 		var cellData=source.get_tile_data(Vector2i.ZERO,0)
 		if(cellData.get_custom_data("unmineable")||
-		cellData.get_custom_data("ExplosionProof")):continue
+		cellData.get_custom_data("ExplosionProof")||
+		source.get("name")==null):continue
 		#full item building
 		#it's many layers but is very good at it's job
 		var dropItem=world.itemManager.compressToStorage(

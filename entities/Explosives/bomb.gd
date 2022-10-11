@@ -78,7 +78,7 @@ func stripCharge():
 	var _lay0=floor(abs(addDir))*sign(addDir)
 	lineNormal=lineNormal.normalized()
 	#changes explosion range to be the desired value
-	var explosionMult=3/explosionRadius
+	var explosionMult=3./explosionRadius
 	for x in explosionRadius*2:
 		cPos=floor(lineNormal*x)
 		

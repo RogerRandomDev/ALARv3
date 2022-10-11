@@ -30,6 +30,12 @@ func _ready():
 			"id":1,
 			"actionType":"throw",
 			"actionRange":6})
+	call_deferred('storeItem',{
+			"name":"Sand",
+			"quantity":100,
+			"id":3,
+			"actionType":"place",
+			"actionRange":0})
 func storeItem(item):
 
 	var count = item.quantity
@@ -59,16 +65,43 @@ func storeItem(item):
 	return count
 #removes given number from the slot
 func reduceSlotBy(slot,count):
+	
 	inventoryData[slot].quantity-=count
 	if inventoryData[slot].quantity<=0:
 		emptySlot(slot)
 	else:emit_signal("updateSlot",slot)
-
+#removes given number from any slot with the item
+#until it meets the amount
+func removeItemBy(itemName,count):
+	var slotSearch=inventoryData.filter(func(e):return e.name==itemName)
+	var remaining=count
+	for slot in slotSearch:
+		
+		#empties if it still has more left
+		if remaining>=inventoryData[slot.slotNum].quantity:
+			remaining-=inventoryData[slot.slotNum].quantity
+			emptySlot(slot.slotNum)
+		#otherwise, leave the remaining and exit loop
+		else:
+			inventoryData[slot.slotNum].quantity-=remaining
+			emit_signal("updateSlot",slot.slotNum)
+			break
+		
 #sets slot to default empty value
 func emptySlot(slot):
 	inventoryData[slot]=emptySlotb.duplicate()
 	inventoryData[slot].slotNum=slot
 	emit_signal("updateSlot",slot)
+#checks if you have a minimum of the given quantity of the given item
+func haveEnough(itemName,itemQuantity):
+	#filters to only the wanted items,
+	#then reduces while adding the quantities
+	#and returns if the output is greater than itemQuantity
+	var out=inventoryData.filter(
+		func(i):return i.name==itemName).map(
+			func(e):return e.quantity).reduce(
+			func(a,b):return a+b)
+	return (out!=null&&out>=itemQuantity-1)
 
 #gets the active slot data
 func get_active():
@@ -110,3 +143,12 @@ func dropItem(slotID):
 	inventoryData[slotID]=emptySlotb.duplicate()
 	inventoryData[slotID].slotNum=slotID
 	emit_signal("updateSlot",slotID)
+
+#checks if there is enough space in the inventory for the given items
+func hasRoomFor(itemName,quantityOf):
+	if inventoryData.filter(func(e):return e.name==null):return true
+	var slotCheck=inventoryData.filter(func(e):return e.name==itemName&&e.quantity<world.maxItemStack)
+	var curQuantity=quantityOf
+	for slot in slotCheck:
+		curQuantity-=world.maxItemStack-inventoryData[slot].quantity
+	return curQuantity<=0

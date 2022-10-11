@@ -9,7 +9,7 @@ var chunkFiller=load("res://world/generation/chunkFiller.gd").new()
 var worldShadows=load("res://world/generation/worldShadows.gd").new()
 var dataStore=load("res://world/generation/rawChunkData.gd").new()
 var shaderComp=load("res://world/generation/runShader.gd").new()
-var fileManager=load("res://world/generation/fileManager.gd").new()
+var fileManager=load("res://managers/fileManager.gd").new()
 
 var miscFunctions=load("res://entities/resources/miscActions.gd").new()
 var itemActions=load("res://Player/itemActions.gd").new()
@@ -17,12 +17,13 @@ var itemActions=load("res://Player/itemActions.gd").new()
 
 var inventory=load("res://Inventory/inventory.gd").new()
 var playerInventory=load("res://Inventory/inventoryMenu.tscn").instantiate()
-var itemManager=load("res://world/generation/itemManager.gd").new()
-
+var itemManager=load("res://managers/itemManager.gd").new()
+var craftingManager=load("res://managers/recipeManager.gd").new()
 var saveName="testing"
 
 var root=null
 var chunkHolder=null
+var entityHolder
 var player=null
 var biomeList=[]
 var renderDistance=3
@@ -38,7 +39,8 @@ var itemList=[]
 #stores item objects to reduce lag to a certain extent
 var itemDropStore=[]
 
-
+#is only true in the game world
+var inGame=false
 
 const oneUp=Vector2i(0,1)
 
@@ -55,13 +57,13 @@ var maxItemStack:int=99
 #default number of item objects to preload
 var defaultItemStoreCount:int=2500
 func _ready():
-
 	itemManager._ready()
+	craftingManager._ready()
 	fillBiomeList()
 	fileManager._ready()
 	mapGen.call_deferred('_ready')
-#	worldShadows.call_deferred('_ready')
-	shaderComp._ready()
+	worldShadows.call_deferred('_ready')
+	shaderComp.call_deferred('_ready')
 	inventory._ready()
 	add_child(mineTimer)
 	mineTimer.wait_time=1
@@ -72,14 +74,18 @@ func _ready():
 	timer.start()
 	timer.connect("timeout",checkThreads)
 func loadItems(toNode):
+	GameTick.pause=true
 	for item in defaultItemStoreCount:
 		var drop=itemDrop2D.new()
 		#why does this crash me
 		GameTick.connect("updateItems",drop.checkInRenderDistance)
+		#fixed it by stopping game ticks until loaded
+		#i question threading sometimes,
+		#and this is the best way to word why
 		itemDropStore.append(drop)
-		await get_tree().process_frame
-		toNode.add_child(drop)
-
+		
+		if drop.get_parent()==null:toNode.add_child(drop)
+	GameTick.pause=false
 
 #loads all the biomes into an array
 func fillBiomeList():
@@ -100,10 +106,12 @@ func removeItems(items):
 func _notification(what):
 	if what==NOTIFICATION_EXIT_TREE:
 		exitGame=true
-		GameTick.thread.wait_to_finish()
 		GameTick.sem.post()
+		GameTick.thread.wait_to_finish()
+		mapGen.genSema.post()
 		mapGen.generationThread.wait_to_finish()
-		GameTick.genSema.post(1)
+		
+		
 
 
 #changes cell in given chunk
@@ -120,8 +128,11 @@ func dropItem(globalCell,itemData,place=true,dropping=true):
 		var quant=itemData.quantity
 		itemData=world.itemManager.getItemData(drop)
 		itemData.quantity=quant
+	if itemData.name=="NONE":
+		itemDropStore.push_back(item)
+		return
 	item.buildItem(itemData)
-	
+	if item.get_parent()==null:root.add_child(item)
 	if place:
 		item.position=(Vector2(globalCell)+Vector2(0.5,0.5))*tileSize+Vector2(0,6)
 	return item
@@ -152,9 +163,9 @@ func progressMine():
 	itemActions.mineTex.visible=false
 	mineTimer.stop()
 	var minedItem=mapGen.loadedChunks[curMining[0]].changeCell(curMining[1],-1,false)
+	if typeof(minedItem)!=TYPE_DICTIONARY||minedItem.name=="ERROR":return
 	minedItem=itemManager.getDrop(minedItem.name)
 	#if the used tool smelts, then it will auto-smelt the drop
-	
 	if (
 		inventory.get_active().id==1&&
 		itemManager.canSmelt(minedItem)

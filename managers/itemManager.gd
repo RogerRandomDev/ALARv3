@@ -1,6 +1,7 @@
 extends Node
 #none is for empty objects
 var itemData={"NONE":{"name":"NONE"}}
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	buildCSV()
@@ -26,13 +27,13 @@ func buildCSV():
 			keys[5]:line[5]
 			
 		}
-func compressToStorage(itemData):
+func compressToStorage(itemDat):
 	return [
-		itemData.quantity,
-		itemData.actionRange,
-		itemData.name,
-		itemData.actionType,
-		itemData.id
+		itemDat.quantity,
+		itemDat.actionRange,
+		itemDat.name,
+		itemDat.actionType,
+		itemDat.id
 	]
 
 

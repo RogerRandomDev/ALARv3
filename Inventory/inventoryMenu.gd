@@ -29,13 +29,14 @@ func buildMenu():
 		slot.texture=basicTextures.EMPTYSLOT
 		slot.ignore_texture_size=true
 		slot.custom_minimum_size=Vector2(12,12)
+		
+		
 		var count=Label.new()
 		count.mouse_filter=Control.MOUSE_FILTER_PASS
 		count.name="itemCount"
 		count.position=Vector2(0,6)
 		count.size=Vector2(8,12)
 		count.text_direction=Control.TEXT_DIRECTION_RTL
-		
 		var itemTex=TextureRect.new()
 		itemTex.mouse_filter=Control.MOUSE_FILTER_PASS
 		count.theme=world.itemTheme
@@ -44,8 +45,12 @@ func buildMenu():
 		itemTex.position=Vector2(2,2)
 		slot.add_child(itemTex)
 		itemTex.name="itemTex"
+		var _hold=Node2D.new()
+		_hold.add_child(count)
+		_hold.name="hold"
 		holder.add_child(slot)
-		slot.add_child(count)
+		slot.add_child(_hold)
+		_hold.z_index=world.inventory.inventorySize-item
 		#lets you select the slot with your mouse
 		
 	
@@ -60,12 +65,13 @@ func updateSlot(slot):
 		slotItem.get_node("itemTex").texture=world.findItemTexture(slotData)
 		slotItem.get_node("itemTex").visible=true
 	if slotData.quantity>1:
-		slotItem.get_node("itemCount").text=str(slotData.quantity)
+		slotItem.get_node("hold/itemCount").text=str(slotData.quantity)
 	else:
-		slotItem.get_node("itemCount").text=""
+		slotItem.get_node("hold/itemCount").text=""
 var releasedChange=true
 #changes which slot is held
 func _input(_event):
+	if !world.inGame:return
 	justHeld=false
 	checkInv(_event)
 	heldItem.global_position=heldItem.get_global_mouse_position()
@@ -96,9 +102,6 @@ func _input(_event):
 			world.itemActions.mineTex.visible=false
 		world.mineTimer.stop()
 	
-	if Input.is_key_pressed(KEY_E):
-		world.inventory.toggled=!world.inventory.toggled
-		emit_signal("toggleVisible",int(world.inventory.toggled)*(world.inventory.inventorySize-8)+8)
 	emit_signal("toggleActive",world.inventory.holdingSlot)
 	releasedChange=releasedChange||(Input.is_action_just_released("nextHotBar")||
 	Input.is_action_just_released("prevHotBar")
@@ -132,10 +135,15 @@ func slotInput(item):
 		justHeld=true
 		curHeld=-1
 
-
+var pressedM1=false
 #lets you choose slots in your inventory
-func checkInv(e):
-	if not e is InputEventMouseButton or not e.pressed:return
+func checkInv(_e):
+	pressedM1=Input.is_action_pressed("m1")&&pressedM1
+	if world.inventory.get_active().name==null:
+		heldItem.visible=false
+		curHeld=-1
+	if pressedM1||!Input.is_action_pressed("m1"):return
+	pressedM1=true
 	var pos=$ItemList.get_local_mouse_position()
 	var itemPos=Vector2i(pos/14)
 	if (
@@ -151,3 +159,10 @@ func checkInv(e):
 			
 			return
 	slotInput(itemPos.x+itemPos.y*8)
+#makes toggling the inventory more responsive
+func _process(_delta):
+	if Input.is_action_just_pressed("inventoryToggle"):
+		world.inventory.toggled=!world.inventory.toggled
+		emit_signal("toggleVisible",int(world.inventory.toggled)*(world.inventory.inventorySize-8)+8)
+		emit_signal("toggleActive",world.inventory.holdingSlot)
+		CraftingMenu.visible=world.inventory.toggled

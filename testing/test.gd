@@ -5,6 +5,7 @@ extends Node2D
 func _ready():
 	world.root=self
 	world.chunkHolder=self
-	
+	world.entityHolder=$entityNode
 	world.itemActions.mineTex=$Sprite2d
-	world.loadItems(self)
+	world.loadItems(world.entityHolder)
+	world.inGame=true

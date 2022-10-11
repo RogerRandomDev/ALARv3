@@ -11,7 +11,7 @@ func _ready():
 	z_index=10
 func _init():
 	pattern.set_size(Vector2i(world.chunkSize,world.chunkSize))
-func fill(contents,randomTick=false):
+func fill(contents,_randomTick=false):
 	for tileID in contents[0].size():
 		var cellPos=Vector2i(tileID%16,tileID/16)
 		#handles updates outside the gametick
@@ -37,7 +37,6 @@ func fillEntities(entities):
 	for entity in entities:
 		if entity[2]=="ERROR_NAME":continue
 		var ent = world.getItem()
-		if(ent.get_parent()!=null):ent.get_parent().remove_child(ent)
 		ent.fromStorageFormat(entity)
 		ent.position=(_pos*world.chunkSize+entity[len(entity)-1])*world.tileSize+Vector2i(
 			4,6
@@ -77,14 +76,15 @@ func getCellData(cell):
 func changeCell(cell,id,dropItem=true):
 	if _pos.y>40:return false
 	var cellData=null
+	
 	if id<0:
+		if !pattern.has_cell(cell):return false
 		if mineCell(cell,dropItem)==null:return false
 		cellData=getCellData(cell)
 		pattern.remove_cell(cell,false)
 	else:
 		var cellDat=getCustomCellData(cell)
 		if cellDat!=null&&!cellDat.get_custom_data("replacable"):return false
-		pattern.set_cell(cell,id,atlas,0)
 		call_deferred("set_cell",0,cell,id,atlas,0)
 		cellData = true
 	changedCell[cell]=id
@@ -93,14 +93,13 @@ func changeCell(cell,id,dropItem=true):
 #checks if can explode given cell
 func canExplode(cell):
 	if _pos.y>40:return false
-	if !pattern.has_cell(cell):return false
 	var cellData=getTileData(cell)
 	if cellData==null||cellData.get_custom_data("ExplosionProof"):return false
 	return true
+
 #explodes the given cell if not immune to it
 func explodeCell(cell):
 	if !canExplode(cell)||!mineCell(cell):return
-	pattern.remove_cell(cell,false)
 	changedCell[cell]=-1
 	if !world.dataStore.chunkData.has(_pos):return
 	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
@@ -119,7 +118,7 @@ func mineCell(cell,dropItem=true):
 	else:
 		cellData=world.itemManager.getItemData(cellData.name)
 		cellData.quantity=1
-		if dropItem:world.dropItem(cell+_pos*world.chunkSize,cellData)
+		if dropItem:world.dropItem.call_deferred(cell+_pos*world.chunkSize,cellData)
 		
 	return true
 
@@ -130,7 +129,8 @@ func removeCells(cellList):
 	
 #returns tile data from the pattern
 func getTileData(cell):
-	if !pattern.has_cell(cell):return null
-	return tile_set.get_source(pattern.get_cell_source_id(cell)).get_tile_data(atlas,0)
+	if pattern.has_cell(cell):
+		return tile_set.get_source(pattern.get_cell_source_id(cell)).get_tile_data(atlas,0)
+	return null
 
 

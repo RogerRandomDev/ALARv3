@@ -57,3 +57,5 @@ z_index = 100
 frames = SubResource("SpriteFrames_ryr7t")
 playing = true
 centered = false
+
+[node name="entityNode" type="Node2D" parent="."]

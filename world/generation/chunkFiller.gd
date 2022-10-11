@@ -85,7 +85,7 @@ func buildChunkData(chunkPos,stored=true):
 		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
 		var groundLevel=tH*(world.groundLevel*groundVariance)+groundOffset
 		var ores=biomes[0][1].oreTiles
-		var oreLen=len(ores)
+		var _oreLen=len(ores)
 		#per cell in here
 		for y in world.chunkSize:
 			var cellID=[-1,-1]

@@ -21,10 +21,13 @@ var toFree=false
 #prevent it from being orphaned and taking up memory as a leak
 func _init():
 	
+	
 	z_index=100
 	if !pickable:return
-	add_child(quantityLabel)
+	add_child.call_deferred(quantityLabel)
 	quantityLabel.theme=world.itemTheme
+	
+	
 #handles freeing itself
 func prepFree():
 	
@@ -37,17 +40,20 @@ func prepFree():
 	if world.itemDropStore.size()<2499:
 		world.itemDropStore.push_back(self)
 	else:
-		quantityLabel.queue_free()
-		queue_free()
+		if !is_queued_for_deletion():queue_free()
+		
+		
 	
 	toggleActive(false)
 #toggle item activity
 func toggleActive(isActive):
+	lifeTime=0.0
 	set_physics_process_internal(isActive)
 	set_physics_process(isActive)
 	visible=isActive
 
 func _physics_process(delta):
+	if !visible:return
 	lifeTime+=delta
 	if(position.x>GameTick.rrX||
 	position.x<GameTick.rlX||
@@ -60,7 +66,7 @@ func _physics_process(delta):
 		nearChecks=0
 		checkSameNearBy()
 	else:nearChecks+=1
-	quantityLabel.text=str(quantity)
+	
 #handles the falling and moving up of items to stay on the floor
 func rayCheck(delta):
 	if get_parent()==null||free||toFree:return
@@ -89,6 +95,7 @@ func rayCheck(delta):
 	
 
 func buildItem(itemData):
+	
 	toggleActive(true)
 	toFree=false
 	free=false
@@ -103,6 +110,7 @@ func buildItem(itemData):
 	id=itemData.id
 	actionType=itemData.actionType
 	if itemData.actionRange!=null:actionRadius=itemData.actionRange
+	quantityLabel.text=str(quantity)
 	toggleActive(true)
 #gets the chunk the item is in
 func getChunk():
@@ -132,8 +140,8 @@ func checkSameNearBy():
 	for item in world.itemList:
 		if toFree||free:break
 		if(
-			item==null||item.toFree||item==self||item.free||
-			item.itemName!=itemName||
+			item.itemName!=itemName||item==null||
+			item.toFree||item==self||item.free||
 			#increases the radius them ore items there are
 			#does this to reduce lag from large item counts
 			(item.position-position).length_squared()>(65)||
@@ -144,11 +152,10 @@ func checkSameNearBy():
 			item.quantity=itemQuantity-world.maxItemStack
 			quantity=world.maxItemStack
 			return
-			
 		quantity+=item.quantity
 		item.free=true
-		item.prepFree.call_deferred()
-		
+		item.prepFree()
+	quantityLabel.text=str(quantity)
 var free=false
 
 #formats the item to data to get stored

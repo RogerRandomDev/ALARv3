@@ -7,10 +7,12 @@ layout(local_size_x = 256) in;
 
 layout(set = 0, binding = 0, std430) restrict buffer MyBuffer {
   int data[];
-  
 }
-
 my_buffer;
+layout(set = 0, binding = 1, rgba8) writeonly uniform image2D target_image;
+
+
+
 //generates a random number
 uint wang_hash(uint seed)
 {
@@ -101,8 +103,6 @@ int growGrass(int neighborCells[3][3],int cellID,uint index){
 
 
 
-
-
 void main() {  
   time=uint(my_buffer.data[12544])*12544;
   uint index=gl_GlobalInvocationID.x;
@@ -120,6 +120,14 @@ void main() {
   if(cellID==0||cellID==1){cellID=growGrass(neighborCells,cellID,index);}
 
   my_buffer.data[index] = cellID;
+  //generates the shadow base texture
+  ivec2 indexXY=ivec2(index%112,int(index/112));
+  vec2 uv = (vec2(indexXY) + 0.5) / vec2(imageSize(target_image));
+  //add another check for each cell that light passes through
+  imageStore(target_image, indexXY, vec4(0.0,0.0,0.0,float(
+    inRangeOrNegative(cellID,7,11)||cellID==13
+
+  )));
 }
 
 \
