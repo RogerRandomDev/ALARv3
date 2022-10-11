@@ -98,7 +98,17 @@ int growGrass(int neighborCells[3][3],int cellID,uint index){
 
   return cellOut;
 }
+//generates the shadow base texture
+void buildShadowTexture(uint index,int cellID){
+  
+  ivec2 indexXY=ivec2(index%112,int(index/112));
+  vec2 uv = (vec2(indexXY) + 0.5) / vec2(imageSize(target_image));
+  //add another check for each cell that light passes through
+  imageStore(target_image, indexXY, vec4(0.0,0.0,0.0,float(
+    inRangeOrNegative(cellID,7,11)||cellID==13
 
+  )));
+}
 
 
 
@@ -120,14 +130,7 @@ void main() {
   if(cellID==0||cellID==1){cellID=growGrass(neighborCells,cellID,index);}
 
   my_buffer.data[index] = cellID;
-  //generates the shadow base texture
-  ivec2 indexXY=ivec2(index%112,int(index/112));
-  vec2 uv = (vec2(indexXY) + 0.5) / vec2(imageSize(target_image));
-  //add another check for each cell that light passes through
-  imageStore(target_image, indexXY, vec4(0.0,0.0,0.0,float(
-    inRangeOrNegative(cellID,7,11)||cellID==13
-
-  )));
+  buildShadowTexture(index,cellID);
 }
 
 \

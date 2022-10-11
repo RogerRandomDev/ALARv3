@@ -10,6 +10,5 @@ void fragment() {
 		closest=min(closest,float(x==0.&&y==0.&&col<0.5)*72.+(x*x+y*y)/max(float(col>0.5),0.001));
 	}}
 	
-	COLOR.a=sqrt(closest/2.)/5.-0.2;
-	
+	COLOR.a=closest/72.0;
 }

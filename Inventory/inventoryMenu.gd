@@ -88,7 +88,7 @@ func _input(_event):
 			55:world.inventory.holdingSlot=6
 			56:world.inventory.holdingSlot=7
 	else:
-		if releasedChange:
+		if releasedChange||!InputManager.useController:
 			#handles scroll wheel and controller switching
 			world.inventory.holdingSlot=(held+(
 				int(Input.is_action_just_pressed("nextHotBar"))-
@@ -142,7 +142,8 @@ func checkInv(_e):
 	if world.inventory.get_active().name==null:
 		heldItem.visible=false
 		curHeld=-1
-	if pressedM1||!Input.is_action_pressed("m1"):return
+	if (pressedM1||!Input.is_action_pressed("m1"))&&InputManager.useController:return
+	if !Input.is_action_just_pressed("m1"):return
 	pressedM1=true
 	var pos=$ItemList.get_local_mouse_position()
 	var itemPos=Vector2i(pos/14)

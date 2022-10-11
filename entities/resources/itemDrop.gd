@@ -31,8 +31,7 @@ func _init():
 #handles freeing itself
 func prepFree():
 	
-	if is_queued_for_deletion()||toFree:return
-	toFree=true
+	if is_queued_for_deletion()||toFree||free:return
 	if world.itemList.has(self):
 		world.itemList.erase(self)
 	if world.itemDropStore.has(self):
@@ -40,9 +39,8 @@ func prepFree():
 	if world.itemDropStore.size()<2499:
 		world.itemDropStore.push_back(self)
 	else:
-		if !is_queued_for_deletion():queue_free()
-		
-		
+		if !is_queued_for_deletion()&&!free&&!toFree:queue_free()
+	toFree=true
 	
 	toggleActive(false)
 #toggle item activity
@@ -153,8 +151,8 @@ func checkSameNearBy():
 			quantity=world.maxItemStack
 			return
 		quantity+=item.quantity
-		item.free=true
 		item.prepFree()
+		item.free=true
 	quantityLabel.text=str(quantity)
 var free=false
 
