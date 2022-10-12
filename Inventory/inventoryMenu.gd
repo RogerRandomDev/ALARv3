@@ -62,7 +62,7 @@ func updateSlot(slot):
 	if slotData.name==null:
 		slotItem.get_node("itemTex").visible=false
 	else:
-		slotItem.get_node("itemTex").texture=world.findItemTexture(slotData)
+		slotItem.get_node("itemTex").texture=world.findItemTexture(slotData.name.replace(" ",""))
 		slotItem.get_node("itemTex").visible=true
 	if slotData.quantity>1:
 		slotItem.get_node("hold/itemCount").text=str(slotData.quantity)
@@ -113,10 +113,11 @@ func hold(item):
 	if item==-1:
 		justHeld=true
 		heldItem.visible=false
+		return
 	var data=world.inventory.inventoryData[item]
 	if data.name==null:return
 	heldItem.visible=true
-	heldItem.texture=world.findItemTexture(data)
+	heldItem.texture=world.findItemTexture(data.name.replace(" ",""))
 	heldItem.get_node("Label").text=str(
 				world.inventory.inventoryData[item].quantity
 			)
@@ -167,3 +168,6 @@ func _process(_delta):
 		emit_signal("toggleVisible",int(world.inventory.toggled)*(world.inventory.inventorySize-8)+8)
 		emit_signal("toggleActive",world.inventory.holdingSlot)
 		CraftingMenu.visible=world.inventory.toggled
+		get_tree().paused=world.inventory.toggled
+		if world.inventory.toggled:
+			CraftingMenu.updateRecipeList()

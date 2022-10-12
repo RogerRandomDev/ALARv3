@@ -6,6 +6,7 @@ extends CanvasLayer
 
 
 func _ready():
+	process_mode=Node.PROCESS_MODE_ALWAYS
 	updateRecipeList.call_deferred()
 
 
@@ -14,7 +15,7 @@ func updateRecipeList():
 	list.clear()
 	var recipeList=world.craftingManager.getAllCraftableRecipes()
 	for recipe in recipeList:
-		list.add_item(recipe,world.findItemTexture(world.itemManager.itemData[recipe]))
+		list.add_item(recipe,world.findItemTexture(world.itemManager.itemData[recipe].name))
 
 #loads recipe information to the side for crafting
 func loadRecipe(recipeID):
@@ -28,7 +29,7 @@ func loadRecipe(recipeID):
 	for needs in (len(recipeData)-1) /2.0:
 		recipeIn.add_item(
 			"Requires: %s"%str(recipeData[needs*2+2]),
-			world.findItemTexture(world.itemManager.itemData[recipeData[needs*2+1]])
+			world.findItemTexture(world.itemManager.itemData[recipeData[needs*2+1]].name)
 		)
 	
 

@@ -18,31 +18,36 @@ func buildCSV():
 		var line=file.get_csv_line()
 		if(len(line)==1):break
 		if line[3]=="":line[3]="place"
-		itemData[line[0]]={
+		var _set={
 			keys[0]:line[0],
 			keys[1]:str_to_var(line[1]),
 			keys[2]:str_to_var(line[2]),
 			keys[3]:line[3],
 			keys[4]:line[4],
-			keys[5]:line[5]
-			
+			keys[5]:line[5],
+			"location":str_to_var(line[6])
 		}
+		_set.texture=world.loadItemTexture(_set)
+		itemData[line[0].replace(" ","")]=_set
 func compressToStorage(itemDat):
 	return [
 		itemDat.quantity,
 		itemDat.actionRange,
 		itemDat.name,
 		itemDat.actionType,
-		itemDat.id
+		itemDat.id,
+		itemDat.location
 	]
 
-
+func getItemTexture(itemName):
+	return itemData[itemName].texture
 
 func canSmelt(itemName):
 	return itemName!="NONE"&&itemData[itemName].SmeltTo!=""
 func getDrop(itemName):
+	itemName=itemName.replace(" ","")
 	if(itemData[itemName].BreakTo==""):return itemName
 	return itemData[itemName].BreakTo
 
 func getItemData(itemName):
-	return itemData[itemName].duplicate()
+	return itemData[itemName.replace(" ","")].duplicate()

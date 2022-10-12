@@ -9,7 +9,8 @@ const caveNoise0=preload("res://world/noise/caveNoise0.tres")
 const caveNoise1=preload("res://world/noise/caveNoise1.tres")
 const plantNoise0=preload("res://world/noise/plantNoise0.tres")
 const plantNoise1=preload("res://world/noise/plantNoise1.tres")
-
+const oreNoise0=preload("res://world/noise/oreNoise0.tres")
+const oreNoise1=preload("res://world/noise/oreNoise1.tres")
 
 
 
@@ -85,9 +86,10 @@ func buildChunkData(chunkPos,stored=true):
 		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
 		var groundLevel=tH*(world.groundLevel*groundVariance)+groundOffset
 		var ores=biomes[0][1].oreTiles
-		var _oreLen=len(ores)
+		var _oreLen=len(ores)-1
 		#per cell in here
 		for y in world.chunkSize:
+			var corn=TLcorner+Vector2i(x,y)
 			var cellID=[-1,-1]
 			#bottom of the world here
 			if(chunkPos.y>40):
@@ -96,31 +98,40 @@ func buildChunkData(chunkPos,stored=true):
 			
 			#basic grass,dirt.stone
 			#grass
-			cellID[0]=(int(groundLevel<TLcorner.y+y)*(biomeCells[0]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<corn.y)*(biomeCells[0]-cellID[0])+cellID[0])
 			#dirt
-			cellID[0]=(int(groundLevel<TLcorner.y+y-1+int(canGrowPlant))*(biomeCells[1]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<corn.y-1+int(canGrowPlant))*(biomeCells[1]-cellID[0])+cellID[0])
 			#middle layer
-			cellID[0]=(int(groundLevel<TLcorner.y+y-3)*(biomeCells[2]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<corn.y-3)*(biomeCells[2]-cellID[0])+cellID[0])
 			#stone
-			cellID[0]=(int(groundLevel<TLcorner.y+y-12)*(biomeCells[3]-cellID[0])+cellID[0])
+			cellID[0]=(int(groundLevel<corn.y-12)*(biomeCells[3]-cellID[0])+cellID[0])
 			#deals with water
 			if(
-				TLcorner.y+y>0&&
-				tH*(world.groundLevel*groundVariance)+groundOffset>TLcorner.y+y&&
+				corn.y>0&&
+				tH*(world.groundLevel*groundVariance)+groundOffset>corn.y&&
 				cellID[0]==-1):
 				cellID[0]=8
 			#handles caves
-			if (caveNoise2D(TLcorner.x+x,TLcorner.y+y)>0&&groundLevel<TLcorner.y+y):cellID[0]=-1
+			if (caveNoise2D(corn.x,corn.y)>0&&groundLevel<corn.y):cellID[0]=-1
 			
+			
+				
 			
 			#handles plant generation
 			if(canGrowPlant&&cellID[0]==-1&&
-			(int(groundLevel<TLcorner.y+y+plantSize))&&
-			(int(groundLevel>TLcorner.y+y))
+			(int(groundLevel<corn.y+plantSize))&&
+			(int(groundLevel>corn.y))
 			):
 				#regular handler for plants
-				cellID[0]=biomes[0][1].plantTiles[(int(groundLevel>TLcorner.y+y+int(plantSize*0.75)))]
-			if(int(groundLevel)==TLcorner.y+y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
+				cellID[0]=biomes[0][1].plantTiles[(int(groundLevel>corn.y+int(plantSize*0.75)))]
+			if(int(groundLevel)==corn.y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
+			#handles ore
+			if _oreLen>0&&cellID[0]==biomeCells[3]&&oreNoise1.get_noise_2d(corn.x,corn.y)>0.5:
+				var oreCutoff=(abs(oreNoise1.get_noise_2d(corn.x,corn.y)-0.5))*2
+				var oreChosen=ores.keys().filter(func(e):return ores[e]>oreCutoff)
+				if len(oreChosen):cellID[0]=oreChosen[len(oreChosen)-1]
+				
+			
 			
 			out[0][x+y*16]=cellID[0]
 			

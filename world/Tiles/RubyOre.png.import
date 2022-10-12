@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hoyg1moucj5i"
-path="res://.godot/imported/Bomb.png-464bb8ffce78fd527e44a622c5e5ec2c.ctex"
+uid="uid://4pvdr3iug8xv"
+path="res://.godot/imported/RubyOre.png-2a219a0f01ed907ae863a51d0bb51fe2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tools/Bomb.png"
-dest_files=["res://.godot/imported/Bomb.png-464bb8ffce78fd527e44a622c5e5ec2c.ctex"]
+source_file="res://world/Tiles/RubyOre.png"
+dest_files=["res://.godot/imported/RubyOre.png-2a219a0f01ed907ae863a51d0bb51fe2.ctex"]
 
 [params]
 

@@ -61,6 +61,5 @@ func getAllCraftableRecipes():
 #for the given recipe
 func consumeCraft(recipeName):
 	var recipeData2=convertToRecipe(get_recipe(recipeName))
-	@warning_ignore(integer_division)
 	for i in (len(recipeData2)-1)/2.0:
 		world.inventory.removeItemBy(recipeData2[i*2+1],recipeData2[i*2+2])

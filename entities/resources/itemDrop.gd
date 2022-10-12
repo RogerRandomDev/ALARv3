@@ -74,13 +74,14 @@ func rayCheck(delta):
 	velocity=clamp(velocity+world.defaultGravity*delta,-world.defaultGravity,world.defaultGravity)
 	if hit:
 		
-		if hit.collider.name=="Player":
+		if hit.collider.name=="Player"&&!CraftingMenu.visible:
 			if !lifeTime>world.itemPickupBuffer:return
 			var newStack=world.inventory.storeItem(
 				{"quantity":quantity,
 				"name":itemName,
 				"id":id,
 				"actionType":actionType,
+				"location":location,  
 				"actionRange":actionRadius})
 			if newStack>0:
 				quantity=newStack
@@ -99,8 +100,7 @@ func buildItem(itemData):
 	free=false
 	if !world.itemList.has(self):world.itemList.append(self)
 	if !itemData.has("texture"):
-		var texPath = ("res://tools/%s.png" if itemData.actionType!="place" else "res://world/Tiles/%s.png")
-		itemData.texture=load(texPath%itemData.name)
+		itemData.texture=world.findItemTexture(itemData.name)
 	scale=Vector2(0.5,0.5)
 	texture=itemData.texture
 	quantity=itemData.quantity
@@ -108,6 +108,7 @@ func buildItem(itemData):
 	id=itemData.id
 	actionType=itemData.actionType
 	if itemData.actionRange!=null:actionRadius=itemData.actionRange
+	location=itemData.location
 	quantityLabel.text=str(quantity)
 	toggleActive(true)
 #gets the chunk the item is in
@@ -155,7 +156,7 @@ func checkSameNearBy():
 		item.free=true
 	quantityLabel.text=str(quantity)
 var free=false
-
+var location=0
 #formats the item to data to get stored
 func storageFormat():
 	
@@ -164,19 +165,20 @@ func storageFormat():
 		"actionRange":actionRadius,
 		"name":itemName,
 		"actionType":actionType,
-		"id":id
+		"id":id,
+		"location":location
 	})
 #rebuilds from storage format
 func fromStorageFormat(data):
-	var texPath = ("res://tools/%s.png" if data[3]!="place" else "res://world/Tiles/%s.png")
 	buildItem({
 		"quantity":data[0],
 		"actionRange":data[1],
 		"name":data[2],
 		"weight":1,
 		"actionType":data[3],
-		"texture":load(texPath%data[2]),
-		"id":data[4]
+		"texture":world.findItemTexture(data[2]),
+		"id":data[4],
+		"location":data[5]
 	})
 	
 	

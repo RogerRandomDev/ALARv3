@@ -57,6 +57,7 @@ var maxItemStack:int=99
 #default number of item objects to preload
 var defaultItemStoreCount:int=2500
 func _ready():
+	process_mode=Node.PROCESS_MODE_ALWAYS
 	itemManager._ready()
 	craftingManager._ready()
 	fillBiomeList()
@@ -178,12 +179,17 @@ func progressMine():
 	if minedItem.name=="NONE":return
 	dropItem(curMining[1]+curMining[0]*world.chunkSize,minedItem,true,false)
 
+const typeToPath=[
+	"world/Tiles/%s.png",
+	"items/tools/%s.png",
+	"items/resources/%s.png"
+]
 #finds texture for given item
 func findItemTexture(itemData):
-	if itemData.actionType=="place":return load("res://world/Tiles/%s.png"%itemData.name)
-	else:
-		return load("res://tools/%s.png"%itemData.name)
-
+	return itemManager.getItemTexture(itemData)
+#loads texture
+func loadItemTexture(itemData):
+	return load(typeToPath[itemData.location]%itemData.name.replace(" ",""))
 #restarts threads if they are found to have crashed
 func checkThreads():
 	if !mapGen.generationThread.is_alive():

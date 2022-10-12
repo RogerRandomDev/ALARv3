@@ -11,6 +11,7 @@ var emptySlotb={
 			"id":-1,
 			"actionType":"mine",
 			"actionRange":1,
+			"location":-1,
 			"slotNum":0}
 
 func _ready():
@@ -23,18 +24,21 @@ func _ready():
 			"quantity":400,
 			"id":-1,
 			"actionType":"throw",
+			"location":1,
 			"actionRange":12})
 	call_deferred('storeItem',{
 			"name":"Bomb",
 			"quantity":100,
 			"id":1,
 			"actionType":"throw",
+			"location":1,
 			"actionRange":6})
 	call_deferred('storeItem',{
 			"name":"Sand",
 			"quantity":100,
 			"id":3,
 			"actionType":"place",
+			"location":0,
 			"actionRange":0})
 func storeItem(item):
 

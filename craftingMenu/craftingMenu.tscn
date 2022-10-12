@@ -48,7 +48,7 @@ hue_variation_max = 0.13
 [sub_resource type="GDScript" id="GDScript_amno7"]
 script/source = "extends GPUParticles2D;
 var original=true
-func _process(_delta):if !emitting&&!original:queue_free()
+func _process(_delta):if !emitting&&!original&&!is_queued_for_deletion():queue_free()
 "
 
 [node name="craftMenu" type="CanvasLayer"]
