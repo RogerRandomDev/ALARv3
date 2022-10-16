@@ -84,7 +84,10 @@ func changeCell(cell,id,dropItem=true):
 		pattern.remove_cell(cell,false)
 	else:
 		var cellDat=getCustomCellData(cell)
-		if cellDat!=null&&!cellDat.get_custom_data("replacable"):return false
+		if (
+			cellDat!=null&&
+			!cellDat.get_custom_data("replacable")||
+			changedCell.has(cell)):return false
 		call_deferred("set_cell",0,cell,id,atlas,0)
 		cellData = true
 	changedCell[cell]=id

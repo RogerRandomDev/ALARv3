@@ -9,7 +9,7 @@ var emptySlotb={
 			"name":null,
 			"quantity":0,
 			"id":-1,
-			"actionType":"mine",
+			"actionType":"empty",
 			"actionRange":1,
 			"location":-1,
 			"slotNum":0}
@@ -20,26 +20,19 @@ func _ready():
 		inventoryData[slot]=emptySlotb.duplicate()
 		inventoryData[slot].slotNum=slot
 	call_deferred('storeItem',{
+			"name":"Drill",
+			"quantity":1,
+			"id":-1,
+			"actionType":"mine",
+			"location":1,
+			"actionRange":0})
+	call_deferred('storeItem',{
 			"name":"Dynamite",
 			"quantity":400,
 			"id":-1,
 			"actionType":"throw",
 			"location":1,
 			"actionRange":12})
-	call_deferred('storeItem',{
-			"name":"Bomb",
-			"quantity":100,
-			"id":1,
-			"actionType":"throw",
-			"location":1,
-			"actionRange":6})
-	call_deferred('storeItem',{
-			"name":"Sand",
-			"quantity":100,
-			"id":3,
-			"actionType":"place",
-			"location":0,
-			"actionRange":0})
 func storeItem(item):
 
 	var count = item.quantity

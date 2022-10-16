@@ -6,6 +6,8 @@ const itemTheme=preload("res://themes/itemTheme.tres")
 
 var mapGen=load("res://world/generation/mapGeneration.gd").new()
 var chunkFiller=load("res://world/generation/chunkFiller.gd").new()
+var oreFiller=load("res://world/generation/oreFill.gd").new()
+
 var worldShadows=load("res://world/generation/worldShadows.gd").new()
 var dataStore=load("res://world/generation/rawChunkData.gd").new()
 var shaderComp=load("res://world/generation/runShader.gd").new()
@@ -59,6 +61,7 @@ var defaultItemStoreCount:int=2500
 func _ready():
 	process_mode=Node.PROCESS_MODE_ALWAYS
 	itemManager._ready()
+	oreFiller._ready()
 	craftingManager._ready()
 	fillBiomeList()
 	fileManager._ready()

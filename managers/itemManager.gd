@@ -40,7 +40,7 @@ func compressToStorage(itemDat):
 	]
 
 func getItemTexture(itemName):
-	return itemData[itemName].texture
+	return itemData[itemName.replace(" ","")].texture
 
 func canSmelt(itemName):
 	return itemName!="NONE"&&itemData[itemName].SmeltTo!=""

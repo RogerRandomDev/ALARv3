@@ -1,4 +1,4 @@
 output,quantity,in0,amount0,in1,amount1,in2,amount2,in3,amount3
 Glass,1,Sand,1,,,,,,
-Dirt,1,Grass,1,Sand,1,,,,
-Stone,1,Dirt,1,Sand,1,Grass,1,,
+Dynamite,1,Sand,1,Sulfur,1,Log,1,,
+Stone Bricks,4,Stone,4,,,,,,

@@ -25,6 +25,8 @@ func throw(id):
 	bomb.bombType=id.name
 	bomb.id=id.id
 	world.inventory.reduceSlotBy(id.slotNum,1)
+#null action
+func empty(_id):return
 
 
 func getChunkAndCell(mPos):

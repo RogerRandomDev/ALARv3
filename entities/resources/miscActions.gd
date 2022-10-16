@@ -1,5 +1,7 @@
 extends Node
 const explosionFX=preload("res://entities/Explosives/explosionEffect/explosionAnimation.tscn")
+
+##the bomb related actions
 func fireBomb(from,to,radius):
 	var direction=from.angle_to_point(to)
 	var bomb=itemBomb2D.new()
@@ -35,12 +37,19 @@ func explode(global_pos,explosionRadius,removeTiles=[],showFx=true):
 	for chunk in outSide:
 		world.mapGen.modifyUnloaded.call_deferred(chunk,outSide[chunk])
 	if showFx:triggerExplosionFx(global_pos,explosionRadius)
+
+
 #explosion fx
 func triggerExplosionFx(global_pos,explosionRadius):
 	var fx=explosionFX.instantiate()
 	fx.scale*=(explosionRadius/3)
 	world.root.add_child(fx)
 	fx.global_position=global_pos
+
+#end of the bomb functions
+
+
+
 
 
 

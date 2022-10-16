@@ -9,7 +9,6 @@ const caveNoise0=preload("res://world/noise/caveNoise0.tres")
 const caveNoise1=preload("res://world/noise/caveNoise1.tres")
 const plantNoise0=preload("res://world/noise/plantNoise0.tres")
 const plantNoise1=preload("res://world/noise/plantNoise1.tres")
-const oreNoise0=preload("res://world/noise/oreNoise0.tres")
 const oreNoise1=preload("res://world/noise/oreNoise1.tres")
 
 
@@ -85,8 +84,7 @@ func buildChunkData(chunkPos,stored=true):
 			biomes[0][1].plantSizeMin)
 		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
 		var groundLevel=tH*(world.groundLevel*groundVariance)+groundOffset
-		var ores=biomes[0][1].oreTiles
-		var _oreLen=len(ores)-1
+		var oreCut=biomes[0][1].oreCutoff;var biomeName=biomes[0][1].biomeName
 		#per cell in here
 		for y in world.chunkSize:
 			var corn=TLcorner+Vector2i(x,y)
@@ -126,10 +124,8 @@ func buildChunkData(chunkPos,stored=true):
 				cellID[0]=biomes[0][1].plantTiles[(int(groundLevel>corn.y+int(plantSize*0.75)))]
 			if(int(groundLevel)==corn.y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
 			#handles ore
-			if _oreLen>0&&cellID[0]==biomeCells[3]&&oreNoise1.get_noise_2d(corn.x,corn.y)>0.5:
-				var oreCutoff=(abs(oreNoise1.get_noise_2d(corn.x,corn.y)-0.5))*2
-				var oreChosen=ores.keys().filter(func(e):return ores[e]>oreCutoff)
-				if len(oreChosen):cellID[0]=oreChosen[len(oreChosen)-1]
+			if cellID[0]==biomeCells[3]&&oreNoise1.get_noise_2d(corn.x,corn.y)>oreCut:
+				cellID[0]=world.oreFiller.getOre(corn.x,corn.y,biomeName,cellID[0])
 				
 			
 			

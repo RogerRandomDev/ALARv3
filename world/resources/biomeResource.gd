@@ -18,4 +18,4 @@ class_name biomeResource
 @export var plantSizeMin:int=4
 @export var plantSizeMax:int=8
 @export var plantTiles:PackedInt32Array=PackedInt32Array([0,0])
-@export var oreTiles:={}
+@export var oreCutoff:float=0.5

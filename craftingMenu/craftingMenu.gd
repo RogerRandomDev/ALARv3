@@ -15,7 +15,7 @@ func updateRecipeList():
 	list.clear()
 	var recipeList=world.craftingManager.getAllCraftableRecipes()
 	for recipe in recipeList:
-		list.add_item(recipe,world.findItemTexture(world.itemManager.itemData[recipe].name))
+		list.add_item(recipe,world.findItemTexture(world.itemManager.itemData[recipe.replace(" ","")].name))
 
 #loads recipe information to the side for crafting
 func loadRecipe(recipeID):
