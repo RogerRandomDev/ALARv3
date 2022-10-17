@@ -6,7 +6,7 @@ func _ready():
 	randomize()
 	world.playerInventory.visible=false
 	call_deferred('loadSaveList')
-	
+	$Launch/Back/V/TopRow/AboutWorld/worldData.text="Version:\n   %s\n\n\n\n\n"%world.gameVersion
 
 #loads saves from fileManager
 func loadSaveList():
@@ -16,13 +16,19 @@ func loadSaveList():
 
 
 func menu_back():
-	$Launch.visible=false
-	$Main.visible=true
+	$Launch/Back/V/Middle/WorldActions.visible=false
+	$Launch/Back/V/Middle/WorldActions/WorldList.visible=true
+	$Launch/Back/V/Middle/WorldActions/CreateWorld.visible=false
+	$Launch/Back/V/Middle/Main.visible=true
+	$Launch/Back/V/TopRow/Label/Back.visible=false
+	$Launch/Back/V/TopRow/AboutWorld/worldData.text="Version:\n   %s\n\n\n\n\n"%world.gameVersion
 
 
 func launch_pressed():
-	$Launch.visible=true
-	$Main.visible=false
+	$Launch/Back/V/Middle/WorldActions.visible=true
+	$Launch/Back/V/Middle/Main.visible=false
+	$Launch/Back/V/TopRow/Label/Back.visible=true
+	$Launch/Back/V/TopRow/AboutWorld/worldData.text="World Name:\n   \nLast Played:\n   \nSeed:\n   \n"
 
 
 func createWorld():

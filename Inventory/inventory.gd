@@ -33,6 +33,32 @@ func _ready():
 			"actionType":"throw",
 			"location":1,
 			"actionRange":12})
+#builds using just an id and quantity of each item
+func buildFromStorage(inputData):
+	for slot in len(inputData):
+		if inputData[slot][0]==-1:
+			inventoryData[slot]=emptySlotb.duplicate()
+			inventoryData[slot].slotNum=slot
+			continue
+		var data=world.itemManager.getItemData(
+			world.itemManager.getItemName(inputData[slot][0])
+		)
+		inventoryData[slot]={
+			"name":data.name,
+			"quantity":inputData[slot][1],
+			"id":data.id,
+			"actionType":data.actionType,
+			"location":data.location,
+			"actionRange":data.actionRange,
+			"slotNum":slot
+			}
+		emit_signal("updateSlot",slot)
+#converts data to storage format
+func convertToStorage():
+	var output=inventoryData.map(func(e):
+		return [world.itemManager.itemData.keys().find(e.name),e.quantity])
+	return output
+
 func storeItem(item):
 
 	var count = item.quantity

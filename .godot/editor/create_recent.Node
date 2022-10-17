@@ -1,14 +1,15 @@
+BoxContainer
+PanelContainer
+HSeparator
+Container
 Button
 HBoxContainer
-BoxContainer
-Container
 Label
 LineEdit
 VBoxContainer
 Control
 Sprite2D
 TextureRect
-PanelContainer
 ItemList
 Panel
 Node2D
@@ -29,4 +30,3 @@ GridContainer
 CPUParticles2D
 AnimationPlayer
 WorldEnvironment
-Area2D

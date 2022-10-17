@@ -109,6 +109,37 @@ func buildChunks():
 		computing=false
 		emit_signal.call_deferred("chunksLoaded")
 
+#saves chunks even if they aren't being removed
+func saveLoadedChunks():
+	var removeChunks=loadedChunks.keys()
+	#gets items by chunk
+	var itemsByChunk={}
+	for c in loadedChunks.keys():itemsByChunk[c]=[[],[]]
+	for item in world.itemList:
+		var c=item.getChunk()
+		if !itemsByChunk.has(c):continue
+		var data=item.storageFormat()
+		var pos=globalToCell(item.position)[0]
+		data.append(pos.x);data.append(pos.y)
+		itemsByChunk[c][0].append_array(data)
+		itemsByChunk[c][1].append(item)
+	#removes chunks outside of range
+	for chunk in removeChunks:
+		#handles items first
+		if itemsByChunk.has(chunk):
+			world.dataStore.entityData[chunk]=itemsByChunk[chunk][0]
+			
+			world.removeItems(itemsByChunk[chunk][1])
+		#removes chunk from local, and checks if you have modified it at all
+		#so it only saves modified chunks
+		world.dataStore.removeChunk(chunk,
+		(loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk]||
+		itemsByChunk.has(chunk))
+		)
+		
+		world.fileManager.closeChunkFile(chunk)
+		
+	return true
 
 #does basic thread prep for use
 func _prepThreads():
@@ -159,8 +190,8 @@ func modifyUnloaded(chunkPos,data):
 	for c in float(len(data))/2:
 		
 		var cell=data[c*2]
-		var id=chunkData[0][cell.x+cell.y*16]
-		if chunkData[0][cell.x+cell.y*16]<0:continue
+		var id=chunkData[cell.x+cell.y*16]
+		if chunkData[cell.x+cell.y*16]<0:continue
 		var source=world.mapTiles.get_source(id)
 		var cellData=source.get_tile_data(Vector2i.ZERO,0)
 		if(cellData.get_custom_data("unmineable")||
@@ -177,7 +208,7 @@ func modifyUnloaded(chunkPos,data):
 			dropItem.append(cell.y)
 			entData.append_array(dropItem)
 		
-		chunkData[0][cell.x+cell.y*16]=-1
+		chunkData[cell.x+cell.y*16]=-1
 	
 	
 #	world.fileManager.storeFullChunk(chunkPos,[chunkData,fullData[1]])

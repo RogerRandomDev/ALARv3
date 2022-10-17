@@ -166,22 +166,24 @@ func storageFormat():
 		"actionRange":actionRadius,
 		"name":itemName,
 		"actionType":actionConversion[actionType],
-		"id":id,
+		"id":id-1,
 		"location":location
 	})
 #rebuilds from storage format
 func fromStorageFormat(data):
-	var nameID=world.itemManager.getItemName(data[2])
-	
-	buildItem({
-		"quantity":data[0],
-		"actionRange":data[1],
-		"name":nameID,
-		"weight":1,
-		"actionType":actionConversion.keys()[data[3]],
-		"texture":world.findItemTexture(nameID),
-		"id":data[4],
-		"location":data[5]
-	})
+	velocity.y=0
+	var myID=data[0]+data[1]*256
+	if data[1]>254:
+		prepFree()
+		return
+	var newData=world.itemManager.getItemData(world.itemManager.getItemName(myID))
+	if newData.name=="NONE":
+		prepFree()
+		return
+	if newData.actionRange==null:newData.actionRange=0
+	newData.quantity=data[2]
+	buildItem(
+		newData
+	)
 	
 	

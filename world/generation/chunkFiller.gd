@@ -81,8 +81,8 @@ func buildChunkData(chunkPos,stored=true):
 		dat=world.dataStore.getChunk(chunkPos)
 	if dat!=null:return dat
 	
-	var out =[[],[]]
-	out[0]=world.dataStore.emptyChunk
+	var out =[]
+	out=world.dataStore.emptyChunk
 	var TLcorner=chunkPos*world.chunkSize
 	for x in world.chunkSize:
 		#only horizontal based checks
@@ -100,49 +100,49 @@ func buildChunkData(chunkPos,stored=true):
 		#per cell in here
 		for y in world.chunkSize:
 			var corn=TLcorner+Vector2i(x,y)
-			var cellID=[-1,-1]
+			var cellID=-1
 			#bottom of the world here
 			if(chunkPos.y>40):
-				out[0][x+y*16]=1;continue
+				out[x+y*16]=1;continue
 			#gets the terrainheight base value from terrainNoise0
 			
 			#basic grass,dirt.stone
 			#grass
-			cellID[0]=(int(groundLevel<corn.y)*(biomeCells[0]-cellID[0])+cellID[0])
+			cellID=(int(groundLevel<corn.y)*(biomeCells[0]-cellID)+cellID)
 			#dirt
-			cellID[0]=(int(groundLevel<corn.y-1+int(canGrowPlant))*(biomeCells[1]-cellID[0])+cellID[0])
+			cellID=(int(groundLevel<corn.y-1+int(canGrowPlant))*(biomeCells[1]-cellID)+cellID)
 			#middle layer
-			cellID[0]=(int(groundLevel<corn.y-3)*(biomeCells[2]-cellID[0])+cellID[0])
+			cellID=(int(groundLevel<corn.y-3)*(biomeCells[2]-cellID)+cellID)
 			#stone
-			cellID[0]=(int(groundLevel<corn.y-12)*(biomeCells[3]-cellID[0])+cellID[0])
+			cellID=(int(groundLevel<corn.y-12)*(biomeCells[3]-cellID)+cellID)
 			#deals with water
 			if(
 				corn.y>0&&
 				tH*(world.groundLevel*groundVariance)+groundOffset>corn.y&&
-				cellID[0]==-1):
-				cellID[0]=8
+				cellID==-1):
+				cellID=8
 			#handles caves
-			if (caveNoise2D(corn.x,corn.y)>0&&groundLevel<corn.y):cellID[0]=-1
+			if (caveNoise2D(corn.x,corn.y)>0&&groundLevel<corn.y):cellID=-1
 			
 			
 				
 			
 			#handles plant generation
-			if(canGrowPlant&&cellID[0]==-1&&
+			if(canGrowPlant&&cellID==-1&&
 			(int(groundLevel<corn.y+plantSize))&&
 			(int(groundLevel>corn.y))
 			):
 				#regular handler for plants
-				cellID[0]=biomes[0][1].plantTiles[(int(groundLevel>corn.y+int(plantSize*0.75)))]
-			if(int(groundLevel)==corn.y):canGrowPlant=cellID[0]!=-1&&canGrowPlant
+				cellID=biomes[0][1].plantTiles[(int(groundLevel>corn.y+int(plantSize*0.75)))]
+			if(int(groundLevel)==corn.y):canGrowPlant=cellID!=-1&&canGrowPlant
 			#handles ore
-			if cellID[0]==biomeCells[3]&&oreNoise1.get_noise_2d(corn.x,corn.y)>oreCut:
-				cellID[0]=world.oreFiller.getOre(corn.x,corn.y,biomeName,cellID[0])
+			if cellID==biomeCells[3]&&oreNoise1.get_noise_2d(corn.x,corn.y)>oreCut:
+				cellID=world.oreFiller.getOre(corn.x,corn.y,biomeName,cellID)
 				
 			
 			
-			out[0][x+y*16]=cellID[0]
+			out[x+y*16]=cellID
 			
 
-	#		if cellID[1]> -1:out[0].append([Vector2i(x,y),atlasPos,cellID[0]])
+	#		if cellID[1]> -1:out[0].append([Vector2i(x,y),atlasPos,cellID])
 	return out

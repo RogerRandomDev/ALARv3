@@ -12,18 +12,18 @@ func _ready():
 func _init():
 	pattern.set_size(Vector2i(world.chunkSize,world.chunkSize))
 func fill(contents,_randomTick=false):
-	for tileID in contents[0].size():
+	for tileID in contents.size():
 		var cellPos=Vector2i(tileID%16,tileID/16)
 		#handles updates outside the gametick
-		if changedCell.has(cellPos):contents[0][tileID]=changedCell[cellPos];changedCell.erase(cellPos)
+		if changedCell.has(cellPos):contents[tileID]=changedCell[cellPos];changedCell.erase(cellPos)
 			
 		
-		if(contents[0][tileID]<0):
+		if(contents[tileID]<0):
 			
 			if pattern.has_cell(cellPos):
 				pattern.remove_cell(cellPos,false)
 			continue
-		pattern.set_cell(cellPos,contents[0][tileID],atlas,0)
+		pattern.set_cell(cellPos,contents[tileID],atlas,0)
 	world.dataStore.chunkData[_pos]=contents
 	set_pattern.call_deferred(0,atlas,pattern)
 	var used =get_used_cells(0).filter(func(cell):return !pattern.has_cell(cell))
@@ -34,15 +34,17 @@ func fill(contents,_randomTick=false):
 func fillEntities(entities):
 	if !len(entities):return
 	var entList=[]
-	for entity in len(entities)/8.:
-		if entities[entity*8+2]==-1:continue
+	for entity in len(entities)/world.itemStoreLength:
 		var ent = world.getItem()
 		ent.fromStorageFormat(
-			entities.slice(entity*8,entity*8+6)
+			entities.slice(entity*world.itemStoreLength,entity*world.itemStoreLength+
+			world.itemStoreLength-2)
 		)
 		ent.position=(_pos*world.chunkSize+Vector2i(
-			entities[entity*8+6],
-			entities[entity*8+7]))*world.tileSize+Vector2i(
+			entities[entity*world.itemStoreLength+
+			world.itemStoreLength-2],
+			entities[entity*world.itemStoreLength+
+			world.itemStoreLength-1]))*world.tileSize+Vector2i(
 			4,6
 		)
 		entList.append(ent)
@@ -78,7 +80,7 @@ func getCellData(cell):
 
 #changes current cell
 func changeCell(cell,id,dropItem=true):
-	if _pos.y>40:return false
+	if _pos.y>40||_pos.y<-10:return false
 	var cellData=null
 	
 	if id<0:
@@ -95,11 +97,11 @@ func changeCell(cell,id,dropItem=true):
 		call_deferred("set_cell",0,cell,id,atlas,0)
 		cellData = true
 	changedCell[cell]=id
-	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]=id
+	world.dataStore.chunkData[_pos][cell.x+cell.y*16]=id
 	return cellData
 #checks if can explode given cell
 func canExplode(cell):
-	if _pos.y>40:return false
+	if _pos.y>40||_pos.y<-10:return false
 	var cellData=getTileData(cell)
 	if cellData==null||cellData.get_custom_data("ExplosionProof"):return false
 	return true
@@ -109,7 +111,7 @@ func explodeCell(cell):
 	if !canExplode(cell)||!mineCell(cell):return
 	changedCell[cell]=-1
 	if !world.dataStore.chunkData.has(_pos):return
-	world.dataStore.chunkData[_pos][0][cell.x+cell.y*16]= -1
+	world.dataStore.chunkData[_pos][cell.x+cell.y*16]= -1
 
 #attempts to fill cell if it is not solid
 func attemptFillCell(cell,ignoreFull=false):

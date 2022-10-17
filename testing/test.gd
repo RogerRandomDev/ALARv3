@@ -10,3 +10,4 @@ func _ready():
 	world.loadItems(world.entityHolder)
 	world.worldShadows.loadScene()
 	world.inGame=true
+	world.fileManager.loadWorld(world.saveName)

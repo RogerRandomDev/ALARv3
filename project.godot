@@ -71,6 +71,10 @@ window/stretch/mode="canvas_items"
 
 import/use_multiple_threads=false
 
+[global]
+
+version="0.0.1_ALPHA"
+
 [input]
 
 l={

@@ -51,7 +51,7 @@ func compileChunks():
 		for y in 16:
 			var temp=y*16
 			for cX in world.renderDistance*2+1:
-				var arr=chunkData[Vector2i(cX,cY)+modBy][0]
+				var arr=chunkData[Vector2i(cX,cY)+modBy]
 				data.append_array(arr.slice(temp,temp+16))
 	
 	return data

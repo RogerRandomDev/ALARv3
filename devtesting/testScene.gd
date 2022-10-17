@@ -5,7 +5,7 @@ func _ready():
 	world.player=self
 	world.root=self
 	world.chunkHolder=self
-	var data=world.chunkFiller.buildChunkData(Vector2i(1,1),false)[0]
+	var data=world.chunkFiller.buildChunkData(Vector2i(1,1),false)
 	var myGeom=PackedVector2Array()
 	for cell in len(data):
 		if data[cell]>0:

@@ -40,12 +40,15 @@ var explosionForce:int=200
 var itemList=[]
 #stores item objects to reduce lag to a certain extent
 var itemDropStore=[]
-
+#stores length of each item when stored in chunkdata
+var itemStoreLength=5
 #is only true in the game world
 var inGame=false
 
+
 const oneUp=Vector2i(0,1)
 
+var gameVersion=""
 #block id to what the plant is made of
 const plantsByFloor={
 	0:[5,6],
@@ -60,6 +63,7 @@ var maxItemStack:int=99
 var defaultItemStoreCount:int=2500
 func _ready():
 	process_mode=Node.PROCESS_MODE_ALWAYS
+	gameVersion=ProjectSettings.get_setting("global/version")
 	itemManager._ready()
 	oreFiller._ready()
 	craftingManager._ready()
@@ -106,15 +110,17 @@ func removeItems(items):
 	for item in items:
 		item.prepFree.call_deferred()
 
-
+#closes threads to end game
 func _notification(what):
 	if what==NOTIFICATION_EXIT_TREE:
+		fileManager.compilePlayerSave()
+		
 		exitGame=true
 		GameTick.sem.post()
 		GameTick.thread.wait_to_finish()
 		mapGen.genSema.post()
 		mapGen.generationThread.wait_to_finish()
-		
+		await mapGen.saveLoadedChunks()
 		
 
 

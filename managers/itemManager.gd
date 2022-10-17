@@ -31,12 +31,10 @@ func buildCSV():
 		itemData[line[0].replace(" ","")]=_set
 func compressToStorage(itemDat):
 	return [
-		itemDat.quantity,
-		itemDat.actionRange,
-		itemData.keys().find(itemDat.name),
-		itemDat.actionType,
-		itemDat.id,
-		itemDat.location
+		max(itemDat.id,0)%256,
+		int((itemDat.id-255)/256),
+		itemDat.quantity
+		
 	]
 
 func getItemTexture(itemName):

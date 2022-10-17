@@ -31,6 +31,7 @@ func createNewSave(saveName,_seed):
 		file.open("user://Saves/%s/Misc/menuData.dat"%saveName,File.WRITE)
 		var out=[]
 		OS.execute('date',PackedStringArray(["+%d-%m-%y"]),out,true)
+		file.seek(0)
 		file.store_line(var_to_str(
 			[saveName,
 			_seed,
@@ -68,12 +69,36 @@ func getWorldData(worldName):
 	var out=str_to_var(file.get_as_text())
 	file.close()
 	return out
+func loadWorld(worldName):
+	var file=File.new()
+	var path="user://Saves/%s/"%worldName
+	if !file.file_exists("%sPlayer/PlayerData.dat"%path):
+		file.open("%sPlayer/PlayerData.dat"%path,File.WRITE)
+		file.close()
+	else:
+		file.open("%sPlayer/PlayerData.dat"%path,File.READ_WRITE)
+		var data=str_to_var(file.get_as_text())
+		if data==null:return
+		world.player.global_position=data.cellPos*8
+		world.inventory.buildFromStorage(data.inventory)
+#compiles save data for the player
+func compilePlayerSave():
+	var data={
+		"cellPos":Vector2i(world.player.global_position/8.),
+		"inventory":world.inventory.convertToStorage()
+	}
+	var file=File.new()
+	var path="user://Saves/%s/"%world.saveName
+	file.open("%sPlayer/PlayerData.dat"%path,File.READ_WRITE)
+	file.seek(0)
+	file.store_line(var_to_str(data))
+	file.close()
 
 
 
 #main game from here
 func openChunkFile(chunk):
-	if(chunkFiles.has(chunk))||chunk.y>40:return
+	if(chunkFiles.has(chunk))||chunk.y>40||chunk.y<-10:return
 	var path="user://Saves/%s/chunks/%s.dat"%[world.saveName,str(chunk)]
 	var file=File.new()
 	if !dir.file_exists(path):
@@ -94,10 +119,10 @@ func closeChunkFile(chunk):
 
 #stores entire chunk worth of data
 func storeFullChunk(chunk,data):
-	if !chunkFiles.has(chunk)||chunk.y>40:return
+	if !chunkFiles.has(chunk)||chunk.y>40||chunk.y<-10:return
 	chunkFiles[chunk].seek(0)
 #	chunkFiles[chunk].store_pascal_string(compressChunkData(data))
-	chunkFiles[chunk].store_line(compressChunkData(data))
+	chunkFiles[chunk].store_string(compressChunkData(data))
 	
 
 
@@ -131,30 +156,48 @@ const numCompression={
 #change it to 255 on one or both and it should be fixed
 func compressChunkData(chunkData):
 	var compressed=[]
-	compressed.append([
-		PackedByteArray(chunkData[0][0].map(func(e):return e%256)).compress(2),
-		PackedByteArray(chunkData[0][0].map(func(e):return int((e-256)/256))).compress(2)
-		]
+	var dat=chunkData[0].map(func(e):return e%256)
+	dat.append_array(
+			chunkData[0].map(func(e):return int((e-255)/256)))
+	compressed.append(
+		PackedByteArray(
+			dat).compress(2).hex_encode()
 		)
-	compressed.append(chunkData[1])
+	compressed.append(PackedByteArray(chunkData[1]).compress(2).hex_encode())
 	#stores the decompression lengths
 	compressed.append(len(chunkData[1]))
-	return compressed
+	
+	return var_to_str(compressed).replace(" ","")
 
 
 #decompression of a chunk for use
 func decompressChunkData(chunkData):
-	
 	var decompressed=str_to_var(chunkData)
-	if decompressed[0][0]!=[]:
-		decompressed[0][0]=Array(PackedByteArray(decompressed[0][0]).decompress(
-			256,2
+	var cArr=[]
+	#decompresses chunk data
+	if len(decompressed[0])>4:
+		var j=0
+		while j * 2 < len(decompressed[0]):
+			cArr.push_back(decompressed[0].substr(j*2, 2).hex_to_int())
+			j += 1
+		decompressed[0]=cArr
+		decompressed[0]=Array(PackedByteArray(decompressed[0]).decompress(
+			512,2
 		))
-		decompressed[0][1]=Array(PackedByteArray(decompressed[0][1]).decompress(256,2))
-		
 		for i in 256:
-			decompressed[0][0][i]+=decompressed[0][1][i]*256+1
-			decompressed[0][0][i]=decompressed[0][0][i]*int(decompressed[0][1][i]<254)-1
+			decompressed[0][i]+=decompressed[0][i+256]*256+1
+			decompressed[0][i]=decompressed[0][i]*int(decompressed[0][i+256]<253)-1
+		decompressed[0].resize(256)
+	#decompresses entity data
+	if len(decompressed[1])>2:
+		var j=0
+		cArr=[]
+		while j * 2 < len(decompressed[1]):
+			cArr.push_back(decompressed[1].substr(j*2,2).hex_to_int())
+			j += 1
+		decompressed[1]=Array(PackedByteArray(cArr).decompress(
+			decompressed[2],2
+		))
 	return decompressed
 
 
