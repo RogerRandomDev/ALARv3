@@ -166,7 +166,7 @@ func storageFormat():
 		"actionRange":actionRadius,
 		"name":itemName,
 		"actionType":actionConversion[actionType],
-		"id":id-1,
+		"id":id+1,
 		"location":location
 	})
 #rebuilds from storage format

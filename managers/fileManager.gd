@@ -122,8 +122,9 @@ func storeFullChunk(chunk,data):
 	if !chunkFiles.has(chunk)||chunk.y>40||chunk.y<-10:return
 	chunkFiles[chunk].seek(0)
 #	chunkFiles[chunk].store_pascal_string(compressChunkData(data))
-	chunkFiles[chunk].store_string(compressChunkData(data))
-	
+	var compressed=compressChunkData(data)
+	chunkFiles[chunk].store_buffer(compressed)
+	var a=File.new()
 
 
 
@@ -131,7 +132,8 @@ func storeFullChunk(chunk,data):
 func getFullChunk(chunk):
 	if !chunkFiles.has(chunk):return null
 	
-	var base=decompressChunkData(chunkFiles[chunk].get_as_text())
+	var base=decompressChunkData(chunkFiles[chunk].get_buffer(chunkFiles[chunk].get_length()))
+	
 	return base
 
 #loads the chunk data only if it is available
@@ -155,49 +157,42 @@ const numCompression={
 #its the (e-256)/256 part
 #change it to 255 on one or both and it should be fixed
 func compressChunkData(chunkData):
-	var compressed=[]
 	var dat=chunkData[0].map(func(e):return e%256)
 	dat.append_array(
 			chunkData[0].map(func(e):return int((e-255)/256)))
-	compressed.append(
+	dat.append_array(chunkData[1])
+	var leng=len(chunkData[1])
+	dat.append_array([leng%256,int((leng-255)/256.)])
+	return (
 		PackedByteArray(
-			dat).compress(2).hex_encode()
+			dat).compress(2)
 		)
-	compressed.append(PackedByteArray(chunkData[1]).compress(2).hex_encode())
-	#stores the decompression lengths
-	compressed.append(len(chunkData[1]))
-	
-	return var_to_str(compressed).replace(" ","")
 
 
 #decompression of a chunk for use
 func decompressChunkData(chunkData):
-	var decompressed=str_to_var(chunkData)
-	var cArr=[]
+	var steps=Array(chunkData)
+	var s=steps.size()
+	var length=(steps[512]+steps[513]*256)+514
 	#decompresses chunk data
-	if len(decompressed[0])>4:
-		var j=0
-		while j * 2 < len(decompressed[0]):
-			cArr.push_back(decompressed[0].substr(j*2, 2).hex_to_int())
-			j += 1
-		decompressed[0]=cArr
-		decompressed[0]=Array(PackedByteArray(decompressed[0]).decompress(
-			512,2
+	steps=Array(chunkData.decompress(
+			length,2
 		))
-		for i in 256:
-			decompressed[0][i]+=decompressed[0][i+256]*256+1
-			decompressed[0][i]=decompressed[0][i]*int(decompressed[0][i+256]<253)-1
-		decompressed[0].resize(256)
-	#decompresses entity data
-	if len(decompressed[1])>2:
-		var j=0
-		cArr=[]
-		while j * 2 < len(decompressed[1]):
-			cArr.push_back(decompressed[1].substr(j*2,2).hex_to_int())
-			j += 1
-		decompressed[1]=Array(PackedByteArray(cArr).decompress(
-			decompressed[2],2
-		))
+	var ents=[]
+	if(length>514):ents=steps.slice(514,len(steps)-1)
+	var decompressed=[
+		steps.slice(0,512),
+		ents,
+		steps[len(steps)-1]
+	]
+	var i=0
+	while i<256:
+		decompressed[0][i]+=decompressed[0][i+256]*256+1
+		decompressed[0][i]=decompressed[0][i]*int(
+			decompressed[0][i+256]<253
+		)-1
+		i+=1
+	decompressed[0].resize(256)
 	return decompressed
 
 
