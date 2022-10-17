@@ -33,7 +33,7 @@ func compressToStorage(itemDat):
 	return [
 		itemDat.quantity,
 		itemDat.actionRange,
-		itemDat.name,
+		itemData.keys().find(itemDat.name),
 		itemDat.actionType,
 		itemDat.id,
 		itemDat.location
@@ -49,5 +49,11 @@ func getDrop(itemName):
 	if(itemData[itemName].BreakTo==""):return itemName
 	return itemData[itemName].BreakTo
 
+
 func getItemData(itemName):
 	return itemData[itemName.replace(" ","")].duplicate()
+
+
+#gets name of the item from index
+func getItemName(id):
+	return itemData.keys()[id]

@@ -157,6 +157,7 @@ func checkSameNearBy():
 	quantityLabel.text=str(quantity)
 var free=false
 var location=0
+const actionConversion={"place":0,"mine":1,"throw":2,"NONE":3}
 #formats the item to data to get stored
 func storageFormat():
 	
@@ -164,19 +165,21 @@ func storageFormat():
 		"quantity":quantity,
 		"actionRange":actionRadius,
 		"name":itemName,
-		"actionType":actionType,
+		"actionType":actionConversion[actionType],
 		"id":id,
 		"location":location
 	})
 #rebuilds from storage format
 func fromStorageFormat(data):
+	var nameID=world.itemManager.getItemName(data[2])
+	
 	buildItem({
 		"quantity":data[0],
 		"actionRange":data[1],
-		"name":data[2],
+		"name":nameID,
 		"weight":1,
-		"actionType":data[3],
-		"texture":world.findItemTexture(data[2]),
+		"actionType":actionConversion.keys()[data[3]],
+		"texture":world.findItemTexture(nameID),
 		"id":data[4],
 		"location":data[5]
 	})

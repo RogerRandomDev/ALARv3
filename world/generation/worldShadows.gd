@@ -2,14 +2,14 @@ extends Node
 
 var tex=ImageTexture.new()
 var img=Image.new()
-var sprite=Sprite2D.new()
-
-
+var sprite=null
 
 func _ready():
-	
 	img.create((world.renderDistance*2+1)*16,(world.renderDistance*2+1)*16,false,Image.FORMAT_RGBA8)
 	tex.create_from_image(img)
+
+func loadScene():
+	sprite=Sprite2D.new()
 	sprite.scale=Vector2i(8,8);sprite.centered=false
 	sprite.material=preload("res://world/resources/shadowMat.tres")
 	sprite.top_level=true;sprite.z_index=100

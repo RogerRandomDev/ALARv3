@@ -53,7 +53,6 @@ func finishExplode():
 			stripCharge()
 		2:
 			clusterBomb()
-	quantityLabel.queue_free()
 	body.queue_free()
 #the default explosion method
 func defaultExplosion():

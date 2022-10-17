@@ -40,7 +40,7 @@ animations = [{
 "speed": 7.0
 }]
 
-[node name="Node2D" type="Node2D"]
+[node name="gameWorld" type="Node2D"]
 texture_filter = 1
 script = ExtResource("1_t34bj")
 

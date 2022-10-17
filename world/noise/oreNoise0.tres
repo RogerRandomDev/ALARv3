@@ -2,10 +2,9 @@
 
 [resource]
 noise_type = 2
+frequency = 0.065
 fractal_type = 0
-cellular_distance_function = 3
 cellular_jitter = 0.928
 cellular_return_type = 0
-domain_warp_enabled = true
-domain_warp_type = 1
 domain_warp_amplitude = 30.07
+domain_warp_fractal_type = 0

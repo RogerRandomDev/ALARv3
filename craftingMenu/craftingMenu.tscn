@@ -73,6 +73,7 @@ theme = ExtResource("1_w2ybt")
 [node name="Craft" type="HBoxContainer" parent="PanelContainer"]
 clip_children = true
 custom_minimum_size = Vector2i(0, 367)
+layout_mode = 2
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -82,6 +83,7 @@ offset_right = -4.0
 offset_bottom = -4.0
 
 [node name="RecipeList" type="ItemList" parent="PanelContainer/Craft"]
+layout_mode = 2
 offset_right = 189.0
 offset_bottom = 367.0
 size_flags_horizontal = 3
@@ -94,6 +96,7 @@ item_1/text = "test2"
 
 [node name="RecipeInfo" type="VBoxContainer" parent="PanelContainer/Craft"]
 clip_contents = true
+layout_mode = 2
 offset_left = 193.0
 offset_right = 760.0
 offset_bottom = 367.0
@@ -101,6 +104,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 
 [node name="recipeName" type="Label" parent="PanelContainer/Craft/RecipeInfo"]
+layout_mode = 2
 offset_right = 567.0
 offset_bottom = 44.0
 theme_override_font_sizes/font_size = 32
@@ -109,6 +113,7 @@ text = "NameOf"
 horizontal_alignment = 1
 
 [node name="recipeQuantity" type="Label" parent="PanelContainer/Craft/RecipeInfo"]
+layout_mode = 2
 offset_top = 48.0
 offset_right = 567.0
 offset_bottom = 72.0
@@ -117,6 +122,7 @@ text = "Manufactures: 1"
 horizontal_alignment = 1
 
 [node name="recipeInputLabel" type="Label" parent="PanelContainer/Craft/RecipeInfo"]
+layout_mode = 2
 offset_top = 76.0
 offset_right = 567.0
 offset_bottom = 100.0
@@ -125,6 +131,7 @@ text = "Fabrication Materials:"
 horizontal_alignment = 1
 
 [node name="recipeInputs" type="ItemList" parent="PanelContainer/Craft/RecipeInfo"]
+layout_mode = 2
 offset_top = 104.0
 offset_right = 567.0
 offset_bottom = 338.0
@@ -136,6 +143,7 @@ fixed_icon_size = Vector2i(24, 24)
 item_0/text = "Requires: 1"
 
 [node name="ManufactureButton" type="Button" parent="PanelContainer/Craft/RecipeInfo"]
+layout_mode = 2
 offset_top = 342.0
 offset_right = 567.0
 offset_bottom = 367.0
@@ -147,6 +155,7 @@ text = "Manufacture"
 [node name="Mod" type="HBoxContainer" parent="PanelContainer"]
 visible = false
 custom_minimum_size = Vector2i(0, 367)
+layout_mode = 2
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -155,6 +164,7 @@ offset_top = 29.0
 [node name="RecipeInfo" type="VBoxContainer" parent="PanelContainer/Mod"]
 visible = false
 clip_contents = true
+layout_mode = 2
 offset_left = 195.0
 offset_right = 768.0
 offset_bottom = 367.0
@@ -162,6 +172,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 
 [node name="recipeName" type="Label" parent="PanelContainer/Mod/RecipeInfo"]
+layout_mode = 2
 offset_right = 573.0
 offset_bottom = 24.0
 text = "NameOf"

@@ -1,6 +1,40 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bku7dq7w73u32"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://bku7dq7w73u32"]
 
-[ext_resource type="FontFile" uid="uid://ddobdb23b8yoc" path="res://themes/Retro Gaming.ttf" id="1_q67da"]
+[ext_resource type="FontFile" uid="uid://pagu0vv8j03h" path="res://themes/Retro Gaming.ttf" id="1_q67da"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ky0pp"]
+bg_color = Color(0.6, 0.690196, 0.74902, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 8
+border_color = Color(0.0509804, 0.0901961, 0.121569, 1)
+corner_radius_top_left = 8
+corner_detail = 1
+expand_margin_top = 4.0
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_spn8o"]
+bg_color = Color(0.478431, 0.584314, 0.654902, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.0509804, 0.0901961, 0.121569, 1)
+corner_radius_top_left = 8
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_om2vj"]
+bg_color = Color(0.478431, 0.584314, 0.654902, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.0509804, 0.0901961, 0.121569, 1)
+corner_radius_top_left = 8
+corner_detail = 1
+anti_aliasing = false
 
 [resource]
 default_font = ExtResource("1_q67da")
@@ -24,9 +58,9 @@ Button/font_sizes/font_size = 24
 Button/fonts/font = ExtResource("1_q67da")
 Button/styles/disabled = null
 Button/styles/focus = null
-Button/styles/hover = null
-Button/styles/normal = null
-Button/styles/pressed = null
+Button/styles/hover = SubResource("StyleBoxFlat_ky0pp")
+Button/styles/normal = SubResource("StyleBoxFlat_spn8o")
+Button/styles/pressed = SubResource("StyleBoxFlat_om2vj")
 CheckButton/colors/font_color = Color(0, 0, 0, 1)
 CheckButton/colors/font_disabled_color = Color(0, 0, 0, 1)
 CheckButton/colors/font_focus_color = Color(0, 0, 0, 1)

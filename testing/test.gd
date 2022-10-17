@@ -8,4 +8,5 @@ func _ready():
 	world.entityHolder=$entityNode
 	world.itemActions.mineTex=$Sprite2d
 	world.loadItems(world.entityHolder)
+	world.worldShadows.loadScene()
 	world.inGame=true

@@ -34,11 +34,15 @@ func fill(contents,_randomTick=false):
 func fillEntities(entities):
 	if !len(entities):return
 	var entList=[]
-	for entity in entities:
-		if entity[2]=="ERROR_NAME":continue
+	for entity in len(entities)/8.:
+		if entities[entity*8+2]==-1:continue
 		var ent = world.getItem()
-		ent.fromStorageFormat(entity)
-		ent.position=(_pos*world.chunkSize+entity[len(entity)-1])*world.tileSize+Vector2i(
+		ent.fromStorageFormat(
+			entities.slice(entity*8,entity*8+6)
+		)
+		ent.position=(_pos*world.chunkSize+Vector2i(
+			entities[entity*8+6],
+			entities[entity*8+7]))*world.tileSize+Vector2i(
 			4,6
 		)
 		entList.append(ent)

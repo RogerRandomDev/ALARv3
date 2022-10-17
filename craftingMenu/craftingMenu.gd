@@ -59,6 +59,10 @@ func craftRecipe():
 		
 #loops the craft as long as repeatPress has timed out
 func _physics_process(_delta):
+	if !visible:
+		for child in $Particles.get_children():child.emitting=false
+		return
+	
 	if Input.is_action_pressed("m1")&&repeatCraft:craftRecipe()
 	else:if repeatCraft:
 		repeatCraft=false

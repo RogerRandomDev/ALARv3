@@ -1,17 +1,29 @@
 extends Node
 
-const terrainNoise0=preload("res://world/noise/terrainNoise0.tres")
-const underTerrainNoise0=preload("res://world/noise/terrainNoise1.tres")
-const tempNoise=preload("res://world/noise/BiomeNoise0.tres")
-const humidNoise=preload("res://world/noise/BiomeNoise2.tres")
-const heightNoise=preload("res://world/noise/BiomeNoise1.tres")
-const caveNoise0=preload("res://world/noise/caveNoise0.tres")
-const caveNoise1=preload("res://world/noise/caveNoise1.tres")
-const plantNoise0=preload("res://world/noise/plantNoise0.tres")
-const plantNoise1=preload("res://world/noise/plantNoise1.tres")
-const oreNoise1=preload("res://world/noise/oreNoise1.tres")
+var terrainNoise0=preload("res://world/noise/terrainNoise0.tres")
+var underTerrainNoise0=preload("res://world/noise/terrainNoise1.tres")
+var tempNoise=preload("res://world/noise/BiomeNoise0.tres")
+var humidNoise=preload("res://world/noise/BiomeNoise2.tres")
+var heightNoise=preload("res://world/noise/BiomeNoise1.tres")
+var caveNoise0=preload("res://world/noise/caveNoise0.tres")
+var caveNoise1=preload("res://world/noise/caveNoise1.tres")
+var plantNoise0=preload("res://world/noise/plantNoise0.tres")
+var plantNoise1=preload("res://world/noise/plantNoise1.tres")
+var oreNoise1=preload("res://world/noise/oreNoise1.tres")
 
-
+func updateSeed(newSeed):
+	newSeed=hash(newSeed)
+	terrainNoise0.seed=newSeed
+	underTerrainNoise0.seed=hash(newSeed)
+	tempNoise.seed=hash(newSeed+1)
+	humidNoise.seed=hash(newSeed+2)
+	heightNoise.seed=hash(newSeed+3)
+	caveNoise0.seed=hash(newSeed+4)
+	caveNoise1.seed=hash(newSeed+5)
+	plantNoise0.seed=hash(newSeed+6)
+	plantNoise1.seed=hash(newSeed+7)
+	oreNoise1.seed=hash(newSeed+8)
+	world.oreFiller.oreNoise0.seed=hash(newSeed+9)
 
 
 func caveNoise2D(x,y):

@@ -1,6 +1,6 @@
 extends Node
 
-const oreNoise0=preload("res://world/noise/oreNoise0.tres")
+var oreNoise0=preload("res://world/noise/oreNoise0.tres")
 
 const oreList=[
 ]

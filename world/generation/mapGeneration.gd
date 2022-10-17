@@ -76,8 +76,9 @@ func buildChunks():
 			var c=item.getChunk()
 			if !itemsByChunk.has(c):continue
 			var data=item.storageFormat()
-			data.append(globalToCell(item.position)[0])
-			itemsByChunk[c][0].append(data)
+			var pos=globalToCell(item.position)[0]
+			data.append(pos.x);data.append(pos.y)
+			itemsByChunk[c][0].append_array(data)
 			itemsByChunk[c][1].append(item)
 		#removes chunks outside of range
 		for chunk in removeChunks:
@@ -172,8 +173,9 @@ func modifyUnloaded(chunkPos,data):
 			world.itemManager.getDrop(source.get("name"))
 			))
 		if dropItem!="NONE":
-			dropItem.append(cell)
-			entData.append(dropItem)
+			dropItem.append(cell.x)
+			dropItem.append(cell.y)
+			entData.append_array(dropItem)
 		
 		chunkData[0][cell.x+cell.y*16]=-1
 	
