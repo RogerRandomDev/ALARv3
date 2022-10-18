@@ -113,14 +113,16 @@ func removeItems(items):
 #closes threads to end game
 func _notification(what):
 	if what==NOTIFICATION_EXIT_TREE:
-		fileManager.compilePlayerSave()
+		if root!=null:
+			fileManager.compilePlayerSave()
 		
 		exitGame=true
 		GameTick.sem.post()
 		GameTick.thread.wait_to_finish()
 		mapGen.genSema.post()
 		mapGen.generationThread.wait_to_finish()
-		await mapGen.saveLoadedChunks()
+		if root!=null:
+			await mapGen.saveLoadedChunks()
 		
 
 

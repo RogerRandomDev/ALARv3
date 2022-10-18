@@ -79,8 +79,13 @@ func loadWorld(worldName):
 		file.open("%sPlayer/PlayerData.dat"%path,File.READ_WRITE)
 		var data=str_to_var(file.get_as_text())
 		if data==null:return
-		world.player.global_position=data.cellPos*8
+		world.player.canMove=false
+		world.player.global_position=data.cellPos*8-Vector2i(0,32)
 		world.inventory.buildFromStorage(data.inventory)
+		var myChunk=world.mapGen.globalToChunk(world.player.global_position)
+		world.mapGen.moveCurrentChunk(myChunk)
+		await world.mapGen.chunksLoaded
+		world.player.canMove=true
 #compiles save data for the player
 func compilePlayerSave():
 	var data={

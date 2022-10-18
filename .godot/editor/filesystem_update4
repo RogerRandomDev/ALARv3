@@ -1,4 +1,4 @@
-res://Debug/DebugMenu.tscn
+res://Title/Title.tscn
 res://world/resources/mapTiles.tres
 res://themes/craftingTheme.tres
 res://Title/titleTheme.tres
@@ -13,7 +13,7 @@ res://entities/Explosives/explosionEffect/explosionPArticle.tres
 res://world/noise/oreNoise0.tres
 res://world/resources/shadowMat.tres
 res://testing/test.tscn
-res://Title/Title.tscn
-res://entities/resources/itemDrop.gd
-res://world/generation/oreFill.gd
+res://Debug/DebugMenu.tscn
+res://world/generation/worldShadows.gd
 res://managers/fileManager.gd
+res://world/generation/router.gd
