@@ -38,13 +38,13 @@ func fillEntities(entities):
 		var ent = world.getItem()
 		ent.fromStorageFormat(
 			entities.slice(entity*world.itemStoreLength,entity*world.itemStoreLength+
-			world.itemStoreLength-2)
+			world.itemStoreLength-1)
 		)
 		ent.position=(_pos*world.chunkSize+Vector2i(
 			entities[entity*world.itemStoreLength+
-			world.itemStoreLength-2],
-			entities[entity*world.itemStoreLength+
-			world.itemStoreLength-1]))*world.tileSize+Vector2i(
+			world.itemStoreLength-1]%16,
+			int(entities[entity*world.itemStoreLength+
+			world.itemStoreLength-1]/16)))*world.tileSize+Vector2i(
 			4,6
 		)
 		entList.append(ent)

@@ -120,7 +120,7 @@ func saveLoadedChunks():
 		if !itemsByChunk.has(c):continue
 		var data=item.storageFormat()
 		var pos=globalToCell(item.position)[0]
-		data.append(pos.x);data.append(pos.y)
+		data.append(pos.x+pos.y*16)
 		itemsByChunk[c][0].append_array(data)
 		itemsByChunk[c][1].append(item)
 	#removes chunks outside of range
@@ -204,8 +204,7 @@ func modifyUnloaded(chunkPos,data):
 			world.itemManager.getDrop(source.get("name"))
 			))
 		if dropItem!="NONE":
-			dropItem.append(cell.x)
-			dropItem.append(cell.y)
+			dropItem.append(cell.x+cell.y*16)
 			entData.append_array(dropItem)
 		
 		chunkData[cell.x+cell.y*16]=-1

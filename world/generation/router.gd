@@ -41,7 +41,7 @@ var itemList=[]
 #stores item objects to reduce lag to a certain extent
 var itemDropStore=[]
 #stores length of each item when stored in chunkdata
-var itemStoreLength=5
+var itemStoreLength=4
 #is only true in the game world
 var inGame=false
 

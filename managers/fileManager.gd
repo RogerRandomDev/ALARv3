@@ -99,7 +99,7 @@ func compilePlayerSave():
 #main game from here
 func openChunkFile(chunk):
 	if(chunkFiles.has(chunk))||chunk.y>40||chunk.y<-10:return
-	var path="user://Saves/%s/chunks/%s.dat"%[world.saveName,str(chunk)]
+	var path="user://Saves/%s/chunks/%s.nfts"%[world.saveName,str(chunk)]
 	var file=File.new()
 	if !dir.file_exists(path):
 		file.open(path,File.WRITE_READ)
@@ -122,9 +122,8 @@ func storeFullChunk(chunk,data):
 	if !chunkFiles.has(chunk)||chunk.y>40||chunk.y<-10:return
 	chunkFiles[chunk].seek(0)
 #	chunkFiles[chunk].store_pascal_string(compressChunkData(data))
-	var compressed=compressChunkData(data)
+	var compressed=compressChunkData(data,chunk)
 	chunkFiles[chunk].store_buffer(compressed)
-	var a=File.new()
 
 
 
@@ -132,7 +131,7 @@ func storeFullChunk(chunk,data):
 func getFullChunk(chunk):
 	if !chunkFiles.has(chunk):return null
 	
-	var base=decompressChunkData(chunkFiles[chunk].get_buffer(chunkFiles[chunk].get_length()))
+	var base=decompressChunkData(chunkFiles[chunk].get_buffer(chunkFiles[chunk].get_length()),chunk)
 	
 	return base
 
@@ -140,8 +139,8 @@ func getFullChunk(chunk):
 func loadFullChunk(chunk):
 	var out=getFullChunk(chunk)
 	if out==null:return
-	world.dataStore.chunkData[chunk]=out[0]
-	world.dataStore.entityData[chunk]=out[1]
+	world.nftsaStore.chunkData[chunk]=out[0]
+	world.nftsaStore.entityData[chunk]=out[1]
 	
 #opens chunk temporarily
 
@@ -153,33 +152,45 @@ const numCompression={
 
 #compression of a chunk for storing
 
+#gets what spot in the storage buffer this chunk is
+func getSpotInBuffer(chunk):
+	var origin=chunk-Vector2i(chunk/4)*4
+	return origin.x+origin.y*4
+
 #if you have problems with blocks and items being wrong later
 #its the (e-256)/256 part
 #change it to 255 on one or both and it should be fixed
-func compressChunkData(chunkData):
+func compressChunkData(chunkData,chunk):
+	
 	var dat=chunkData[0].map(func(e):return e%256)
 	dat.append_array(
 			chunkData[0].map(func(e):return int((e-255)/256)))
-	dat.append_array(chunkData[1])
+	#stores size of chunk entity list
 	var leng=len(chunkData[1])
 	dat.append_array([leng%256,int((leng-255)/256.)])
-	return (
-		PackedByteArray(
-			dat).compress(2)
-		)
+	#stores the list itself now
+	dat.append_array(chunkData[1])
+	var compressed=PackedByteArray(dat).compress(2)
+	compressed.append_array([
+		len(dat)%256,int(len(dat)/256)
+	])
+	
+	return compressed
+		
 
 
 #decompression of a chunk for use
-func decompressChunkData(chunkData):
-	var steps=Array(chunkData)
-	var s=steps.size()
-	var length=(steps[512]+steps[513]*256)+514
+func decompressChunkData(chunkData,chunk,giveFull=false):
+	var bufferSpot=getSpotInBuffer(chunk)
+	var length=chunkData[len(chunkData)-2]+chunkData[len(chunkData)-1]*256
+	chunkData.resize(len(chunkData)-2)
 	#decompresses chunk data
-	steps=Array(chunkData.decompress(
+	var steps=Array(chunkData.decompress(
 			length,2
 		))
 	var ents=[]
-	if(length>514):ents=steps.slice(514,len(steps)-1)
+	#cuts into only the entity buffer
+	if(length>514):ents=steps.slice(514,len(steps))
 	var decompressed=[
 		steps.slice(0,512),
 		ents,

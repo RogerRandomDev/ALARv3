@@ -7,7 +7,7 @@ const oreList=[
 
 #builds the ore list
 func _ready():
-	addOre(15,[0,40],["Desert","DesertMountains","Desert dLake"],true)
+	addOre(15,[0,2],["Desert","DesertMountains","Desert dLake"],true)
 	addOre(16,[0,40],[],false)
 	addOre(17,[30,40],[],false)
 	addOre(18,[32,40],[],false)

@@ -26,6 +26,9 @@ func _init():
 	if !pickable:return
 	add_child.call_deferred(quantityLabel)
 	quantityLabel.theme=world.itemTheme
+	if itemName=="ERROR_NAME":
+		toggleActive(false)
+		return
 	
 	
 #handles freeing itself

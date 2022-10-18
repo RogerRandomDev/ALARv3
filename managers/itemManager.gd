@@ -54,4 +54,5 @@ func getItemData(itemName):
 
 #gets name of the item from index
 func getItemName(id):
-	return itemData.keys()[id]
+	if itemData.size()>id:return itemData.keys()[id]
+	return "NONE"
