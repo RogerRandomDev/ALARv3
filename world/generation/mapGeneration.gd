@@ -133,8 +133,7 @@ func saveLoadedChunks():
 		#removes chunk from local, and checks if you have modified it at all
 		#so it only saves modified chunks
 		world.dataStore.removeChunk(chunk,
-		(loadedChunks[chunk].originalData!=world.dataStore.chunkData[chunk]||
-		itemsByChunk.has(chunk))
+		true
 		)
 		
 		world.fileManager.closeChunkFile(chunk)

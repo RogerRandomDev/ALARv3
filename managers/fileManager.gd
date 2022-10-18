@@ -7,6 +7,12 @@ var allSaves=[]
 
 func _ready():
 	allSaves=getSaveList()
+#gets the chunk cluster vector
+func getChunkCluster(chunk):
+	var c=chunk
+	c.x-=int(chunk.x<0)*7;c.y-=int(chunk.y<0)*7
+	return Vector2i(c/8)
+
 #returns list of saves for you
 func getSaveList():
 	var out=[]
@@ -103,8 +109,9 @@ func compilePlayerSave():
 
 #main game from here
 func openChunkFile(chunk):
+	var n=getChunkCluster(chunk)
 	if(chunkFiles.has(chunk))||chunk.y>40||chunk.y<-10:return
-	var path="user://Saves/%s/chunks/%s.nfts"%[world.saveName,str(chunk)]
+	var path="user://Saves/%s/chunks/%s.nfts"%[world.saveName,str(n)]
 	var file=File.new()
 	if !dir.file_exists(path):
 		file.open(path,File.WRITE_READ)
@@ -128,15 +135,45 @@ func storeFullChunk(chunk,data):
 	chunkFiles[chunk].seek(0)
 #	chunkFiles[chunk].store_pascal_string(compressChunkData(data))
 	var compressed=compressChunkData(data,chunk)
-	chunkFiles[chunk].store_buffer(compressed)
+	insertChunkToFile(chunk,compressed)
+	
 
-
+#inserts data into chunk cluster
+func insertChunkToFile(chunk,data):
+	var start=str_to_var(chunkFiles[chunk].get_buffer(
+		chunkFiles[chunk].get_length()
+	).get_string_from_ascii())
+	if start==null:start={}
+	start[chunk]=data.hex_encode()
+	chunkFiles[chunk].seek(0)
+	var buff=var_to_str(start).to_ascii_buffer()
+	var out=buff.compress(2)
+	
+	out.append_array([len(buff)%256,int(len(buff)/256)])
+	chunkFiles[chunk].store_buffer(out)
+#pulls chunk data from the chunk cluster file
+func getChunkFromFile(chunk):
+	var start=chunkFiles[chunk].get_buffer(
+			chunkFiles[chunk].get_length()
+		)
+	
+	var leng=((start[len(start)-2])+(start[len(start)-1])*256)
+	start.resize(len(start)-2)
+	start=str_to_var(start.decompress(leng,2).get_string_from_ascii())
+	if !start.has(chunk):return null
+	var out=start[chunk];var finOut=PackedByteArray()
+	var i=0;var arrLen=len(out)/2
+	while i<arrLen:
+		finOut.append(out.substr(i*2,2).hex_to_int())
+		i+=1
+	return finOut
 
 #gets the entire chunk's data
 func getFullChunk(chunk):
 	if !chunkFiles.has(chunk):return null
-	
-	var base=decompressChunkData(chunkFiles[chunk].get_buffer(chunkFiles[chunk].get_length()),chunk)
+	var chunkData=getChunkFromFile(chunk)
+	if chunkData==null:return null
+	var base=decompressChunkData(chunkData,chunk)
 	
 	return base
 
@@ -159,8 +196,9 @@ const numCompression={
 
 #gets what spot in the storage buffer this chunk is
 func getSpotInBuffer(chunk):
-	var origin=chunk-Vector2i(chunk/4)*4
-	return origin.x+origin.y*4
+	var n=getChunkCluster(chunk)*4
+	
+	return chunk.x-n.x+(chunk.y-n.y)*4
 
 #if you have problems with blocks and items being wrong later
 #its the (e-256)/256 part
