@@ -1,6 +1,9 @@
 extends Node
 
 var chunkFiles={}
+var activeChunks=[]
+var clusterBuffers={}
+
 var unusedChunkFiles=[]
 var dir=Directory.new()
 var allSaves=[]
@@ -10,8 +13,8 @@ func _ready():
 #gets the chunk cluster vector
 func getChunkCluster(chunk):
 	var c=chunk
-	c.x-=int(chunk.x<0)*7;c.y-=int(chunk.y<0)*7
-	return Vector2i(c/8)
+	c.x-=int(chunk.x<0)*5;c.y-=int(chunk.y<0)*5
+	return Vector2i(c/6)
 
 #returns list of saves for you
 func getSaveList():
@@ -36,7 +39,8 @@ func createNewSave(saveName,_seed):
 		var file=File.new()
 		file.open("user://Saves/%s/Misc/menuData.dat"%saveName,File.WRITE)
 		var out=[]
-		OS.execute('date',PackedStringArray(["+%d-%m-%y"]),out,true)
+#		OS.execute('date',PackedStringArray(["+%d-%m-%y"]),out,true)
+		out=["1-1-1"]
 		file.seek(0)
 		file.store_line(var_to_str(
 			[saveName,
@@ -109,144 +113,182 @@ func compilePlayerSave():
 
 #main game from here
 func openChunkFile(chunk):
+	
 	var n=getChunkCluster(chunk)
-	if(chunkFiles.has(chunk))||chunk.y>40||chunk.y<-10:return
+	if (chunk.y>40||chunk.y<-10)||chunkFiles.has(n):return
+	activeChunks.append(chunk)
+	
 	var path="user://Saves/%s/chunks/%s.nfts"%[world.saveName,str(n)]
 	var file=File.new()
+	var bufferData=null
 	if !dir.file_exists(path):
 		file.open(path,File.WRITE_READ)
+		bufferData=PackedByteArray()
+		bufferData.resize(72)
 	else:
 		file.open(path,File.READ_WRITE)
-	chunkFiles[chunk]=file
+		bufferData=file.get_buffer(
+			file.get_length()
+		)
+	if !clusterBuffers.has(n):clusterBuffers[n]=bufferData
+	chunkFiles[n]=file
 	
+
+#cuts chunk out of cluster buffer
+#and then returns it and the two split parts without it
+func cutChunkFromBuffer(chunk):
+	
+	var n=getChunkCluster(chunk)
+	if !clusterBuffers.has(n):return
+	var bufferSlot=getSpotInBuffer(chunk)
+	var myBuffer=clusterBuffers[n]
+	var mySize=(
+		myBuffer[bufferSlot*2]+
+		myBuffer[bufferSlot*2+1]*256
+	)
+	var distanceToMine=0
+	var secondByte=true
+	Array(
+		myBuffer.slice(0,bufferSlot*2)
+		).map(func(e):
+			secondByte=!secondByte
+			distanceToMine+=e*((255*int(secondByte))+1)
+			)
+	distanceToMine=int(distanceToMine)
+	return [
+		myBuffer.slice(
+			distanceToMine+72,
+			distanceToMine+72+mySize
+		),
+		[
+			myBuffer.slice(0,distanceToMine+72),
+			myBuffer.slice(distanceToMine+72+mySize)
+		],
+	]
+
 
 
 func closeChunkFile(chunk):
-	if !chunkFiles.has(chunk):return
-	chunkFiles[chunk].close()
-	chunkFiles.erase(chunk)
+	if !activeChunks.has(chunk):return
+	activeChunks.erase(chunk)
+	var myCluster=getChunkCluster(chunk)
+	if (
+		activeChunks.any(
+			func(pos):getChunkCluster(pos)-myCluster==Vector2i.ZERO
+		)||
+		!chunkFiles.has(myCluster)
+	):return
+	#await makes sure this is completed before it continues with the rest
+	chunkFiles[myCluster].seek(0)
+	chunkFiles[myCluster].store_buffer(clusterBuffers[myCluster])
+	chunkFiles[myCluster].close()
+	clusterBuffers.erase(myCluster)
+	chunkFiles.erase(myCluster)
+	
 
 
 
 
 #stores entire chunk worth of data
 func storeFullChunk(chunk,data):
-	if !chunkFiles.has(chunk)||chunk.y>40||chunk.y<-10:return
-	chunkFiles[chunk].seek(0)
-#	chunkFiles[chunk].store_pascal_string(compressChunkData(data))
-	var compressed=compressChunkData(data,chunk)
-	insertChunkToFile(chunk,compressed)
+	var newData=compressChunkData(data)
+	var bufferData=cutChunkFromBuffer(chunk)
+	
+	if bufferData==null:return
+	
+	var bufferSlot=getSpotInBuffer(chunk)
+	bufferData[1][0][bufferSlot*2]=len(newData)%256
+	bufferData[1][0][bufferSlot*2+1]=int(len(newData)/256)
+	var newDataOut=bufferData[1][0]
+	newDataOut.append_array(newData)
+	newDataOut.append_array(bufferData[1][1])
+	clusterBuffers[getChunkCluster(chunk)]=(
+		newDataOut
+	)
+	
+	
+	
+	
 	
 
 #inserts data into chunk cluster
 func insertChunkToFile(chunk,data):
-	var start=str_to_var(chunkFiles[chunk].get_buffer(
-		chunkFiles[chunk].get_length()
-	).get_string_from_ascii())
-	if start==null:start={}
-	start[chunk]=data.hex_encode()
-	chunkFiles[chunk].seek(0)
-	var buff=var_to_str(start).to_ascii_buffer()
-	var out=buff.compress(2)
-	
-	out.append_array([len(buff)%256,int(len(buff)/256)])
-	chunkFiles[chunk].store_buffer(out)
+	pass
 #pulls chunk data from the chunk cluster file
 func getChunkFromFile(chunk):
-	var start=chunkFiles[chunk].get_buffer(
-			chunkFiles[chunk].get_length()
-		)
-	
-	var leng=((start[len(start)-2])+(start[len(start)-1])*256)
-	start.resize(len(start)-2)
-	start=str_to_var(start.decompress(leng,2).get_string_from_ascii())
-	if !start.has(chunk):return null
-	var out=start[chunk];var finOut=PackedByteArray()
-	var i=0;var arrLen=len(out)/2
-	while i<arrLen:
-		finOut.append(out.substr(i*2,2).hex_to_int())
-		i+=1
-	return finOut
+	pass
 
 #gets the entire chunk's data
 func getFullChunk(chunk):
-	if !chunkFiles.has(chunk):return null
-	var chunkData=getChunkFromFile(chunk)
-	if chunkData==null:return null
-	var base=decompressChunkData(chunkData,chunk)
-	
-	return base
-
+	var rawInput=cutChunkFromBuffer(chunk)
+	if rawInput==null:return
+	var out=decompressChunkData(rawInput[0])
+	return out
 #loads the chunk data only if it is available
 func loadFullChunk(chunk):
 	var out=getFullChunk(chunk)
 	if out==null:return
-	world.nftsaStore.chunkData[chunk]=out[0]
-	world.nftsaStore.entityData[chunk]=out[1]
+	world.dataStore.chunkData[chunk]=out[0]
+#	world.dataStore.entityData[chunk]=out[1]
 	
 #opens chunk temporarily
 
 
-
-const numCompression={
-}
 
 
 #compression of a chunk for storing
 
 #gets what spot in the storage buffer this chunk is
 func getSpotInBuffer(chunk):
-	var n=getChunkCluster(chunk)*4
+	var n=getChunkCluster(chunk)*6
 	
-	return chunk.x-n.x+(chunk.y-n.y)*4
+	return chunk.x-n.x+(chunk.y-n.y)*6
 
 #if you have problems with blocks and items being wrong later
 #its the (e-256)/256 part
 #change it to 255 on one or both and it should be fixed
-func compressChunkData(chunkData,chunk):
-	
-	var dat=chunkData[0].map(func(e):return e%256)
-	dat.append_array(
-			chunkData[0].map(func(e):return int((e-255)/256)))
-	#stores size of chunk entity list
-	var leng=len(chunkData[1])
-	dat.append_array([leng%256,int((leng-255)/256.)])
-	#stores the list itself now
-	dat.append_array(chunkData[1])
-	var compressed=PackedByteArray(dat).compress(2)
-	compressed.append_array([
-		len(dat)%256,int(len(dat)/256)
-	])
-	
-	return compressed
-		
+func compressChunkData(chunkData):
+	#handles cell tiles first, 512 bytes of them
+	var out=PackedByteArray(
+		chunkData[0].map(func(e):e%256
+		))
+	out.append_array(
+			chunkData[0].map(func(e):int((e-255)/256))
+		#now it goes through entities
+		)
+	out.append_array(
+			chunkData[1]
+		#stores entity data length for decompression reasons
+		)
+	out.append_array(
+			[
+				len(chunkData[1])%256,
+				int((len(chunkData[1])-255)/256)
+			]
+		)
+	return out.compress(2)
 
 
 #decompression of a chunk for use
-func decompressChunkData(chunkData,chunk,giveFull=false):
-	var bufferSpot=getSpotInBuffer(chunk)
-	var length=chunkData[len(chunkData)-2]+chunkData[len(chunkData)-1]*256
+func decompressChunkData(chunkData):
+	var length=len(chunkData)-1
+	if length<1:return
+	var decompSize=chunkData[length-1]+chunkData[length]*256
 	chunkData.resize(len(chunkData)-2)
-	#decompresses chunk data
-	var steps=Array(chunkData.decompress(
-			length,2
-		))
-	var ents=[]
-	#cuts into only the entity buffer
-	if(length>514):ents=steps.slice(514,len(steps))
-	var decompressed=[
-		steps.slice(0,512),
-		ents,
-		steps[len(steps)-1]
-	]
-	var i=0
+	
+	var newChunkData=chunkData.decompress(decompSize,2)
+	var blockData=[]
+	var i=0;
 	while i<256:
-		decompressed[0][i]+=decompressed[0][i+256]*256+1
-		decompressed[0][i]=decompressed[0][i]*int(
-			decompressed[0][i+256]<253
-		)-1
+		blockData.append(
+			(newChunkData[i]+newChunkData[i+256]*256)*
+			int(newChunkData[i+256]<253)
+			
+		)
 		i+=1
-	decompressed[0].resize(256)
-	return decompressed
+	return [
+		blockData,
+		[]
+		]
 
 

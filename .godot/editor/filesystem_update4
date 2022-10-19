@@ -15,4 +15,3 @@ res://world/resources/shadowMat.tres
 res://managers/fileManager.gd
 res://Title/Title.tscn
 res://testing/test.tscn
-res://world/generation/mapGeneration.gd
