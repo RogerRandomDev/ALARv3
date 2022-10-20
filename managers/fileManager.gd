@@ -93,7 +93,7 @@ func loadWorld(worldName):
 		var data=str_to_var(file.get_as_text())
 		if data==null:return
 		world.player.canMove=false
-		world.player.global_position=data.cellPos*8-Vector2i(0,32)
+		world.player.global_position=data.cellPos*8-Vector2i(0,16)
 		world.inventory.buildFromStorage(data.inventory)
 		var myChunk=world.mapGen.globalToChunk(world.player.global_position)
 		world.mapGen.moveCurrentChunk(myChunk)
@@ -119,7 +119,7 @@ func getChunkFile(chunk):
 
 #main game from here
 func openChunkFile(chunk):
-	
+	if activeChunks.has(chunk):return
 	var n=getChunkCluster(chunk)
 	activeChunks[chunk]=n
 	if (chunk.y>40||chunk.y<-10)||clusterBuffers.has(n):return
@@ -140,7 +140,7 @@ func openChunkFile(chunk):
 
 #cuts chunk out of cluster buffer
 #and then returns it and the two split parts without it
-func cutChunkFromBuffer(chunk):
+func cutChunkFromBuffer(_chunk):
 	pass
 
 
@@ -149,23 +149,29 @@ func closeChunkFile(chunk):
 	if activeChunks.has(chunk):activeChunks.erase(chunk)
 	if activeChunks.values().has(n):return
 	saveClusterBuffer(n)
+
 #saves a cluster buffer to file
 func saveClusterBuffer(cluster):
-	clusterFiles[cluster].store_buffer(clusterBuffers[cluster])
+	clusterFiles[cluster].seek(0)
+	clusterFiles[cluster].store_buffer(
+		PackedByteArray(
+			clusterBuffers[cluster]))
 	clusterFiles[cluster].close()
 	clusterFiles.erase(cluster)
 	clusterBuffers.erase(cluster)
+	
 
 func getClusterPosition(chunk):
 	var n=getChunkCluster(chunk)
 	var clusterPos=getSpotInBuffer(chunk)
 	var outPos=0;var i=0;
+	var buffer=clusterBuffers[n]
 	while i<clusterPos:
-		outPos+=clusterBuffers[n][i*2]+clusterBuffers[n][i*2+1]*256
+		outPos+=buffer[i*2]+buffer[i*2+1]*256
 		i+=1
 	return [
 		outPos+72,
-		clusterBuffers[n][clusterPos*2]+clusterBuffers[n][clusterPos*2+1]*256
+		buffer[clusterPos*2]+buffer[clusterPos*2+1]*256
 	]
 
 
@@ -173,28 +179,45 @@ func getClusterPosition(chunk):
 func storeFullChunk(chunk,data):
 	var n=getChunkCluster(chunk)
 	if !clusterBuffers.has(n):return
+	var compressedData=compressChunk(data)
 	var startingCluster=clusterBuffers[n]
+	var clusterPos=getSpotInBuffer(chunk)
 	var cutAt=getClusterPosition(chunk)
+	if cutAt==null:return
+	var newData=startingCluster.slice(0,cutAt[0])
+	newData.append_array(compressedData)
+	newData.append_array(
+		startingCluster.slice(cutAt[0]+cutAt[1])
+	)
+	clusterBuffers[n]=newData
+	clusterBuffers[n][clusterPos*2]=len(compressedData)%256
+	clusterBuffers[n][clusterPos*2+1]=int(len(compressedData)/256.)
 	
 
-func getFromCluster(chunk):
+func getFromCluster(_chunk):
 	return []
 	
 #gets the entire chunk's data
 func getFullChunk(chunk):
 	if !activeChunks.has(chunk):return
+	var n=getChunkCluster(chunk)
 	var curAt=getClusterPosition(chunk)
+	
 	if curAt[1]==0:return
 	#doesn't return the actual chunk data yet
 	#need to do that still
 	#add 72 to the numbers to account for the front byte buffer
-	var out=[]
-	out=null
-	return out
+#	var startingCluster=clusterBuffers[n]
+	return decompressChunk(
+		clusterBuffers[n].slice(
+			curAt[0],curAt[0]+curAt[1]
+		)
+	)
 
 #loads the chunk data only if it is available
 func loadFullChunk(chunk):
 	var out=getFullChunk(chunk)
+	
 	if out==null:return
 	world.dataStore.chunkData[chunk]=out[0]
 	world.dataStore.entityData[chunk]=[]
@@ -209,3 +232,35 @@ func getSpotInBuffer(chunk):
 	var n=getChunkCluster(chunk)*6
 	
 	return chunk.x-n.x+(chunk.y-n.y)*6
+
+#compression and decompression
+func compressChunk(data):
+	var compressed=PackedByteArray()
+	data[0].map(
+		func(tile):
+			compressed.append_array([
+				tile%256,
+				int((tile-255)/256)
+			])
+	)
+	
+	compressed.append_array(data[1])
+#	compressed=compressed.compress(2)
+	compressed.append_Array([
+		len(data[1])%256,
+		int(len(data[1])/256.)
+	])
+	return compressed
+func decompressChunk(data):
+	var decompressed=[[],[]]
+	var i=0;
+	var dataLen=data[len(data)-2]+data[len(data)-1]*256
+#	data=data.slice(2).decompress(dataLen+512,2)
+	while i<256:
+		decompressed[0].append(
+			(data[i*2]+data[i*2+1]*256+1)*
+			int(data[i*2+1]<254)-1
+		)
+		i+=1
+	decompressed[1].append_array(data.slice(514))
+	return decompressed

@@ -151,6 +151,10 @@ locale/language_filter=["en"]
 limits/multithreaded_server/rid_pool_prealloc=128
 limits/message_queue/max_size_kb=8192
 
+[network]
+
+limits/packet_peer_stream/max_buffer_po2=18
+
 [physics]
 
 2d/physics_engine="GodotPhysics2D"

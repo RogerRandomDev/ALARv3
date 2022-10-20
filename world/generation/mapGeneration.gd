@@ -98,7 +98,7 @@ func buildChunks():
 			)
 			loadedChunks.erase(chunk)
 			
-			world.fileManager.closeChunkFile(chunk)
+			await world.fileManager.closeChunkFile(chunk)
 		#builds new needed chunks
 		for chunk in needChunks:
 			world.fileManager.openChunkFile(chunk)
@@ -132,9 +132,7 @@ func saveLoadedChunks():
 			world.removeItems(itemsByChunk[chunk][1])
 		#removes chunk from local, and checks if you have modified it at all
 		#so it only saves modified chunks
-		world.dataStore.removeChunk(chunk,
-		true
-		)
+		await world.dataStore.removeChunk(chunk,true)
 		
 		world.fileManager.closeChunkFile(chunk)
 		
@@ -211,7 +209,7 @@ func modifyUnloaded(chunkPos,data):
 	
 #	world.fileManager.storeFullChunk(chunkPos,[chunkData,fullData[1]])
 	world.fileManager.storeFullChunk(chunkPos,[chunkData.duplicate(),entData])
-	world.fileManager.closeChunkFile(chunkPos)
+	await world.fileManager.closeChunkFile(chunkPos)
 
 
 

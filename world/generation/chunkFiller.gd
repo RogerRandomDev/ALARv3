@@ -79,6 +79,7 @@ func buildChunkData(chunkPos,stored=true):
 	var dat=null
 	if stored:
 		dat=world.dataStore.getChunk(chunkPos)
+		print(dat)
 	if dat!=null:return dat
 	
 	var out =[]

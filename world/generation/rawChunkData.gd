@@ -33,9 +33,8 @@ func addChunk(chunk,chunkDataIn=[]):
 #this prevents storing in the ram itself
 #if you want to load chunks after this, you need to store
 #as a file and then get this fill from getChunk
-func removeChunk(chunk,doSave):
-	if doSave:
-		world.fileManager.storeFullChunk(chunk,[
+func removeChunk(chunk,_doSave):
+	world.fileManager.storeFullChunk(chunk,[
 			chunkData[chunk].duplicate(),
 			entityData[chunk].duplicate()])
 	entityData.erase(chunk)
