@@ -17,11 +17,14 @@ func loadScene():
 	sprite.texture=tex
 
 func loadNewTex(dataIN):
+	if world==null:return
+	
 	var nImg=Image.new()
 	nImg.create_from_data(112,112,false,Image.FORMAT_RGBA8,dataIN)
 	tex.set_image(nImg)
-	img=nImg
-	if world==null:return
-	sprite.global_position=(world.mapGen.centerChunk-Vector2i(
+	sprite.set_deferred('global_position',(world.mapGen.centerChunk-Vector2i(
 		world.renderDistance,
 		world.renderDistance))*128
+		)
+	img=nImg
+	

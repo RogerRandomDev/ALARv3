@@ -11,13 +11,13 @@ var allSaves=[]
 var emptyBuffer=PackedByteArray()
 
 func _ready():
-	emptyBuffer.resize(72)
+	emptyBuffer.resize(128)
 	allSaves=getSaveList()
 #gets the chunk cluster vector
 func getChunkCluster(chunk):
 	var c=chunk
-	c.x-=int(chunk.x<0)*5;c.y-=int(chunk.y<0)*5
-	return Vector2i(c/6)
+	c.x-=int(chunk.x<0)*7;c.y-=int(chunk.y<0)*7
+	return Vector2i(c/8)
 
 #returns list of saves for you
 func getSaveList():
@@ -42,8 +42,8 @@ func createNewSave(saveName,_seed):
 		var file=File.new()
 		file.open("user://Saves/%s/Misc/menuData.dat"%saveName,File.WRITE)
 		var out=[]
-#		OS.execute('date',PackedStringArray(["+%d-%m-%y"]),out,true)
-		out=["1-1-1"]
+		OS.execute('date',PackedStringArray(["+%d-%m-%y"]),out,true)
+		
 		file.seek(0)
 		file.store_line(var_to_str(
 			[saveName,
@@ -102,7 +102,7 @@ func loadWorld(worldName):
 #compiles save data for the player
 func compilePlayerSave():
 	var data={
-		"cellPos":Vector2i(world.player.global_position/8.),
+		"cellPos":Vector2i(world.player.position/8.),
 		"inventory":world.inventory.convertToStorage()
 	}
 	var file=File.new()
@@ -113,7 +113,7 @@ func compilePlayerSave():
 	file.close()
 #returns the file object for the given chunk
 func getChunkFile(chunk):
-	var path="user://Saves/%s/chunks/%s.nfts"%[world.saveName,str(getChunkCluster(chunk))]
+	var path="user://Saves/%s/chunks/%s.CHUNK"%[world.saveName,str(getChunkCluster(chunk))]
 	var file=File.new();file.open(path,File.READ_WRITE)
 	return file
 
@@ -123,13 +123,13 @@ func openChunkFile(chunk):
 	var n=getChunkCluster(chunk)
 	activeChunks[chunk]=n
 	if (chunk.y>40||chunk.y<-10)||clusterBuffers.has(n):return
-	var path="user://Saves/%s/chunks/%s.nfts"%[world.saveName,str(n)]
+	var path="user://Saves/%s/chunks/%s.CHUNK"%[world.saveName,str(n)]
 	var file=File.new()
 	if !dir.file_exists(path):
 		file.open(path,File.WRITE_READ)
 		file.store_buffer(emptyBuffer)
 		clusterBuffers[n]=PackedByteArray()
-		clusterBuffers[n].resize(72)
+		clusterBuffers[n].resize(128)
 	else:
 		file.open(path,File.READ_WRITE)
 		clusterBuffers[n]=file.get_buffer(
@@ -170,7 +170,7 @@ func getClusterPosition(chunk):
 		outPos+=buffer[i*2]+buffer[i*2+1]*256
 		i+=1
 	return [
-		outPos+72,
+		outPos+128,
 		buffer[clusterPos*2]+buffer[clusterPos*2+1]*256
 	]
 
@@ -229,9 +229,9 @@ func loadFullChunk(chunk):
 
 #gets what spot in the storage buffer this chunk is
 func getSpotInBuffer(chunk):
-	var n=getChunkCluster(chunk)*6
+	var n=getChunkCluster(chunk)*8
 	
-	return chunk.x-n.x+(chunk.y-n.y)*6
+	return chunk.x-n.x+(chunk.y-n.y)*8
 
 #compression and decompression
 func compressChunk(data):
@@ -245,8 +245,8 @@ func compressChunk(data):
 	)
 	
 	compressed.append_array(data[1])
-#	compressed=compressed.compress(2)
-	compressed.append_Array([
+	compressed=compressed.compress(2)
+	compressed.append_array([
 		len(data[1])%256,
 		int(len(data[1])/256.)
 	])
@@ -254,13 +254,14 @@ func compressChunk(data):
 func decompressChunk(data):
 	var decompressed=[[],[]]
 	var i=0;
-	var dataLen=data[len(data)-2]+data[len(data)-1]*256
-#	data=data.slice(2).decompress(dataLen+512,2)
+	var dataLen=(data[len(data)-2]+data[len(data)-1]*256)
+	data.resize(len(data)-2)
+	data=data.decompress(dataLen+512,2)
 	while i<256:
 		decompressed[0].append(
 			(data[i*2]+data[i*2+1]*256+1)*
 			int(data[i*2+1]<254)-1
 		)
 		i+=1
-	decompressed[1].append_array(data.slice(514))
+	decompressed[1].append_array(data.slice(512))
 	return decompressed

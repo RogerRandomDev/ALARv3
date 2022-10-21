@@ -12,7 +12,7 @@ var throwDir=Vector2.ZERO
 var sticky=false
 func _ready():
 	randomize()
-	texture=load("res://items/tools/%s.png"%bombType)
+	texture=load("res://items/tools/%s.png"%bombType.replace(" ",""))
 	var shape=CollisionShape2D.new()
 	shape.shape=CircleShape2D.new()
 	shape.shape.radius=3

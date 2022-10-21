@@ -33,10 +33,9 @@ func _init():
 	
 #handles freeing itself
 func prepFree():
-	
-	if is_queued_for_deletion()||toFree||free:return
 	if world.itemList.has(self):
 		world.itemList.erase(self)
+	if is_queued_for_deletion()||toFree||free:return
 	if world.itemDropStore.has(self):
 		world.itemDropStore.erase(self)
 	if world.itemDropStore.size()<2499:

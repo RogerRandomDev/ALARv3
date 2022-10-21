@@ -63,7 +63,7 @@ func runCompute():
 	var output_bytes := rd.buffer_get_data(buffer)
 	var output := output_bytes.to_int32_array()
 	var output_img := rd.texture_get_data(bufferTex,0)
-	world.worldShadows.loadNewTex.call_deferred(output_img)
+	world.worldShadows.loadNewTex(output_img)
 	
 	rd.free_rid(buffer)
 	

@@ -30,6 +30,7 @@ func buildCSV():
 		_set.texture=world.loadItemTexture(_set)
 		itemData[line[0].replace(" ","")]=_set
 func compressToStorage(itemDat):
+	itemDat.id=itemData.keys().find(itemDat.name)
 	return [
 		max(itemDat.id,0)%256,
 		int((itemDat.id-255)/256),

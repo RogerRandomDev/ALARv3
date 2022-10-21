@@ -49,7 +49,10 @@ func canMakeRecipe(recipeName):
 	#checks quantity of an item in inventory to the amount needed
 	#offsets by 1 so it ignores the first index, being the output quantity
 	
-	for i in (len(recipeData2)-1)/2.0:if !world.inventory.haveEnough(recipeData2[i*2+1],i*2+2):return false
+	for i in (len(recipeData2)-1)/2.0:if !world.inventory.haveEnough(
+		recipeData2[i*2+1],
+		recipeData2[i*2+2]
+		):return false
 	return true
 
 

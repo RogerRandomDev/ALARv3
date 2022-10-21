@@ -59,6 +59,7 @@ formats/zstd/long_distance_matching=true
 
 settings/profiler/max_functions=24576
 settings/gdscript/max_call_stack=2048
+gdscript/warnings/integer_division=0
 
 [display]
 
