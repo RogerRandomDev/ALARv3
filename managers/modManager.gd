@@ -2,6 +2,55 @@ extends Node
 
 const ZERO=Vector2i(0,0)
 const EIGHT=Vector2i(8,8)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#please do not make fun of my janky code for this
+#it is very shy
+#also it is italian
+
 var TileShapes=[
 	PackedVector2Array([Vector2i(-4,-4),Vector2i(4,-4),Vector2i(4,4),Vector2i(-4,4)]),
 	PackedVector2Array([Vector2i(-4,-2),Vector2i(4,-2),Vector2i(4,4),Vector2i(-4,4)]),
