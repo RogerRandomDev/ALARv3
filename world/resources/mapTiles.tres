@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=44 format=3 uid="uid://dpwq7omehya5w"]
+[gd_resource type="TileSet" load_steps=44 format=3 uid="uid://davtqyf4ojauw"]
 
 [ext_resource type="Texture2D" uid="uid://blg0uqgmesg5b" path="res://world/Tiles/Grass.png" id="1_xku5c"]
 [ext_resource type="Texture2D" uid="uid://b1cfv8c17sk4j" path="res://world/Tiles/Dirt.png" id="2_28x5m"]
@@ -17,22 +17,16 @@
 [ext_resource type="Texture2D" uid="uid://l6ghgxa8dqc5" path="res://world/Tiles/WaterTiles/WaterFlowing.png" id="10_sicv8"]
 [ext_resource type="Texture2D" uid="uid://cxvfbq5bqrq8" path="res://world/Tiles/CoalOre.png" id="10_t8qc2"]
 [ext_resource type="Texture2D" uid="uid://behq0w3yy7n8j" path="res://world/Tiles/DiamondOre.png" id="11_8obeh"]
-[ext_resource type="Texture2D" uid="uid://cc7oytcnskh3t" path="res://world/Tiles/WaterTiles/WaterSource.png" id="11_iaow6"]
 [ext_resource type="Texture2D" uid="uid://drda2iu87ne4f" path="res://world/Tiles/UraniumOre.png" id="12_46jb7"]
 [ext_resource type="Texture2D" uid="uid://67x6xe11wv11" path="res://world/Tiles/WaterTiles/Water1.png" id="12_e0qq4"]
 [ext_resource type="Texture2D" uid="uid://4pvdr3iug8xv" path="res://world/Tiles/RubyOre.png" id="13_pptux"]
 [ext_resource type="Texture2D" uid="uid://ddtgf8s3n1syy" path="res://world/Tiles/IronOre.png" id="15_je8kl"]
+[ext_resource type="Texture2D" uid="uid://cc7oytcnskh3t" path="res://world/Tiles/Water.png" id="21_6hv64"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nqwvh"]
 resource_name = "Grass"
 texture = ExtResource("1_xku5c")
 texture_region_size = Vector2i(8, 8)
-0:0/0 = 0
-0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
-0:0/0/physics_layer_0/angular_velocity = 0.0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
-0:0/0/physics_layer_1/linear_velocity = Vector2(0, 0)
-0:0/0/physics_layer_1/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_h3d3m"]
 resource_name = "Dirt"
@@ -249,7 +243,7 @@ texture_region_size = Vector2i(8, 8)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i8w5c"]
 resource_name = "WaterSource"
-texture = ExtResource("11_iaow6")
+texture = ExtResource("21_6hv64")
 texture_region_size = Vector2i(8, 8)
 0:0/0 = 0
 0:0/0/modulate = Color(1, 1, 1, 0.501961)

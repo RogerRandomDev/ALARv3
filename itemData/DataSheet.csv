@@ -1,24 +1,25 @@
-name,id,actionRange,actionType,SmeltTo,BreakTo,location
-Grass,0,,,,Dirt,0
-Dirt,1,,,,,0
-Stone,2,,,,,0
-Sand,3,,,Glass,,0
-SandStone,4,,,,,0
-Log,5,,,,,0
-Leaves,6,,,,,0
-Cactus,12,,,,,0
-Glass,13,,,,NONE,0
-Stone Bricks,14,,,,,0
-Sulfur,15,,,,,0
-Coal Ore,16,,,,Coal,0
-Diamond Ore,17,,,,,0
-Uranium Ore,18,,,,,0
-Ruby Ore,19,,,,,0
-Iron Ore,20,,,Iron,,0
-Coal,0,,NONE,,,2
-Dynamite,-1,12,throw,,,1
-Bomb,1,6,throw,,,1
-Sticky Dynamite,2,12,throw,,,1
-Strip Charge,0,12,throw,,,1
-Drill,-1,,mine,,,1
-Heated Drill,1,,mine,,,1
+name,id,actionRange,actionType,SmeltTo,BreakTo,location,solid
+Grass,0,,,,Dirt,0,0
+Dirt,1,,,,,0,0
+Stone,2,,,,,0,0
+Sand,3,,,Glass,,0,0
+SandStone,4,,,,,0,0
+Log,5,,,,,0,0
+Leaves,6,,,,,0,0
+Water,7,,,,,0,1
+Cactus,8,,,,,0,0
+Glass,9,,,,NONE,0,2
+Stone Bricks,10,,,,,0,0
+Sulfur,11,,,,,0,0
+Coal Ore,12,,,,Coal,0,0
+Diamond Ore,13,,,,,0,0
+Uranium Ore,14,,,,,0,0
+Ruby Ore,15,,,,,0,0
+Iron Ore,16,,,Iron,,0,0
+Coal,0,,NONE,,,2,0
+Dynamite,-1,12,throw,,,1,0
+Bomb,1,6,throw,,,1,0
+Sticky Dynamite,2,12,throw,,,1,0
+Strip Charge,0,12,throw,,,1,0
+Drill,-1,,mine,,,1,0
+Heated Drill,1,,mine,,,1,0

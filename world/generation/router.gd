@@ -1,6 +1,6 @@
 extends Node
 
-const mapTiles=preload("res://world/resources/mapTiles.tres")
+var mapTiles=null
 const font=preload("res://themes/Retro Gaming.ttf")
 const itemTheme=preload("res://themes/itemTheme.tres")
 

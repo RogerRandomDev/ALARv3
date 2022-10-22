@@ -50,6 +50,7 @@ GameTick="*res://world/resources/GameTick.tscn"
 DebugMenu="*res://Debug/DebugMenu.tscn"
 InputManager="*res://InputManager.gd"
 CraftingMenu="*res://craftingMenu/craftingMenu.tscn"
+ModManager="*res://managers/modManager.gd"
 
 [compression]
 
