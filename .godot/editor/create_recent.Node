@@ -1,13 +1,15 @@
-BoxContainer
+Label
+VBoxContainer
+LineEdit
 PanelContainer
+Control
+RichTextLabel
+CanvasLayer
+BoxContainer
 HSeparator
 Container
 Button
 HBoxContainer
-Label
-LineEdit
-VBoxContainer
-Control
 Sprite2D
 TextureRect
 ItemList
@@ -20,7 +22,6 @@ CollisionShape2D
 GPUParticles2D
 TabContainer
 TabBar
-CanvasLayer
 CollisionPolygon2D
 Polygon2D
 TileMap
@@ -29,4 +30,3 @@ AnimatedSprite2D
 GridContainer
 CPUParticles2D
 AnimationPlayer
-WorldEnvironment

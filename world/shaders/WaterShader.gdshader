@@ -8,5 +8,6 @@ void fragment() {
 		texture(SCREEN_TEXTURE,SCREEN_UV+floatyBy).rgb,
 		0.5
 	);
+	
 	COLOR.a=tex.a;
 }

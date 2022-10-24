@@ -6,7 +6,7 @@ class_name itemDrop2D
 @export var actionRadius:int=8
 @export var actionType:String="mine"
 @export var id:int=-1
-
+@export var gameID:int=-1
 var ray=PhysicsRayQueryParameters2D.new()
 var pickable=true
 var velocity=Vector2.ZERO
@@ -33,18 +33,19 @@ func _init():
 	
 #handles freeing itself
 func prepFree():
+	toggleActive(false)
 	if world.itemList.has(self):
 		world.itemList.erase(self)
 	if is_queued_for_deletion()||toFree||free:return
 	if world.itemDropStore.has(self):
 		world.itemDropStore.erase(self)
-	if world.itemDropStore.size()<2499:
+	if world.itemDropStore.size()<3072:
 		world.itemDropStore.push_back(self)
 	else:
 		if !is_queued_for_deletion()&&!free&&!toFree:queue_free()
 	toFree=true
 	
-	toggleActive(false)
+	
 #toggle item activity
 func toggleActive(isActive):
 	lifeTime=0.0
@@ -88,7 +89,7 @@ func rayCheck(delta):
 			if newStack>0:
 				quantity=newStack
 				quantityLabel.text=str(newStack)
-			else:prepFree.call_deferred()
+			else:prepFree()
 		else:
 			velocity=Vector2.ZERO
 			position += (hit.position-position)*delta*15
@@ -96,7 +97,6 @@ func rayCheck(delta):
 	
 
 func buildItem(itemData):
-	
 	toggleActive(true)
 	toFree=false
 	free=false
@@ -109,6 +109,7 @@ func buildItem(itemData):
 	itemName=itemData.name
 	id=itemData.id
 	actionType=itemData.actionType
+	gameID=itemData.gameID
 	if itemData.actionRange!=null:actionRadius=itemData.actionRange
 	location=itemData.location
 	quantityLabel.text=str(quantity)
@@ -168,8 +169,9 @@ func storageFormat():
 		"actionRange":actionRadius,
 		"name":itemName,
 		"actionType":actionConversion[actionType],
-		"id":id+1,
-		"location":location
+		"id":id,
+		"location":location,
+		"gameID":gameID
 	})
 #rebuilds from storage format
 func fromStorageFormat(data):

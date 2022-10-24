@@ -94,7 +94,7 @@ func changeCell(cell,id,dropItem=true):
 			cellDat!=null&&
 			!cellDat.get_custom_data("replacable")||
 			changedCell.has(cell)):return false
-		call_deferred("set_cell",0,cell,id,atlas,0)
+		set_cell(0,cell,id,atlas,0)
 		cellData = true
 	changedCell[cell]=id
 	world.dataStore.chunkData[_pos][cell.x+cell.y*16]=id
@@ -127,7 +127,7 @@ func mineCell(cell,dropItem=true):
 	else:
 		cellData=world.itemManager.getItemData(cellData.name)
 		cellData.quantity=1
-		if dropItem:world.dropItem.call_deferred(cell+_pos*world.chunkSize,cellData)
+		if dropItem:world.dropItem(cell+_pos*world.chunkSize,cellData)
 		
 	return true
 

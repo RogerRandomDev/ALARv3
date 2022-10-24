@@ -163,7 +163,10 @@ func checkInv(_e):
 	slotInput(itemPos.x+itemPos.y*8)
 #makes toggling the inventory more responsive
 func _process(_delta):
-	if get_tree().current_scene.name=="gameWorld"&&Input.is_action_just_pressed("inventoryToggle"):
+	if (
+		get_tree().current_scene.name=="gameWorld"&&
+		Input.is_action_just_pressed("inventoryToggle")&&
+		!Console.visible):
 		world.inventory.toggled=!world.inventory.toggled
 		emit_signal("toggleVisible",int(world.inventory.toggled)*(world.inventory.inventorySize-8)+8)
 		emit_signal("toggleActive",world.inventory.holdingSlot)

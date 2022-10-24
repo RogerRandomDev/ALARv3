@@ -166,6 +166,10 @@ func getClusterPosition(chunk):
 	var clusterPos=getSpotInBuffer(chunk)
 	var outPos=0;var i=0;
 	var buffer=clusterBuffers[n]
+	if len(buffer)==0:
+		clusterBuffers[n].resize(128)
+		return [128,0]
+	
 	while i<clusterPos:
 		outPos+=buffer[i*2]+buffer[i*2+1]*256
 		i+=1

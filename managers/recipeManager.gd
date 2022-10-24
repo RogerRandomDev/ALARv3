@@ -3,8 +3,6 @@ extends Node
 var recipeData={}
 var itemNameTable=[]
 
-func _ready():
-	buildCSV()
 
 
 
@@ -18,17 +16,11 @@ func buildCSV():
 		if len(line)<3:break
 		var insertData=[str_to_var(line[1])]
 		#inserts unknown items into the item table for indexing in recipe data
-		if(itemNameTable.find(line[2])<0):itemNameTable.append(line[2])
-		insertData.append_array([itemNameTable.find(line[2]),str_to_var(line[3])])
-		if(line[4]!=""):
-			if itemNameTable.find(line[4])<0:itemNameTable.append(line[4])
-			insertData.append_array([itemNameTable.find(line[4]),str_to_var(line[5])])
-			if(line[6]!=""):
-				if itemNameTable.find(line[6])<0:itemNameTable.append(line[6])
-				insertData.append_array([itemNameTable.find(line[6]),str_to_var(line[7])])
-				if(line[8]!=""):
-					if itemNameTable.find(line[8])<0:itemNameTable.append(line[8])
-					insertData.append_array([itemNameTable.find(line[8]),str_to_var(line[9])])
+		for i in (len(itemNameTable)-2)/2.:
+			insertData.append_array([
+				world.itemManager.findItem(line[i*2+2]),
+				line[i*2+3].to_int()
+			])
 		recipeData[line[0]]=insertData
 	
 

@@ -12,7 +12,8 @@ var emptySlotb={
 			"actionType":"empty",
 			"actionRange":1,
 			"location":-1,
-			"slotNum":0}
+			"slotNum":0,
+			"gameID":-1}
 
 func _ready():
 	inventoryData.resize(inventorySize)
@@ -50,7 +51,8 @@ func buildFromStorage(inputData):
 			"actionType":data.actionType,
 			"location":data.location,
 			"actionRange":data.actionRange,
-			"slotNum":slot
+			"slotNum":slot,
+			"gameID":data.gameID
 			}
 		emit_signal("updateSlot",slot)
 #converts data to storage format
@@ -60,7 +62,7 @@ func convertToStorage():
 	return output
 
 func storeItem(item):
-
+	if !item.has("gameID"):item.gameID=world.itemManager.itemData.keys().find(item.name)
 	var count = item.quantity
 	var slots=inventoryData.filter(
 		func(slot):return (slot.name==item.name)&&slot.quantity<world.maxItemStack

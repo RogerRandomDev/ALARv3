@@ -27,7 +27,7 @@ func throw(id):
 	world.inventory.reduceSlotBy(id.slotNum,1)
 #null action
 func empty(_id):return
-
+func NONE(_id):return
 
 func getChunkAndCell(mPos):
 	var c=world.mapGen.globalToCell(mPos)

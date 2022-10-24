@@ -35,7 +35,7 @@ func explode(global_pos,explosionRadius,removeTiles=[],showFx=true):
 		outSide[c[1]].append_array([c[0],-1])
 	#fills in unloaded chunks
 	for chunk in outSide:
-		await world.mapGen.modifyUnloaded.call_deferred(chunk,outSide[chunk])
+		await world.mapGen.modifyUnloaded(chunk,outSide[chunk])
 	if showFx:triggerExplosionFx(global_pos,explosionRadius)
 
 

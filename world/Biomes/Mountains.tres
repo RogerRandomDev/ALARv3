@@ -16,3 +16,4 @@ plantCull = 0.75
 plantSizeMin = 4
 plantSizeMax = 8
 plantTiles = PackedInt32Array()
+oreCutoff = 0.5

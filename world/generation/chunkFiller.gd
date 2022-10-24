@@ -98,6 +98,7 @@ func buildChunkData(chunkPos,stored=true):
 		var tH= - abs(terrainNoise0.get_noise_1d(TLcorner.x+x))
 		var groundLevel=tH*(world.groundLevel*groundVariance)+groundOffset
 		var oreCut=biomes[0][1].oreCutoff;var biomeName=biomes[0][1].biomeName
+		var fluid=biomes[0][1].fluidType+1
 		#per cell in here
 		for y in world.chunkSize:
 			var corn=TLcorner+Vector2i(x,y)
@@ -121,7 +122,7 @@ func buildChunkData(chunkPos,stored=true):
 				corn.y>0&&
 				tH*(world.groundLevel*groundVariance)+groundOffset>corn.y&&
 				cellID==-1):
-				cellID=8
+				cellID=fluid
 			#handles caves
 			if (caveNoise2D(corn.x,corn.y)>0&&groundLevel<corn.y):cellID=-1
 			

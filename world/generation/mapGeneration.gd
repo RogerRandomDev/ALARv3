@@ -78,7 +78,7 @@ func buildChunks():
 			var data=item.storageFormat()
 			var pos=globalToCell(item.position)[0]
 			data.append(pos.x);data.append(pos.y)
-			itemsByChunk[c][0].append_array(data)
+			itemsByChunk[c][0].append_array(data.duplicate())
 			itemsByChunk[c][1].append(item)
 		#removes chunks outside of range
 		for chunk in removeChunks:

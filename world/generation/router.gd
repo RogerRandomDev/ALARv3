@@ -3,6 +3,8 @@ extends Node
 var mapTiles=null
 const font=preload("res://themes/Retro Gaming.ttf")
 const itemTheme=preload("res://themes/itemTheme.tres")
+const fileLayout=preload("res://managers/folderLayout.gd")
+
 
 var mapGen=load("res://world/generation/mapGeneration.gd").new()
 var chunkFiller=load("res://world/generation/chunkFiller.gd").new()
@@ -60,27 +62,26 @@ var defaultGravity=Vector2(0,980)
 
 var maxItemStack:int=99
 #default number of item objects to preload
-var defaultItemStoreCount:int=2500
+var defaultItemStoreCount:int=3072
 func _ready():
+	fileLayout.build()
 	process_mode=Node.PROCESS_MODE_ALWAYS
 	gameVersion=ProjectSettings.get_setting("global/version")
 	itemManager._ready()
-	oreFiller._ready()
-	craftingManager._ready()
 	fillBiomeList()
+	ModManager.loadMods()
+	oreFiller._ready()
 	fileManager._ready()
 	mapGen.call_deferred('_ready')
 	worldShadows.call_deferred('_ready')
 	shaderComp.call_deferred('_ready')
 	inventory._ready()
-	add_child(mineTimer)
-	mineTimer.wait_time=1
-	mineTimer.connect("timeout",progressMine)
 	add_child(playerInventory)
-	var timer=Timer.new()
-	add_child(timer)
-	timer.start()
-	timer.connect("timeout",checkThreads)
+	
+	add_child(mineTimer);mineTimer.wait_time=1;mineTimer.connect("timeout",progressMine)
+	var timer=Timer.new();add_child(timer)
+	timer.start();timer.connect("timeout",checkThreads)
+	
 func loadItems(toNode):
 	GameTick.pause=true
 	for item in defaultItemStoreCount:
@@ -201,6 +202,8 @@ func findItemTexture(itemData):
 #loads texture
 func loadItemTexture(itemData):
 	return load(typeToPath[itemData.location]%itemData.name.replace(" ",""))
+func loadModItemTexture(itemData,modName):
+	return load("user://Mods/%s/%s"%[modName,typeToPath[itemData.location]%itemData.name.replace(" ","")])
 #restarts threads if they are found to have crashed
 func checkThreads():
 	if !mapGen.generationThread.is_alive():
@@ -219,11 +222,9 @@ func storeEntityToChunk(c,entData):
 
 #gets item from item store
 func getItem():
-	var item=itemDropStore.pop_back()
-	if item==null:
-		var out=itemDrop2D.new();
-		GameTick.connect("updateItems",out.checkInRenderDistance)
-		root.add_child(out)
-		return out
-	return item
+	if len(itemDropStore):return itemDropStore.pop_back()
+	var out=itemDrop2D.new();
+	GameTick.connect("updateItems",out.checkInRenderDistance)
+	root.add_child(out)
+	return out
 	

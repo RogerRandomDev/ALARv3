@@ -15,5 +15,6 @@ growPlants = true
 plantCull = 0.95
 plantSizeMin = 4
 plantSizeMax = 8
-plantTiles = PackedInt32Array(5, 5)
+plantTiles = PackedInt32Array(8, 8)
 oreCutoff = 0.5
+fluidType = null
