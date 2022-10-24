@@ -51,7 +51,7 @@ func _physics_process(delta):
 	
 
 func checkInputs():
-	if world.inventory.toggled:return
+	if world.inventory.toggled||Console.visible:return
 	#handles the actions for the current held item
 	if Input.is_action_pressed("m1"):
 		if world.playerInventory.justHeld:return

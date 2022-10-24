@@ -81,7 +81,11 @@ func _ready():
 	add_child(mineTimer);mineTimer.wait_time=1;mineTimer.connect("timeout",progressMine)
 	var timer=Timer.new();add_child(timer)
 	timer.start();timer.connect("timeout",checkThreads)
-	
+	var removeNullEntities=Timer.new()
+	add_child(removeNullEntities)
+	removeNullEntities.wait_time=30;removeNullEntities.connect("timeout",func():
+		itemList=itemList.filter(func(i):return i!=null))
+	removeNullEntities.start()
 func loadItems(toNode):
 	GameTick.pause=true
 	for item in defaultItemStoreCount:

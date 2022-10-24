@@ -77,6 +77,9 @@ corner_radius_top_right = 32
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 corner_detail = 1
+shadow_color = Color(0, 0, 0, 0.427451)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
 anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ht01j"]

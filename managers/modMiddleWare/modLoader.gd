@@ -13,5 +13,4 @@ func loadMods():
 func getMods():
 	var dir=Directory.new()
 	dir.open("user://Mods")
-	var file=File.new()
 	return dir.get_directories()

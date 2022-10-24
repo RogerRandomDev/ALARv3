@@ -1,6 +1,109 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://c3ofc8ft0ssg4"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://c3ofc8ft0ssg4"]
 
 [ext_resource type="FontFile" uid="uid://pagu0vv8j03h" path="res://themes/Retro Gaming.ttf" id="1_17yon"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i5y6p"]
+bg_color = Color(0.262745, 0.364706, 0.45098, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_bottom = 1
+border_color = Color(0.262745, 0.364706, 0.45098, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yi4ri"]
+bg_color = Color(0.192157, 0.278431, 0.34902, 1)
+border_width_top = 2
+border_color = Color(0.0784314, 0.12549, 0.164706, 1)
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kf7b0"]
+bg_color = Color(0.192157, 0.278431, 0.34902, 1)
+border_width_top = 2
+border_color = Color(0.0784314, 0.12549, 0.164706, 1)
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tihqq"]
+bg_color = Color(0.121569, 0.184314, 0.235294, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.0901961, 0.141176, 0.180392, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 6
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 6
+corner_detail = 1
+shadow_color = Color(0, 0, 0, 0.32549)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+anti_aliasing = false
+
 [resource]
 default_font = ExtResource("1_17yon")
+Label/colors/font_color = Color(0, 0.6, 0, 1)
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 1)
+Label/constants/line_spacing = 0
+Label/constants/outline_size = 0
+Label/constants/shadow_offset_x = 0
+Label/constants/shadow_offset_y = 0
+Label/constants/shadow_outline_size = 0
+Label/font_sizes/font_size = 16
+Label/fonts/font = ExtResource("1_17yon")
+Label/styles/normal = SubResource("StyleBoxFlat_i5y6p")
+LineEdit/colors/caret_color = Color(0, 0, 0, 1)
+LineEdit/colors/clear_button_color = Color(0, 0, 0, 1)
+LineEdit/colors/clear_button_color_pressed = Color(0, 0, 0, 1)
+LineEdit/colors/font_color = Color(0, 0.619608, 0, 1)
+LineEdit/colors/font_outline_color = Color(0, 0, 0, 1)
+LineEdit/colors/font_placeholder_color = Color(0, 0, 0, 1)
+LineEdit/colors/font_selected_color = Color(0, 0, 0, 1)
+LineEdit/colors/font_uneditable_color = Color(0, 0, 0, 1)
+LineEdit/colors/selection_color = Color(0, 0, 0, 1)
+LineEdit/constants/caret_width = 0
+LineEdit/constants/minimum_character_width = 0
+LineEdit/constants/outline_size = 0
+LineEdit/font_sizes/font_size = 16
+LineEdit/fonts/font = ExtResource("1_17yon")
+LineEdit/icons/clear = null
+LineEdit/styles/focus = SubResource("StyleBoxFlat_yi4ri")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_kf7b0")
+LineEdit/styles/read_only = null
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_tihqq")
+RichTextLabel/colors/default_color = Color(0, 0.619608, 0, 1)
+RichTextLabel/colors/font_outline_color = Color(0, 0, 0, 1)
+RichTextLabel/colors/font_selected_color = Color(0, 0, 0, 1)
+RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 1)
+RichTextLabel/colors/selection_color = Color(0, 0, 0, 1)
+RichTextLabel/colors/table_border = Color(0, 0, 0, 1)
+RichTextLabel/colors/table_even_row_bg = Color(0, 0, 0, 1)
+RichTextLabel/colors/table_odd_row_bg = Color(0, 0, 0, 1)
+RichTextLabel/constants/line_separation = 0
+RichTextLabel/constants/outline_size = 0
+RichTextLabel/constants/shadow_offset_x = 0
+RichTextLabel/constants/shadow_offset_y = 0
+RichTextLabel/constants/shadow_outline_size = 0
+RichTextLabel/constants/table_h_separation = 0
+RichTextLabel/constants/table_v_separation = 0
+RichTextLabel/font_sizes/bold_font_size = 16
+RichTextLabel/font_sizes/bold_italics_font_size = 16
+RichTextLabel/font_sizes/italics_font_size = 16
+RichTextLabel/font_sizes/mono_font_size = 16
+RichTextLabel/font_sizes/normal_font_size = 16
+RichTextLabel/fonts/bold_font = ExtResource("1_17yon")
+RichTextLabel/fonts/bold_italics_font = ExtResource("1_17yon")
+RichTextLabel/fonts/italics_font = ExtResource("1_17yon")
+RichTextLabel/fonts/mono_font = ExtResource("1_17yon")
+RichTextLabel/fonts/normal_font = ExtResource("1_17yon")
+RichTextLabel/styles/focus = null
+RichTextLabel/styles/normal = null

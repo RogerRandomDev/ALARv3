@@ -21,6 +21,7 @@ border_width_top = 8
 border_width_bottom = 8
 border_color = Color(0.0509804, 0.0901961, 0.121569, 1)
 corner_detail = 1
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2uvip"]
 bg_color = Color(0.156863, 0.156863, 0.196078, 1)
@@ -29,6 +30,9 @@ border_width_bottom = 8
 border_color = Color(0.0509804, 0.0901961, 0.121569, 1)
 corner_radius_bottom_left = 32
 corner_detail = 1
+shadow_size = 4
+shadow_offset = Vector2(-2, 2)
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p2p5p"]
 bg_color = Color(0.262745, 0.364706, 0.45098, 1)
@@ -103,6 +107,7 @@ focus_mode = 0
 text = "Back"
 
 [node name="AboutWorld" type="PanelContainer" parent="Launch/Back/V/TopRow"]
+show_behind_parent = true
 custom_minimum_size = Vector2i(368, 192)
 offset_left = 640.0
 offset_right = 1008.0

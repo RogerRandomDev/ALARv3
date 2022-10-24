@@ -49,8 +49,9 @@ func prepFree():
 #toggle item activity
 func toggleActive(isActive):
 	lifeTime=0.0
-	set_physics_process_internal(isActive)
-	set_physics_process(isActive)
+	if is_physics_processing()!=isActive:
+		set_physics_process(isActive)
+		set_physics_process_internal(isActive)
 	visible=isActive
 
 func _physics_process(delta):
@@ -142,7 +143,7 @@ func checkSameNearBy():
 	for item in world.itemList:
 		if toFree||free:break
 		if(
-			item.itemName!=itemName||item==null||
+			item==null||item.itemName!=itemName||
 			item.toFree||item==self||item.free||
 			#increases the radius them ore items there are
 			#does this to reduce lag from large item counts
